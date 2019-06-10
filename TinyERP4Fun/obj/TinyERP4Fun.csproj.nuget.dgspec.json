@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "restore": {
+    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {}
+  },
+  "projects": {
+    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
+        "projectName": "TinyERP4Fun",
+        "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
+        "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\ProgramData\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Yauheni_Tarhonski\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.AspNetCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            },
+            "Microsoft.AspNetCore.Razor.Design": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[2.2.3, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[4.5.1, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}

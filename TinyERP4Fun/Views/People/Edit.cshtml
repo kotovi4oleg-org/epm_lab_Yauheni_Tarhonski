@@ -1,0 +1,67 @@
+﻿@model TinyERP4Fun.ViewModels.PersonViewModel
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Edit"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <h1>@Localization.currentLocalizatin["Edit"]</h1>
+
+<h4>@Localization.currentLocalizatin["Person"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Person.Id" />
+            <div class="form-group">
+                @Localization.currentLocalizatin["First Name"]
+                <input asp-for="Person.FirstName" class="form-control" />
+                <span asp-validation-for="Person.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Last Name"]
+                <input asp-for="Person.LastName" class="form-control" />
+                <span asp-validation-for="Person.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Birthday"]
+                <input asp-for="Person.Birthday" class="form-control" />
+                <span asp-validation-for="Person.Birthday" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["User"]
+                <select asp-for="Person.UserId" asp-items="ViewBag.Users" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Role"]
+                <select asp-for="SelectedRoles" asp-items="Model.RolesList" class="form-control"></select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Person.IsEmployee" /> @Localization.currentLocalizatin["Is Employee"]
+                </label>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Company"]
+                <select asp-for="Person.CompanyId" asp-items="ViewBag.Companies" class="form-control"></select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Person.IsChief" /> @Localization.currentLocalizatin["Is Chief"]
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value=@Localization.currentLocalizatin["Save"] class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">@Localization.currentLocalizatin["Back to List"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

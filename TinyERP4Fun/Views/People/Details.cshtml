@@ -1,0 +1,61 @@
+﻿@model TinyERP4Fun.Models.Common.Person
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Details"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Details"]</h1>
+
+<div>
+    <h4>@Localization.currentLocalizatin["Person"]</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Person"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Last Name"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Birthday"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["User"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.User.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Is Employee"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsEmployee)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Company"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Company)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Is Chief"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsChief)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@Localization.currentLocalizatin["Edit"]</a> |
+    <a asp-action="Index">@Localization.currentLocalizatin["Back to List"]</a>
+</div>

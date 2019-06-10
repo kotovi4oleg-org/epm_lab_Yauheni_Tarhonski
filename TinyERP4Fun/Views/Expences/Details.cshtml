@@ -1,0 +1,97 @@
+﻿@model TinyERP4Fun.Models.Expenses.Expences
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Details"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Details"]</h1>
+
+<div>
+    <h4>@Localization.currentLocalizatin["Expences"]</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Document Number"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DocumentNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Document Date"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DocumentDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Full Name"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["User"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.User.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Our Company"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OurCompany.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Company"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Company.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Desired Payment Date"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DesiredPaymentDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Approved Payment Date"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ApprovedPaymentDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Amount Of Payment"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AmountOfPayment)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Currency"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Currency.Code)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Approved"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Approved)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Declined"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Declined)
+        </dd>
+        <dt class="col-sm-2">
+            @Localization.currentLocalizatin["Purpose Of Payment"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PurposeOfPayment)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@Localization.currentLocalizatin["Edit"]</a> |
+    <a asp-action="Index">@Localization.currentLocalizatin["Back to List"]</a>
+</div>

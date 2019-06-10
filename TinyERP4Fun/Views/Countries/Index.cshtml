@@ -1,0 +1,57 @@
+﻿@model PaginatedList<TinyERP4Fun.Models.Common.Country>
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Countries"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Countries"]</h1>
+
+<p>
+    <a asp-action="Create">@Localization.currentLocalizatin["Create New"]</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Localization.currentLocalizatin["Name"]
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Localization.currentLocalizatin["Edit"]</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">@Localization.currentLocalizatin["Details"]</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">@Localization.currentLocalizatin["Delete"]</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    @Localization.currentLocalizatin["Previous"]
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    @Localization.currentLocalizatin["Next"]
+</a>

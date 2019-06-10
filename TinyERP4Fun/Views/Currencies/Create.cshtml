@@ -1,0 +1,64 @@
+﻿@model TinyERP4Fun.Models.Common.Currency
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Create"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Create"]</h1>
+
+<h4>@Localization.currentLocalizatin["Currency"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Code"]
+                <input asp-for="Code" class="form-control" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Name"]
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Name2"]
+                <input asp-for="Name2" class="form-control" />
+                <span asp-validation-for="Name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Part001Name"]
+                <input asp-for="Part001Name" class="form-control" />
+                <span asp-validation-for="Part001Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Part001Name2"]
+                <input asp-for="Part001Name2" class="form-control" />
+                <span asp-validation-for="Part001Name2" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Active" /> @Localization.currentLocalizatin["Active"]
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Base" /> @Localization.currentLocalizatin["Base"]
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value=@Localization.currentLocalizatin["Create"] class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">@Localization.currentLocalizatin["Back to List"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

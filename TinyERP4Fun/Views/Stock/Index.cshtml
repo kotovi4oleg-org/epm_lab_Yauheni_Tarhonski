@@ -1,0 +1,102 @@
+﻿@model TinyERP4Fun.ViewModels.StockPaginatedViewModel
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Stock"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Stock"]</h1>
+
+<p>
+    <a asp-action="Create">@Localization.currentLocalizatin["Create New"]</a>
+    <a asp-action="Movements">@Localization.currentLocalizatin["Movements"]</a>
+    <a href="#" onclick="show_filter(); return false"><span id="sp_sel">@Localization.currentLocalizatin["Filter"]</span></a>
+</p>
+
+<div id="filter_form" style="display:none">
+    <form asp-controller="StockController" asp-action="Index" method="get" name="filter">
+        <p>
+        <p>
+            @Localization.currentLocalizatin["Item"]:
+            <select asp-for="ItemFilter" asp-items="Model.ItemFilter" class="form-control">
+            </select>
+            @Localization.currentLocalizatin["Warehouse"]:
+            <select asp-for="WarehouseFilter" asp-items="Model.WarehouseFilter" class="form-control" >
+            </select>
+        </p>
+        <p>
+            @Localization.currentLocalizatin["From"]: <input type="date" asp-for="FromFilter" class="form-control" />
+            @Localization.currentLocalizatin["To"]: <input type="date" asp-for="ToFilter" class="form-control" />
+        </p>
+        <p>
+            <input type="submit" value=@Localization.currentLocalizatin["Search"] />
+        </p>
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Localization.currentLocalizatin["Item"]
+            </th>
+            <th>
+                @Localization.currentLocalizatin["Quantity"]
+            </th>
+            <th>
+                @Localization.currentLocalizatin["Warehouse"]
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.StockViewModels)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Warehouse.Name)
+                </td>
+                <td>
+                    @*
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.StockViewModels.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.StockViewModels.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.StockViewModels.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    @Localization.currentLocalizatin["Previous"]
+</a>
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.StockViewModels.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    @Localization.currentLocalizatin["Next"]
+</a>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        function show_filter() {
+            var d = document;
+            var a = d.getElementById('filter_form').style.display;
+            d.getElementById('filter_form').style.display = (a == 'none') ? 'block' : 'none';
+        }
+    </script>
+}

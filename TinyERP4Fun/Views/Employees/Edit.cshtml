@@ -1,0 +1,52 @@
+﻿@model TinyERP4Fun.Models.Common.Employee
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Edit"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Edit"]</h1>
+
+<h4>@Localization.currentLocalizatin["Employee"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                @Localization.currentLocalizatin["Person"]
+                <select asp-for="PersonId" asp-items="ViewBag.People" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Number"]
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Department"]
+                <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Position"]
+                <select asp-for="PositionId" asp-items="ViewBag.Positions" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Address"]
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value=@Localization.currentLocalizatin["Save"] class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">@Localization.currentLocalizatin["Back to List"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

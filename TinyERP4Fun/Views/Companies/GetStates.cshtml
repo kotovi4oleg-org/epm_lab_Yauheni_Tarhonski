@@ -1,0 +1,8 @@
+﻿@model IEnumerable<TinyERP4Fun.Models.Common.State>
+<select id="state" name="StateId" class="form-control">
+    <option value=null></option>
+    @foreach (var item in Model)
+    {
+        <option value="@item.Id">@item.Name</option>
+    }
+</select>

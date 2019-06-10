@@ -1,0 +1,91 @@
+﻿@model TinyERP4Fun.Models.Expenses.Expences
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Edit"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Edit"]</h1>
+
+<h4>@Localization.currentLocalizatin["Expences"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                @Localization.currentLocalizatin["Document Number"]
+                <input asp-for="DocumentNumber" class="form-control" />
+                <span asp-validation-for="DocumentNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Document Date"]
+                <input asp-for="DocumentDate" class="form-control" />
+                <span asp-validation-for="DocumentDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Document Type"]
+                <select asp-for="DocumentTypeId" asp-items="ViewBag.DocumentTypeId" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Person"]
+                <select asp-for="PersonId" asp-items="ViewBag.PersonId" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["User"]
+                <select asp-for="UserId" asp-items="ViewBag.UserId" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Our Company"]
+                <select asp-for="OurCompanyId" class="form-control" asp-items="ViewBag.OurCompanyId"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Company"]
+                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Desired Payment Date"]
+                <input asp-for="DesiredPaymentDate" class="form-control" />
+                <span asp-validation-for="DesiredPaymentDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Approved Payment Date"]
+                <input asp-for="ApprovedPaymentDate" class="form-control" />
+                <span asp-validation-for="ApprovedPaymentDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Amount Of Payment"]
+                <input asp-for="AmountOfPayment" class="form-control" />
+                <span asp-validation-for="AmountOfPayment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Currency"]
+                <select asp-for="CurrencyId" class="form-control" asp-items="ViewBag.CurrencyId"></select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Approved" /> @Localization.currentLocalizatin["Approved"]
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Declined" /> @Localization.currentLocalizatin["Declined"]
+                </label>
+            </div>
+            <div class="form-group">
+                @Localization.currentLocalizatin["Purpose Of Payment"]
+                <input asp-for="PurposeOfPayment" class="form-control" />
+                <span asp-validation-for="PurposeOfPayment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value=@Localization.currentLocalizatin["Save"] class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">@Localization.currentLocalizatin["Back to List"]</a>
+</div>
+

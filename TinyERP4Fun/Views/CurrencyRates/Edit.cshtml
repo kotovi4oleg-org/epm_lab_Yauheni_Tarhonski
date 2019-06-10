@@ -1,0 +1,52 @@
+﻿@model TinyERP4Fun.Models.Common.CurrencyRates
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>CurrencyRates</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="CurrecyScale" class="control-label"></label>
+                <input asp-for="CurrecyScale" class="form-control" />
+                <span asp-validation-for="CurrecyScale" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrencyRate" class="control-label"></label>
+                <input asp-for="CurrencyRate" class="form-control" />
+                <span asp-validation-for="CurrencyRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateRate" class="control-label"></label>
+                <input asp-for="DateRate" class="form-control" />
+                <span asp-validation-for="DateRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrencyId" class="control-label"></label>
+                <select asp-for="CurrencyId" class="form-control" asp-items="ViewBag.CurrencyId"></select>
+                <span asp-validation-for="CurrencyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BaseCurrencyId" class="control-label"></label>
+                <select asp-for="BaseCurrencyId" class="form-control" asp-items="ViewBag.BaseCurrencyId"></select>
+                <span asp-validation-for="BaseCurrencyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

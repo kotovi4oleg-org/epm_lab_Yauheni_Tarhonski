@@ -1,0 +1,80 @@
+﻿@model PaginatedList<TinyERP4Fun.Models.Common.City>
+
+@{
+    ViewData["Title"] = Localization.currentLocalizatin["Cities"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Localization.currentLocalizatin["Cities"]</h1>
+
+<p>
+    <a asp-action="Create">@Localization.currentLocalizatin["Create New"]</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            @Localization.currentLocalizatin["Find"]: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value=@Localization.currentLocalizatin["Search"] /> |
+            <a asp-action="Index">@Localization.currentLocalizatin["Back to Full List"]</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Localization.currentLocalizatin["City"]</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StateSortParm"]">@Localization.currentLocalizatin["State"]</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CountrySortParm"]">@Localization.currentLocalizatin["Country"]</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State.Country.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Localization.currentLocalizatin["Edit"]</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">@Localization.currentLocalizatin["Details"]</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">@Localization.currentLocalizatin["Delete"]</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    @Localization.currentLocalizatin["Previous"]
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    @Localization.currentLocalizatin["Next"]
+</a>
