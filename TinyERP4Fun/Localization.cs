@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun
 {
-    internal static class Localization
+    public static class Localization
     {
         public static void SetEN()
         {
