@@ -16,10 +16,8 @@ namespace TinyERP4Fun
     public class Program
     {
         public static async Task Main(string[] args)
-        //public static  void Main(string[] args)
         {
-            //Localization.currentLocalizatin = Localization.englishLocalizatin;
-            Localization.currentLocalizatin = Localization.russianLocalizatin;
+            Localization.SetRU();
             var host = CreateWebHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
@@ -27,9 +25,6 @@ namespace TinyERP4Fun
 
                 try
                 {
-                    //var context = services.GetRequiredService<MvcMovieContext>();
-                    //context.Database.Migrate();
-
                     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     await RoleInitializer.InitializeAsync(userManager, rolesManager);

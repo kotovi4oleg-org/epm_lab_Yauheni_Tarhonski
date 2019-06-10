@@ -19,9 +19,10 @@ namespace TinyERP4Fun
         {
             throw new NotImplementedException();
         }
-        public static Dictionary<string, string> currentLocalizatin;
-        public static Dictionary<string, string> loadedLocalizatin;
-        public static Dictionary<string, string> englishLocalizatin = new Dictionary<string, string>
+        public static Dictionary<string, string> currentLocalizatin { get; set; }
+        public static Dictionary<string, string> LoadedLocalizatin { get; set; }
+
+        private static readonly Dictionary<string, string> englishLocalizatin = new Dictionary<string, string>
         {
             ["City"] = "City",
             ["Cities"] = "Cities",
@@ -127,7 +128,7 @@ namespace TinyERP4Fun
             ["Movements"] = "Movements",
 
         };
-        public static Dictionary<string, string> russianLocalizatin = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> russianLocalizatin = new Dictionary<string, string>
         {
             ["City"] = "Город",
             ["Cities"] = "Города",
