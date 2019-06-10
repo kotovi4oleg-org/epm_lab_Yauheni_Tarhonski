@@ -25,14 +25,14 @@
                 <span asp-validation-for="UnitId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value=@Localization.currentLocalizatin["Save"] class="btn btn-primary" />
             </div>
         </form>
         <img src="/Items/ViewImage/@Model.Id" />
         <form asp-action="UploadImage" enctype="multipart/form-data" method="post">
             <input type="hidden" asp-for="Id" />
             <input type="file" name="files" />
-            <button>post</button>
+            <input type="submit" value=@Localization.currentLocalizatin["Save"] class="btn btn-primary" />
         </form>
     </div>
 </div>

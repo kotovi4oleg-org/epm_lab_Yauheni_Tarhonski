@@ -57,10 +57,26 @@ namespace TinyERP4Fun.Controllers
         // POST: Items/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,UnitId")] Item item)
+        public async Task<IActionResult> Create([Bind("Id,Name,UnitId")] Item item, IList<IFormFile> files)
         {
             if (ModelState.IsValid)
             {
+
+                IFormFile uploadedImage = files.FirstOrDefault();
+                if (uploadedImage != null && uploadedImage.ContentType.ToLower().StartsWith("image/"))
+                {
+
+                    MemoryStream ms = new MemoryStream();
+                    uploadedImage.OpenReadStream().CopyTo(ms);
+                    using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
+                    {
+                        if (image.Width > Constants.maxImageSize || image.Height > Constants.maxImageSize)
+                            return NotFound();
+                        item.Image = ms.ToArray();
+                        item.ContentType = uploadedImage.ContentType;
+                    }
+                }
+
                 _context.Add(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

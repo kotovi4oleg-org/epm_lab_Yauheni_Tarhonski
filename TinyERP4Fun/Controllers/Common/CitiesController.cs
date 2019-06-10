@@ -70,23 +70,24 @@ namespace TinyERP4Fun.Controllers
             }
             return View(await PaginatedList<City>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
+        private async Task<City> CityInfo(long? id)
+        {
+            if (id == null) return null;
+            var city = await _context.City.Include(x => x.State)
+                              .Include(x => x.State.Country)
+                              .FirstOrDefaultAsync(m => m.Id == id);
+            if (city == null) return null;
+            return city;
+        }
         // GET: Cities/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var city = await _context.City.Include(x => x.State)
-                                          .Include(x => x.State.Country)
-                                          .FirstOrDefaultAsync(m => m.Id == id);
-            if (city == null)
-            {
+            var cityInfo = await CityInfo(id);
+            if (cityInfo == null)
                 return NotFound();
-            }
-
-            return View(city);
+            else
+                return View(cityInfo);
         }
 
         // GET: Cities/Create

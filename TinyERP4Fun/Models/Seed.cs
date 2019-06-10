@@ -12,7 +12,7 @@ using TinyERP4Fun.Models.Expenses;
 
 namespace TinyERP4Fun.Models
 {
-    public class RoleInitializer
+    public static class RoleInitializer
     {
         public static async Task InitializeAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -40,7 +40,7 @@ namespace TinyERP4Fun.Models
             }
         }
     }
-    public class SeedData
+    public static class SeedData
     {
         private static async Task SeedUser(UserManager<IdentityUser> userManager, string userEmail)
         {

@@ -92,7 +92,6 @@ namespace TinyERP4Fun.Controllers
             DataContractJsonSerializer jsonFormatterNBRBRate = new DataContractJsonSerializer(typeof(NBRBRate));
             NBRBCur[] curArray = (NBRBCur[])jsonFormatterNBRBCurAr.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonCurList)));
 
-            //var currencyDate = DateTime.Today;
             foreach (var currency in currencyList)
             {
                 for (var currencyDate = Constants.baseDate; currencyDate <= DateTime.Today; currencyDate = currencyDate.AddDays(1))

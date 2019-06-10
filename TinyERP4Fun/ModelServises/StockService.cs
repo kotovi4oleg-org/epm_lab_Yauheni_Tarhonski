@@ -20,7 +20,6 @@ namespace TinyERP4Fun.ModelServises
         public async Task<Stock> Get(long? id)
         {
             if (id == null) return null;
-            //return await _context.Stock.FindAsync(id);
             return await _context.Stock
                                  .Include(s => s.Item)
                                  .Include(s => s.User)
@@ -38,8 +37,8 @@ namespace TinyERP4Fun.ModelServises
             if (itemFilter.Count() != 0) filteredContext = filteredContext.Where(x => itemFilter.Contains(x.ItemId));
             if (warehouseFilter.Count() != 0) filteredContext = filteredContext.Where(x => warehouseFilter.Contains(x.WarehouseId));
             if (userFilter.Count() != 0) filteredContext = filteredContext.Where(x => userFilter.Contains(x.UserId));
-            if (fromFilter != null) filteredContext = filteredContext.Where(x => x.OperDate != null && x.OperDate >= fromFilter);
-            if (toFilter != null) filteredContext = filteredContext.Where(x => x.OperDate != null && x.OperDate <= toFilter);
+            if (fromFilter != null) filteredContext = filteredContext.Where(x => x.OperDate >= fromFilter);
+            if (toFilter != null) filteredContext = filteredContext.Where(x => x.OperDate <= toFilter);
 
             return filteredContext;
         }
@@ -59,7 +58,7 @@ namespace TinyERP4Fun.ModelServises
         public async Task Update(Stock stock)
         {
 
-            var oldstock = await _context.Stock.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stock.Id);//.FindAsync(stock.Id);
+            var oldstock = await _context.Stock.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stock.Id);
 
             if (oldstock.WarehouseId!=stock.WarehouseId|| oldstock.ItemId != stock.ItemId)
             {
@@ -69,7 +68,7 @@ namespace TinyERP4Fun.ModelServises
             else
             {
                 await CheckUpdateState(stock);
-            }/**/
+            }
             
             await CheckUpdateState(stock);
             _context.Update(stock);
@@ -82,7 +81,6 @@ namespace TinyERP4Fun.ModelServises
 
         private async Task CheckState(Stock stock,bool del)
         {
-            //if (stock.Id == 0) throw new ArgumentException("id == 0 ");
             decimal quantity = del ? 0 : stock.Quantity;
             var sumBefore = quantity + await _context.Stock.Where(x => x.ItemId == stock.ItemId &&
                                                 x.WarehouseId == stock.WarehouseId &&

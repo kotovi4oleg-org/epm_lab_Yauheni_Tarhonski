@@ -1,20 +1,15 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Controllers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.IO;
+
 
 namespace TinyERP4Fun.Scheduler
 {
-    internal class TimedHostedServiceUpdateCurrencies : IHostedService, IDisposable
+    internal sealed class TimedHostedServiceUpdateCurrencies : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
         private Timer _timer;

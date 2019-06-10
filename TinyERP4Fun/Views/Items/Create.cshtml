@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 @Localization.currentLocalizatin["Name"]
@@ -21,6 +21,9 @@
             <div class="form-group">
                 @Localization.currentLocalizatin["Unit"]
                 <select asp-for="UnitId" class="form-control" asp-items="ViewBag.UnitId"></select>
+            </div>
+            <div class="form-group">
+                <input type="file" name="files" />
             </div>
             <div class="form-group">
                 <input type="submit" value=@Localization.currentLocalizatin["Create"] class="btn btn-primary" />
