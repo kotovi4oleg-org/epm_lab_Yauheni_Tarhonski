@@ -75,14 +75,6 @@ namespace TinyERP4Fun.Controllers
                 new SelectList(_userManager.Users.Except(defaultAdmin).Except(usedUsers), "Id", "Email"));
             ViewBag.Roles = new SelectList(_roleManager.Roles, "Id", "Name");
             ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
-            /*
-                var viewmodel = new PersonViewModel
-                {
-                    Person = n,
-                    CourseList = new SelectList(_db.Courses, "Id", "Name"),
-                    SelectedCourses = student.Courses.Select(sc => sc.CourseId)
-                };
-            */
             return View();
         }
 
@@ -170,8 +162,7 @@ namespace TinyERP4Fun.Controllers
 
                 _context.Update(person);
 
-                if (person.IsEmployee)
-                    if (_context.Employee.Where(x=>x.PersonId == person.Id).Count()==0)
+                if (person.IsEmployee && _context.Employee.Where(x=>x.PersonId == person.Id).Count()==0)
                     {
                         Employee employee = new Employee { Person = person };
                         _context.Add(employee);

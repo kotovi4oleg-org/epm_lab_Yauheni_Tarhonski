@@ -27,7 +27,6 @@ namespace TinyERP4Fun.Controllers
         {
             var defaultContext = _context.Country.OrderBy(x => x.Name);
             return View(await PaginatedList<Country>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
-            //return View(await _context.Country.ToListAsync());
         }
 
         // GET: Countries/Details/5

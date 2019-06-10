@@ -50,15 +50,12 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Units/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")]Unit unit)
         {
             if (ModelState.IsValid)
             {
-                //throw new NotImplementedException("1111111111111111111111:"+unit.Name);
                 _context.Add(unit);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,8 +80,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Units/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Unit unit)

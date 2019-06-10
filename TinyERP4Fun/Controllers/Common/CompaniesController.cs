@@ -90,8 +90,6 @@ namespace TinyERP4Fun.Controllers
                     break;
             }
 
-            //return View(await result.ToListAsync());
-            //return View(await result.AsNoTracking().ToListAsync());
             return View(await PaginatedList<Company>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
@@ -123,8 +121,8 @@ namespace TinyERP4Fun.Controllers
         {
             ViewBag.Cities = null;
             ViewBag.States = null;
-            ViewBag.Currencies = CommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name")); ;
-            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name")); ;
+            ViewBag.Currencies = CommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name"));
+            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
             ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
             return View();
         }
@@ -162,7 +160,8 @@ namespace TinyERP4Fun.Controllers
                                                 .FirstOrDefaultAsync(x=>x.Id == id);
             if (company == null)
                 return NotFound();
-                if (company.CityId == null)
+
+            if (company.CityId == null)
             {
                 ViewBag.Cities = null;
                 ViewBag.States = null;

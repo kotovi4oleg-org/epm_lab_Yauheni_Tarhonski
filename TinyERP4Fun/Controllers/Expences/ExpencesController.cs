@@ -69,9 +69,9 @@ namespace TinyERP4Fun.Controllers
             ExpencesViewModel expencesViewModel = new ExpencesViewModel()
             {
                 Expences = await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize),
-                CurrencyFilter = new SelectList(_context.Currency.Where(x => x.Active == true), "Id", "Name"),
+                CurrencyFilter = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name"),
                 CompanyFilter = new SelectList(_context.Company, "Id", "Name"),
-                OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany == true), "Id", "Name"),
+                OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name"),
                 FromFilter = fromFilter,
                 ToFilter = toFilter,
                 ApprovedFilter = approvedFilter,
@@ -94,46 +94,7 @@ namespace TinyERP4Fun.Controllers
                                                bool notProcessedFilter
                                                )
         {
-            #region DeleteCopyPaste
-            /*
-            IQueryable<Expences> defaultContext = _context.Expences.Include(e => e.DocumentType)
-                                                                   .Include(e => e.Company)
-                                                                   .Include(e => e.Currency)
-                                                                   .Include(e => e.OurCompany)
-                                                                   .Include(e => e.Person)
-                                                                   .Include(e => e.User);
-            string total = null;
-            if (currencyFilter != null)
-            {
-                defaultContext = defaultContext.Where(x => x.CurrencyId == (long)currencyFilter);
-                total = Localization.currentLocalizatin["Amount of Expenses"] + ": " + defaultContext.Sum(x => x.AmountOfPayment).ToString();
-            }
-            if (companyFilter != null) defaultContext = defaultContext.Where(x => x.CompanyId == (long)companyFilter);
-            if (ourcompanyFilter != null) defaultContext = defaultContext.Where(x => x.OurCompanyId == (long)ourcompanyFilter);
-            if (fromFilter != null) defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate!=null && x.ApprovedPaymentDate>= fromFilter)||
-                                                                               (x.ApprovedPaymentDate == null && x.DesiredPaymentDate >= fromFilter));
-            if (toFilter != null) defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate != null && x.ApprovedPaymentDate <= toFilter) ||
-                                                                             (x.ApprovedPaymentDate == null && x.DesiredPaymentDate <= toFilter));
-
-            ExpencesViewModel expencesViewModel = new ExpencesViewModel()
-            {
-                Expences = await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize),
-                CurrencyFilter = new SelectList(_context.Currency.Where(x => x.Active == true), "Id", "Name"),
-                CompanyFilter = new SelectList(_context.Company, "Id", "Name"),
-                OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany == true), "Id", "Name"),
-                FromFilter = fromFilter,
-                ToFilter = toFilter,
-                ApprovedFilter = approvedFilter,
-                DeclinedFilter = declinedFilter,
-                NotProcessedFilter = notProcessedFilter,
-                Total = total
-            };
-
-            //return View(await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
-            return View(expencesViewModel);
-            */
-            #endregion
-            return View(await IndexCreateViewModel(pageNumber, currencyFilter, companyFilter, ourcompanyFilter, fromFilter,
+             return View(await IndexCreateViewModel(pageNumber, currencyFilter, companyFilter, ourcompanyFilter, fromFilter,
                    toFilter, approvedFilter, declinedFilter, notProcessedFilter, false));
         }
         [Authorize(Roles = Constants.rolesExpences_Admin)]
@@ -182,42 +143,41 @@ namespace TinyERP4Fun.Controllers
             var currentUserId= _userManager.GetUserId(User);
             ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active == true), "Id", "Name");
-            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany == true), "Id", "Name");
+            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
+            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
             ViewData["PersonId"] = new SelectList(_context.Person.Where(x=>x.UserId == currentUserId&& x.UserId!=null) , "Id", "Name");
             ViewData["UserId"] = new SelectList(_context.Users.Where(x=>x.Id==currentUserId), "Id", "Email");
             return View();
         }
 
         // POST: Expences/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DocumentNumber,DocumentDate,DocumentTypeId,PersonId,UserId,OurCompanyId,CompanyId,DesiredPaymentDate,ApprovedPaymentDate,AmountOfPayment,CurrencyId,Approved,Declined,PurposeOfPayment")] Expences expences)
         {
             if (ModelState.IsValid)
             {
-                #region можно улучшить. но не буду (не совсем доверяю кукам)
-                // Получаем user ID не делая дополнительную вылазку в базу (круто, нужно запомнить) 
+                #region можно улучшить. но не буду (предпочту лишний раз обратиться в базу, возможно зря)
+                // Получаем user ID не делая дополнительную вылазку в базу
                 /*
                 var claimsIdentity = (ClaimsIdentity)this.User.Identity;
                 var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
                 var userId = claim.Value;
-                 */
+                 
                 // Но можно выкинуть этот код в отдельный класс
-                /*
-                    public static class UserHelpers
+                
+                public static class UserHelpers
+                {
+                    public static string GetUserId(this IPrincipal principal)
                     {
-                        public static string GetUserId(this IPrincipal principal)
-                        {
-                            var claimsIdentity = (ClaimsIdentity)principal.Identity;
-                            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-                            return claim?.Value;
-                        }
+                        var claimsIdentity = (ClaimsIdentity)principal.Identity;
+                        var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                        return claim?.Value;
                     }
-                 */
+                }
+                
                 // И обращаться так: var userId = this.User.GetUserId();
+                /**/
                 #endregion
 
                 //Повторно считали Id пользователя 
@@ -244,16 +204,14 @@ namespace TinyERP4Fun.Controllers
             var currentUserId = _userManager.GetUserId(User);
             ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active == true), "Id", "Name");
-            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany == true), "Id", "Name");
+            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
+            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
             ViewData["PersonId"] = new SelectList(_context.Person.Where(x => x.UserId == currentUserId && x.UserId != null), "Id", "Name");
             ViewData["UserId"] = new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
             return View(expences);
         }
 
         // POST: Expences/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,DocumentNumber,DocumentDate,DocumentTypeId,PersonId,UserId,OurCompanyId,CompanyId,DesiredPaymentDate,AmountOfPayment,CurrencyId,PurposeOfPayment")] Expences expences)
@@ -298,16 +256,14 @@ namespace TinyERP4Fun.Controllers
             var currentUserId = _userManager.GetUserId(User);
             ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active == true), "Id", "Name");
-            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany == true), "Id", "Name");
+            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
+            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
             ViewData["PersonId"] = new SelectList(_context.Person.Where(x => x.Id == expences.PersonId), "Id", "Name");
             ViewData["UserId"] = new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
             return View(expences);
         }
 
         // POST: Expences/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constants.rolesExpences_Admin)]

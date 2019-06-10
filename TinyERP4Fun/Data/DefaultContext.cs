@@ -31,34 +31,34 @@ namespace TinyERP4Fun.Data
         public DbSet<TinyERP4Fun.Models.Expenses.Expences> Expences { get; set; }
         public DbSet<TinyERP4Fun.Models.Common.Currency> Currency { get; set; }
         
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             //Sample of UNIQUE Key
-            /*modelBuilder.Entity<Person>()
+            /*builder.Entity<Person>()
                         .HasAlternateKey(c => c.UserId)
                         .HasName("AlternateKey_UserId");*/
             //Sample of UNIQUE Key Or multiple Null
-            modelBuilder.Entity<Person>()
+            builder.Entity<Person>()
                         .HasIndex(x => x.UserId)
                         .IsUnique();
             //Sample of UNIQUE Key Or UNIQUE Null
-            /*modelBuilder.Entity<Product>()
+            /*builder.Entity<Product>()
                         .HasIndex(b => b.ProductId)
                         .IsUnique()
                         .HasFilter(null);*/
             //Sample of NoAction on delete
-            modelBuilder.Entity<CurrencyRates>()
+            builder.Entity<CurrencyRates>()
                         .HasOne(p => p.Currency)
                         .WithMany()
                         .HasForeignKey(s => s.CurrencyId)
                         .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Expences>()
+            builder.Entity<Expences>()
                         .HasOne(p => p.OurCompany)
                         .WithMany()
                         .HasForeignKey(s => s.OurCompanyId)
                         .OnDelete(DeleteBehavior.Restrict);/**/
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
         }  /**/
         

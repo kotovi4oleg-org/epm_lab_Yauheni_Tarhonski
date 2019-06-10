@@ -28,7 +28,6 @@ namespace TinyERP4Fun.Controllers.Common
             var defaultContext = _context.Currency.OrderBy(x => x.Name);
 
             return View(await PaginatedList<Currency>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
-            //return View(await _context.Currency.ToListAsync());
         }
 
         // GET: Currencies/Details/5
@@ -88,8 +87,6 @@ namespace TinyERP4Fun.Controllers.Common
         }
 
         // POST: Currencies/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Code,Name,Name2,Part001Name,Part001Name2,Active,Base")] Currency currency)

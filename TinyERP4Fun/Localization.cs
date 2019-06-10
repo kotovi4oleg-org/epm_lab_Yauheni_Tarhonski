@@ -5,8 +5,20 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun
 {
-    public static class Localization
+    internal static class Localization
     {
+        public static void SetEN()
+        {
+            currentLocalizatin = englishLocalizatin;
+        }
+        public static void SetRU()
+        {
+            currentLocalizatin = russianLocalizatin;
+        }
+        public static void SetLoaded()
+        {
+            throw new NotImplementedException();
+        }
         public static Dictionary<string, string> currentLocalizatin;
         public static Dictionary<string, string> loadedLocalizatin;
         public static Dictionary<string, string> englishLocalizatin = new Dictionary<string, string>

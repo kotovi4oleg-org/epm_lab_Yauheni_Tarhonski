@@ -10,12 +10,12 @@ namespace TinyERP4Fun.Controllers.Common
     {
         public IActionResult EN()
         {
-            Localization.currentLocalizatin = Localization.englishLocalizatin;
+            Localization.SetEN();
             return RedirectToAction("Index", "Home");
         }
         public IActionResult RU()
         {
-            Localization.currentLocalizatin = Localization.russianLocalizatin;
+            Localization.SetRU();
             return RedirectToAction("Index", "Home");
         }
     }

@@ -68,10 +68,8 @@ namespace TinyERP4Fun.Controllers
                     result = result.OrderBy(x => x.Name);
                     break;
             }
-            //return View(await result.AsNoTracking().ToListAsync());
             return View(await PaginatedList<City>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
-
         // GET: Cities/Details/5
         public async Task<IActionResult> Details(long? id)
         {
@@ -100,8 +98,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Cities/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,StateId")] City city)
@@ -125,7 +121,7 @@ namespace TinyERP4Fun.Controllers
 
             var city = await _context.City.Include(x => x.State)
                                           .Include(x => x.State.Country)
-                                          .FirstOrDefaultAsync(m => m.Id == id);//.FindAsync(id);
+                                          .FirstOrDefaultAsync(m => m.Id == id);
             if (city == null)
             {
                 return NotFound();
@@ -141,8 +137,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Cities/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,StateId")] City city)

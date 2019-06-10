@@ -55,27 +55,12 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Items/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,UnitId")] Item item, IList<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Id,Name,UnitId")] Item item)
         {
             if (ModelState.IsValid)
             {
-                IFormFile uploadedImage = files.FirstOrDefault();
-                if (uploadedImage == null || uploadedImage.ContentType.ToLower().StartsWith("image/"))
-                {
-                    MemoryStream ms = new MemoryStream();
-                    uploadedImage.OpenReadStream().CopyTo(ms);
-                    System.Drawing.Image image = System.Drawing.Image.FromStream(ms);
-                    if (image.Width > Constants.maxImageSize || image.Height > Constants.maxImageSize)
-                        return NotFound();
-
-                    item.Image = ms.ToArray();
-                    item.ContentType = uploadedImage.ContentType;
-                }
-
                 _context.Add(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -101,8 +86,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Items/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,UnitId")] Item item)
@@ -179,21 +162,29 @@ namespace TinyERP4Fun.Controllers
 
 
             var item = await _context.Item.FindAsync(id);
+
             if (item == null)
                 return NotFound();
 
 
             IFormFile uploadedImage = files.FirstOrDefault();
-            if (uploadedImage == null || uploadedImage.ContentType.ToLower().StartsWith("image/"))
+            if (uploadedImage == null)
             {
+                item.Image = null;
+                item.ContentType = null;
+            }
+            else if (uploadedImage.ContentType.ToLower().StartsWith("image/"))
+            {
+                
                 MemoryStream ms = new MemoryStream();
                 uploadedImage.OpenReadStream().CopyTo(ms);
-                System.Drawing.Image image = System.Drawing.Image.FromStream(ms);
-                if (image.Width>Constants.maxImageSize||image.Height> Constants.maxImageSize)
-                    return NotFound();
-
-                item.Image = ms.ToArray();
-                item.ContentType = uploadedImage.ContentType;
+                using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
+                {
+                    if (image.Width > Constants.maxImageSize || image.Height > Constants.maxImageSize)
+                        return NotFound();
+                    item.Image = ms.ToArray();
+                    item.ContentType = uploadedImage.ContentType;
+                }
             }
 
             _context.Update(item);
@@ -205,7 +196,6 @@ namespace TinyERP4Fun.Controllers
         [HttpGet]
         public FileStreamResult ViewImage(long? id)
         {
-            //throw new NotImplementedException("id=" + id.ToString());
             if (id == null)
                 return null;
             var item = _context.Item.Find(id);
@@ -215,8 +205,6 @@ namespace TinyERP4Fun.Controllers
             
             MemoryStream ms = new MemoryStream(item.Image);
             return new FileStreamResult(ms, item.ContentType);
-
         }
-        /**/
     }
 }

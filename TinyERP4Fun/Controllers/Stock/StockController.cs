@@ -46,7 +46,6 @@ namespace TinyERP4Fun.Controllers
                 ToFilter = toFilter
             };
             return View(stockMovementsViewModel);
-            //return View(await PaginatedList<Stock>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
         
         public IActionResult Index(int? pageNumber,
@@ -141,8 +140,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Stocks/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ItemId,Quantity,WarehouseId,UserId,OperDate")] Stock stock)
@@ -169,8 +166,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Stocks/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,ItemId,Quantity,WarehouseId,UserId,OperDate")] Stock stock)

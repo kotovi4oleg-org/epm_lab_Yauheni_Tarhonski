@@ -101,10 +101,10 @@ namespace TinyERP4Fun.Controllers
                     if (_context.CurrencyRates.Where(x => x.DateRate == currencyDate && x.Currency.Code == currency.Code).FirstOrDefault() != null)
                         continue;
 
-                    var curNBRB = curArray.Where(x => x.Cur_Abbreviation == currency.Code &&
-                                                 DateTime.Parse(x.Cur_DateStart) <= currencyDate &&
-                                                 DateTime.Parse(x.Cur_DateEnd) >= currencyDate
-                                                ).FirstOrDefault();
+                    var curNBRB = curArray.FirstOrDefault(x => x.Cur_Abbreviation == currency.Code &&
+                                                               DateTime.Parse(x.Cur_DateStart) <= currencyDate &&
+                                                               DateTime.Parse(x.Cur_DateEnd) >= currencyDate
+                                                               );
 
                     if (curNBRB == null)
                         continue;
@@ -142,7 +142,6 @@ namespace TinyERP4Fun.Controllers
                                                        .OrderByDescending(x => x.DateRate)
                                                        .ThenBy(x => x.Currency.Name);
             return View(await PaginatedList<CurrencyRates>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
-            //return View(await defaultContext.ToListAsync());
         }
 
         // GET: CurrencyRates/Details/5
@@ -174,8 +173,6 @@ namespace TinyERP4Fun.Controllers
         }
         [Authorize(Roles = Constants.adminRoleName)]
         // POST: CurrencyRates/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CurrecyScale,CurrencyRate,DateRate,CurrencyId,BaseCurrencyId")] CurrencyRates currencyRates)
@@ -210,8 +207,6 @@ namespace TinyERP4Fun.Controllers
         }
         [Authorize(Roles = Constants.adminRoleName)]
         // POST: CurrencyRates/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,CurrecyScale,CurrencyRate,DateRate,CurrencyId,BaseCurrencyId")] CurrencyRates currencyRates)

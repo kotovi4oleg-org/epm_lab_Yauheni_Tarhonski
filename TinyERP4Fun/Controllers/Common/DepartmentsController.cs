@@ -27,7 +27,6 @@ namespace TinyERP4Fun.Controllers
         {
             var defaultContext = _context.Department.OrderBy(x => x.Name);
             return View(await PaginatedList<Department>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
-            //return View(await _context.Department.ToListAsync());
         }
 
         // GET: Departments/Details/5
