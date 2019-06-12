@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers
     public class DepartmentsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public DepartmentsController(DefaultContext context)
+        public DepartmentsController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: Departments
@@ -32,19 +35,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-
-            return View(department);
+            var result = await _commonService.GetObject<Department>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Departments/Create
@@ -72,17 +65,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Department.FindAsync(id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-            return View(department);
+            var result = await _commonService.GetObject<Department>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Departments/Edit/5
@@ -123,19 +108,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-
-            return View(department);
+            var result = await _commonService.GetObject<Department>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Departments/Delete/5

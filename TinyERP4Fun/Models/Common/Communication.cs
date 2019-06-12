@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Communication : IHaveName
+    public class Communication : IHaveName, IHaveLongId
     {
         public long Id { get; set; }
         public CommunicationType CommunicationType { get; set; }

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers
     public class CompaniesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public CompaniesController(DefaultContext context)
+        public CompaniesController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
         public ActionResult GetCities(int id)
         {
@@ -38,81 +41,18 @@ namespace TinyERP4Fun.Controllers
             ViewData["CountrySortParm"] = sortOrder == "country" ? "country_desc" : "country";
             ViewData["CurrentFilter"] = searchString;
 
-            if (searchString != null)
-            {
-                pageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
+            if (searchString != null) pageNumber = 1;
+            else searchString = currentFilter;
 
-
-
-            IQueryable<Company> result = _context.Company
-                                                 .Include(x => x.City)
-                                                 .Include(x => x.City.State)
-                                                 .Include(x => x.City.State.Country);
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                result = result.Where(x => x.Name.Contains(searchString)
-                                       || x.City.Name.Contains(searchString)
-                                       || x.City.State.Name.Contains(searchString)
-                                       || x.City.State.Country.Name.Contains(searchString));
-            }
-
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    result = result.OrderByDescending(x => x.Name);
-                    break;
-                case "city":
-                    result = result.OrderBy(x => x.City.Name).ThenBy(x => x.Name);
-                    break;
-                case "city_desc":
-                    result = result.OrderByDescending(x => x.City.Name).ThenBy(x => x.Name);
-                    break;
-                case "state":
-                    result = result.OrderBy(x => x.City.State.Name).ThenBy(x => x.Name);
-                    break;
-                case "state_desc":
-                    result = result.OrderByDescending(x => x.City.State.Name).ThenBy(x => x.Name);
-                    break;
-                case "country":
-                    result = result.OrderBy(x => x.City.State.Country.Name).ThenBy(x => x.Name);
-                    break;
-                case "country_desc":
-                    result = result.OrderByDescending(x => x.City.State.Country.Name).ThenBy(x => x.Name);
-                    break;
-                default:
-                    result = result.OrderBy(x => x.Name);
-                    break;
-            }
-
+            IQueryable<Company> result = _commonService.GetFiltredCompanies(sortOrder, searchString);
             return View(await PaginatedList<Company>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Company
-                                        .Include(x => x.City)
-                                        .Include(x => x.City.State)
-                                        .Include(x => x.City.State.Country)
-                                        .Include(x => x.HeadCompany)
-                                        .Include(x => x.BaseCurrency)
-                                        .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
+            var company = await _commonService.GetCompanyInfo(id);
+            if (company == null) return NotFound();
             return View(company);
         }
 
@@ -146,20 +86,8 @@ namespace TinyERP4Fun.Controllers
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Company.Include(x => x.City)
-                                                .Include(x => x.City.State)
-                                                .Include(x => x.City.State.Country)
-                                                .Include(x => x.City.State.Country)
-                                                .Include(x => x.HeadCompany)
-                                                .Include(x => x.BaseCurrency)
-                                                .FirstOrDefaultAsync(x=>x.Id == id);
-            if (company == null)
-                return NotFound();
+            var company = await _commonService.GetCompanyInfo(id);
+            if (company == null) return NotFound();
 
             if (company.CityId == null)
             {
@@ -184,11 +112,9 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,TIN,TIN2,Address,Address2,OurCompany,CityId,HeadCompanyId,BaseCurrencyId")] Company company)
         {
-            if (id != company.Id)
-                return NotFound();
+            if (id != company.Id) return NotFound();
 
-            if (!ModelState.IsValid)
-                return View(company);
+            if (!ModelState.IsValid) return View(company);
             try
             {
                 _context.Update(company);
@@ -196,32 +122,17 @@ namespace TinyERP4Fun.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CompanyExists(company.Id))
-                {
-                    return NotFound();
-                }
-                else
-                    throw;
+                if (!CompanyExists(company.Id)) return NotFound();
+                throw;
             }
-
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Company
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
+            var company = await _commonService.GetCompanyInfo(id);
+            if (company == null) return NotFound();
             return View(company);
         }
 

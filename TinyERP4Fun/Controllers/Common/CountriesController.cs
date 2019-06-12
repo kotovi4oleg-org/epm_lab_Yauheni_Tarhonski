@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers
     public class CountriesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public CountriesController(DefaultContext context)
+        public CountriesController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: Countries
@@ -32,19 +35,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var country = await _context.Country
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (country == null)
-            {
-                return NotFound();
-            }
-
-            return View(country);
+            var result = await _commonService.GetObject<Country>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Countries/Create
@@ -72,17 +65,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var country = await _context.Country.FindAsync(id);
-            if (country == null)
-            {
-                return NotFound();
-            }
-            return View(country);
+            var result = await _commonService.GetObject<Country>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Countries/Edit/5
@@ -123,19 +108,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var country = await _context.Country
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (country == null)
-            {
-                return NotFound();
-            }
-
-            return View(country);
+            var result = await _commonService.GetObject<Country>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Countries/Delete/5

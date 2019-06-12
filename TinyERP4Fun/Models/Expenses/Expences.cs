@@ -30,8 +30,6 @@ namespace TinyERP4Fun.Models.Expenses
         public DateTime DesiredPaymentDate { get; set; }
         [DataType(DataType.Date)]
         public DateTime? ApprovedPaymentDate { get; set; }
-        //Поле для расширения функционала
-        //public DateTime? PaymentDate { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal AmountOfPayment { get; set; }

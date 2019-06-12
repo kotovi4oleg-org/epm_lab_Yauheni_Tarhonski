@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.Controllers
@@ -17,15 +18,16 @@ namespace TinyERP4Fun.Controllers
     public class PeopleController : Controller
     {
         private readonly DefaultContext _context;
-
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ICommonService _commonService;
 
-        public PeopleController(DefaultContext context, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public PeopleController(DefaultContext context, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager, ICommonService commonService)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _context = context;
+            _commonService = commonService;
         }
         //"admin, user"
         // GET: People
@@ -43,19 +45,8 @@ namespace TinyERP4Fun.Controllers
         [Authorize(Roles = Constants.rolesCommon_User)]
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var person = await _context.Person.Include(x=>x.User)
-                                              .Include(x => x.Company)
-                                              .FirstOrDefaultAsync(m => m.Id == id);
-            if (person == null)
-            {
-                return NotFound();
-            }
-
+            var person = await _commonService.GetPersonInfo(id);
+            if (person == null) return NotFound();
             return View(person);
         }
 
@@ -104,20 +95,9 @@ namespace TinyERP4Fun.Controllers
         [Authorize(Roles = Constants.rolesCommon_Admin)]
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-                return NotFound();
+            var person = await _commonService.GetPersonInfo(id);
+            if (person == null) return NotFound();
 
-            var person = await _context.Person.AsNoTracking()
-                                              .Include(x=>x.User)
-                                              .Include(x => x.Company)
-                                              .FirstOrDefaultAsync(m => m.Id == id);
-            if (person == null)
-                return NotFound();
-            /* MSDN:
-             * We don't recommend using ViewBag or ViewData with the Select Tag Helper. 
-             * A view model is more robust at providing MVC metadata and generally less problematic.
-             * Но, т.к. задание тестовое, для упрощения будем все-таки использовать ViewBag.
-             */
             var defaultAdmin = new List<IdentityUser> { await _userManager.FindByNameAsync(Constants.defaultAdminName) };
             var usedUsers = _context.Person.Where(x => x.User != null&&x.Id!=id).Select(x => x.User);
             ViewBag.Users = CommonFunctions.AddFirstItem(
@@ -184,19 +164,8 @@ namespace TinyERP4Fun.Controllers
         [Authorize(Roles = Constants.rolesCommon_Admin)]
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var person = await _context.Person.Include(x => x.User)
-                                              .Include(x => x.Company)
-                                              .FirstOrDefaultAsync(m => m.Id == id);
-            if (person == null)
-            {
-                return NotFound();
-            }
-
+            var person = await _commonService.GetPersonInfo(id);
+            if (person == null) return NotFound();
             return View(person);
         }
 

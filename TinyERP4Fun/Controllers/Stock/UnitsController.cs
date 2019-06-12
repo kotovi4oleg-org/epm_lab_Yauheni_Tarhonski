@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Stock;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
     public class UnitsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly IStockService _stockService;
 
-        public UnitsController(DefaultContext context)
+        public UnitsController(DefaultContext context, IStockService stockService)
         {
             _context = context;
+            _stockService = stockService;
         }
 
         // GET: Units
@@ -28,19 +31,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var unit = await _context.Unit
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (unit == null)
-            {
-                return NotFound();
-            }
-
-            return View(unit);
+            var result = await _stockService.GetObject<Unit>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Units/Create
@@ -66,17 +59,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var unit = await _context.Unit.FindAsync(id);
-            if (unit == null)
-            {
-                return NotFound();
-            }
-            return View(unit);
+            var result = await _stockService.GetObject<Unit>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Units/Edit/5
@@ -115,19 +100,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var unit = await _context.Unit
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (unit == null)
-            {
-                return NotFound();
-            }
-
-            return View(unit);
+            var result = await _stockService.GetObject<Unit>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Units/Delete/5

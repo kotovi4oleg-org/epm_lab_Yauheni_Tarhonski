@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Stock;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
     public class WarehousesController : Controller
     {
         private readonly DefaultContext _context;
-
-        public WarehousesController(DefaultContext context)
+        private readonly IStockService _stockService;
+        public WarehousesController(DefaultContext context, IStockService stockService)
         {
             _context = context;
+            _stockService = stockService;
         }
 
         // GET: Warehouses
@@ -28,19 +30,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Warehouses/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var warehouse = await _context.Warehouse
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (warehouse == null)
-            {
-                return NotFound();
-            }
-
-            return View(warehouse);
+            var result = await _stockService.GetObject<Warehouse>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Warehouses/Create
@@ -66,17 +58,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Warehouses/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var warehouse = await _context.Warehouse.FindAsync(id);
-            if (warehouse == null)
-            {
-                return NotFound();
-            }
-            return View(warehouse);
+            var result = await _stockService.GetObject<Warehouse>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Warehouses/Edit/5
@@ -115,19 +99,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Warehouses/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var warehouse = await _context.Warehouse
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (warehouse == null)
-            {
-                return NotFound();
-            }
-
-            return View(warehouse);
+            var result = await _stockService.GetObject<Warehouse>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Warehouses/Delete/5

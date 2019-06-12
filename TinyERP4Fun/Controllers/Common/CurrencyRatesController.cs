@@ -15,20 +15,23 @@ using Newtonsoft.Json;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
     public class CurrencyRatesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public CurrencyRatesController(DefaultContext context)
+        public CurrencyRatesController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         [DataContract]
-        class NBRBCur
+        class NbrbCur
         {
             [DataMember]
             // Microsoft.CodeAnalysis.CSharp.Workspaces ругается варнингами на непроинициализированные поля, поэтому.... 
@@ -44,7 +47,7 @@ namespace TinyERP4Fun.Controllers
             public string Cur_DateEnd = default;
         }
         [DataContract]
-        class NBRBRate
+        class NbrbRate
         {
             [DataMember]
             public int Cur_Scale = default;
@@ -88,9 +91,9 @@ namespace TinyERP4Fun.Controllers
             Currency baseCurrency = _context.Currency.Where(x => x.Code == Constants.BYNCode).FirstOrDefault();
             var currencyList = _context.Currency.Where(x => x.Code != Constants.BYNCode && x.Active);
             string jsonCurList = await SendGetRequestAsync(new Uri(Constants.BYN_CURRENCY_LIST_URL));
-            DataContractJsonSerializer jsonFormatterNBRBCurAr = new DataContractJsonSerializer(typeof(NBRBCur[]));
-            DataContractJsonSerializer jsonFormatterNBRBRate = new DataContractJsonSerializer(typeof(NBRBRate));
-            NBRBCur[] curArray = (NBRBCur[])jsonFormatterNBRBCurAr.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonCurList)));
+            DataContractJsonSerializer jsonFormatterNBRBCurAr = new DataContractJsonSerializer(typeof(NbrbCur[]));
+            DataContractJsonSerializer jsonFormatterNBRBRate = new DataContractJsonSerializer(typeof(NbrbRate));
+            NbrbCur[] curArray = (NbrbCur[])jsonFormatterNBRBCurAr.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonCurList)));
 
             foreach (var currency in currencyList)
             {
@@ -110,7 +113,7 @@ namespace TinyERP4Fun.Controllers
 
                     string urlRate = Constants.BYN_CURRENCY_RATE_URL + curNBRB.Cur_ID + Constants.BYN_ATTR_DATE + currencyDate;
                     string jsonRate = await SendGetRequestAsync(new Uri(urlRate));
-                    NBRBRate curRate = jsonFormatterNBRBRate.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonRate))) as NBRBRate;
+                    NbrbRate curRate = jsonFormatterNBRBRate.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonRate))) as NbrbRate;
                     CurrencyRates currencyRate = new CurrencyRates
                     {
                         BaseCurrencyId = baseCurrency.Id,
@@ -146,20 +149,8 @@ namespace TinyERP4Fun.Controllers
         // GET: CurrencyRates/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var currencyRates = await _context.CurrencyRates
-                .Include(c => c.BaseCurrency)
-                .Include(c => c.Currency)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (currencyRates == null)
-            {
-                return NotFound();
-            }
-
+            var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
+            if (currencyRates == null) return NotFound();
             return View(currencyRates);
         }
         [Authorize(Roles = Constants.adminRoleName)]
@@ -190,16 +181,8 @@ namespace TinyERP4Fun.Controllers
         // GET: CurrencyRates/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var currencyRates = await _context.CurrencyRates.FindAsync(id);
-            if (currencyRates == null)
-            {
-                return NotFound();
-            }
+            var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
+            if (currencyRates == null) return NotFound();
             ViewData["BaseCurrencyId"] = new SelectList(_context.Currency, "Id", "Id", currencyRates.BaseCurrencyId);
             ViewData["CurrencyId"] = new SelectList(_context.Currency, "Id", "Id", currencyRates.CurrencyId);
             return View(currencyRates);
@@ -243,20 +226,8 @@ namespace TinyERP4Fun.Controllers
         // GET: CurrencyRates/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var currencyRates = await _context.CurrencyRates
-                .Include(c => c.BaseCurrency)
-                .Include(c => c.Currency)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (currencyRates == null)
-            {
-                return NotFound();
-            }
-
+            var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
+            if (currencyRates == null) return NotFound();
             return View(currencyRates);
         }
         [Authorize(Roles = Constants.adminRoleName)]

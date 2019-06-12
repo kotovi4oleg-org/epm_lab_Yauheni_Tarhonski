@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TinyERP4Fun.Data;
+using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Stock;
 using TinyERP4Fun.ModelServiceInterfaces;
 
@@ -17,14 +18,33 @@ namespace TinyERP4Fun.ModelServises
         {
             _context = context;
         }
-        public async Task<Stock> Get(long? id)
+        public async Task<T> GetObject<T>(long? id) where T : class, IHaveLongId
+        {
+            if (id == null) return null;
+
+            T resultObject = await _context.Set<T>().SingleOrDefaultAsync(m => m.Id == id);
+
+            if (resultObject == null) return null;
+
+            return resultObject;
+        }
+        public async Task<Item> GetItemInfo(long? id)
+        {
+            if (id == null) return null;
+
+            var resultObject = await _context.Item.Include(x => x.Unit)
+                                                  .SingleOrDefaultAsync(m => m.Id == id);
+            if (resultObject == null) return null;
+            return resultObject;
+        }
+        public async Task<Stock> GetStockInfo(long? id)
         {
             if (id == null) return null;
             return await _context.Stock
                                  .Include(s => s.Item)
                                  .Include(s => s.User)
                                  .Include(s => s.Warehouse)
-                                 .FirstOrDefaultAsync(s => s.Id == id);
+                                 .SingleOrDefaultAsync(s => s.Id == id);
         }
         public IQueryable<Stock> GetFiltredContent(DateTime? fromFilter,
                                                    DateTime? toFilter,
@@ -77,6 +97,7 @@ namespace TinyERP4Fun.ModelServises
 
         public void ClearHistory(DateTime date)
         {
+            throw new NotImplementedException();
         }
 
         private async Task CheckState(Stock stock,bool del)

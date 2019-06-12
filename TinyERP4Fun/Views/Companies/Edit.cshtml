@@ -1,13 +1,13 @@
 ﻿@model TinyERP4Fun.Models.Common.Company
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = Localization.currentLocalizatin["Edit"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>@Localization.currentLocalizatin["Edit"]</h1>
 
-<h4>Company</h4>
+<h4>@Localization.currentLocalizatin["Company"]</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">

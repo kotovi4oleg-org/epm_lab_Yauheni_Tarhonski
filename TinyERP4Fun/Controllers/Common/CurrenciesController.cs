@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers.Common
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers.Common
     public class CurrenciesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public CurrenciesController(DefaultContext context)
+        public CurrenciesController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: Currencies
@@ -33,19 +36,9 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var currency = await _context.Currency
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (currency == null)
-            {
-                return NotFound();
-            }
-
-            return View(currency);
+            var result = await _commonService.GetObject<Currency>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Currencies/Create
@@ -73,17 +66,9 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var currency = await _context.Currency.FindAsync(id);
-            if (currency == null)
-            {
-                return NotFound();
-            }
-            return View(currency);
+            var result = await _commonService.GetObject<Currency>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Currencies/Edit/5
@@ -122,19 +107,9 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var currency = await _context.Currency
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (currency == null)
-            {
-                return NotFound();
-            }
-
-            return View(currency);
+            var result = await _commonService.GetObject<Currency>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Currencies/Delete/5

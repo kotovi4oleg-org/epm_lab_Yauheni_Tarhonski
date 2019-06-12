@@ -21,6 +21,18 @@ namespace TinyERP4Fun.Controllers
     {
         private readonly DefaultContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private class Filter
+        {
+            public IEnumerable<long?> currencyFilter = default;
+            public IEnumerable<long?> companyFilter = default;
+            public IEnumerable<long?> ourcompanyFilter = default;
+            public DateTime? fromFilter = default;
+            public DateTime? toFilter = default;
+            public bool approvedFilter = default;
+            public bool declinedFilter = default;
+            public bool notProcessedFilter = default;
+            public bool adm = default;
+        }
 
         public ExpencesController(DefaultContext context, UserManager<IdentityUser> userManager)
         {

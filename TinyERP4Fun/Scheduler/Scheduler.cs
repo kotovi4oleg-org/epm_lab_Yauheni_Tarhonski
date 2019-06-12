@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Controllers;
-
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Scheduler
 {
@@ -13,7 +13,8 @@ namespace TinyERP4Fun.Scheduler
     {
         private readonly ILogger _logger;
         private Timer _timer;
-        
+
+
         public TimedHostedServiceUpdateCurrencies(ILogger<TimedHostedServiceUpdateCurrencies> logger)
         {
             _logger = logger;
@@ -29,14 +30,14 @@ namespace TinyERP4Fun.Scheduler
             return Task.CompletedTask;
         }
 
-        private void DoWork(object state)
+         private void DoWork(object state)
         {
             _logger.LogInformation("Timed Background Service is working.");
             var options = CommonFunctions.DefaultContextOptions.GetOptions();
             using (var context = new DefaultContext(options))
             {
-                var CRC = new CurrencyRatesController(context);
-                _ = CRC.UpdateBYNVoid();
+                //Временно отключено var CRC = new CurrencyRatesController(context);
+                //Временно отклюлчено _ = CRC.UpdateBYNVoid();
             }
             
         }

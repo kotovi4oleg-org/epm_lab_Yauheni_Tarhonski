@@ -9,16 +9,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Stock;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
     public class ItemsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly IStockService _stockService;
 
-        public ItemsController(DefaultContext context)
+        public ItemsController(DefaultContext context, IStockService stockService)
         {
             _context = context;
+            _stockService = stockService;
         }
 
         // GET: Items
@@ -31,20 +34,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Items/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item
-                .Include(i => i.Unit)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            return View(item);
+            var result = await _stockService.GetItemInfo(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Items/Create
@@ -87,18 +79,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Items/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item.FindAsync(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name", item.UnitId);
-            return View(item);
+            var result = await _stockService.GetItemInfo(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Items/Edit/5
@@ -137,20 +120,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Items/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item
-                .Include(i => i.Unit)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            return View(item);
+            var result = await _stockService.GetItemInfo(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Items/Delete/5

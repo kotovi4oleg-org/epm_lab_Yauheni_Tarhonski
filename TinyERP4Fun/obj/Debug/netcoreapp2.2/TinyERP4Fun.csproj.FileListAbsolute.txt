@@ -324,7 +324,6 @@ c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\ob
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Stock\Details.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Stock\Edit.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Stock\Index.g.cshtml.cs
-c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Stock\IndexOld.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Stock\Movements.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Units\Create.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Units\Delete.g.cshtml.cs
@@ -344,3 +343,4 @@ c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\ob
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\TinyERP4Fun.dll
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\TinyERP4Fun.pdb
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\TinyERP4Fun.csproj.CopyComplete
+c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Companies\DDPartial.g.cshtml.cs

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class CurrencyRates
+    public class CurrencyRates : IHaveLongId
     {
         public long Id { get; set; }
         public int CurrecyScale { get; set; }

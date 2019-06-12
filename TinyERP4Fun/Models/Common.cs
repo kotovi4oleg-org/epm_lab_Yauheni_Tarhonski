@@ -10,6 +10,10 @@ namespace TinyERP4Fun.Models
     {
         string Name { get; }
     }
+    public interface IHaveLongId
+    {
+        long Id { get; set; }
+    }
 
     public class PaginatedList<T> : List<T>
     {

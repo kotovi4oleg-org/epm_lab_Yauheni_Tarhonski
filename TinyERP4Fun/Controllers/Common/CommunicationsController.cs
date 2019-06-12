@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -15,10 +16,12 @@ namespace TinyERP4Fun.Controllers
     public class CommunicationsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public CommunicationsController(DefaultContext context)
+        public CommunicationsController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: Communications
@@ -30,19 +33,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Communications/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var communication = await _context.Communication
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (communication == null)
-            {
-                return NotFound();
-            }
-
-            return View(communication);
+            var result = await _commonService.GetObject<Communication>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Communications/Create
@@ -70,17 +63,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Communications/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var communication = await _context.Communication.FindAsync(id);
-            if (communication == null)
-            {
-                return NotFound();
-            }
-            return View(communication);
+            var result = await _commonService.GetObject<Communication>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Communications/Edit/5
@@ -121,19 +106,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Communications/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var communication = await _context.Communication
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (communication == null)
-            {
-                return NotFound();
-            }
-
-            return View(communication);
+            var result = await _commonService.GetObject<Communication>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Communications/Delete/5

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Employee : IHaveName
+    public class Employee : IHaveName, IHaveLongId
     {
         public long Id { get; set; }
         public long PersonId { get; set; }

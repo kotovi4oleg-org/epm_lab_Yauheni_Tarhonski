@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun.Models.Stock
 {
-    public class Item : IHaveName
+    public class Item : IHaveName, IHaveLongId
     {
         public long Id { get; set; }
         public string Name { get; set; }

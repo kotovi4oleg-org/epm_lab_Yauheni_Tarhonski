@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -15,10 +16,12 @@ namespace TinyERP4Fun.Controllers
     public class PositionsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public PositionsController(DefaultContext context)
+        public PositionsController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: Positions
@@ -30,19 +33,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var position = await _context.Position
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (position == null)
-            {
-                return NotFound();
-            }
-
-            return View(position);
+            var result = await _commonService.GetObject<Position>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: Positions/Create
@@ -70,17 +63,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var position = await _context.Position.FindAsync(id);
-            if (position == null)
-            {
-                return NotFound();
-            }
-            return View(position);
+            var result = await _commonService.GetObject<Position>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Positions/Edit/5
@@ -121,19 +106,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var position = await _context.Position
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (position == null)
-            {
-                return NotFound();
-            }
-
-            return View(position);
+            var result = await _commonService.GetObject<Position>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Positions/Delete/5

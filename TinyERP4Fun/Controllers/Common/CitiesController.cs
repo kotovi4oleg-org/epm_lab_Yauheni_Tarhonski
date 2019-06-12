@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers
     public class CitiesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public CitiesController(DefaultContext context)
+        public CitiesController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: Cities
@@ -70,24 +73,13 @@ namespace TinyERP4Fun.Controllers
             }
             return View(await PaginatedList<City>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
-        private async Task<City> CityInfo(long? id)
-        {
-            if (id == null) return null;
-            var city = await _context.City.Include(x => x.State)
-                              .Include(x => x.State.Country)
-                              .FirstOrDefaultAsync(m => m.Id == id);
-            if (city == null) return null;
-            return city;
-        }
+
         // GET: Cities/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-
-            var cityInfo = await CityInfo(id);
-            if (cityInfo == null)
-                return NotFound();
-            else
-                return View(cityInfo);
+            var cityInfo = await _commonService.GetCityInfo(id);
+            if (cityInfo == null) return NotFound();
+            return View(cityInfo);
         }
 
         // GET: Cities/Create
@@ -115,21 +107,11 @@ namespace TinyERP4Fun.Controllers
         // GET: Cities/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var city = await _context.City.Include(x => x.State)
-                                          .Include(x => x.State.Country)
-                                          .FirstOrDefaultAsync(m => m.Id == id);
-            if (city == null)
-            {
-                return NotFound();
-            }
-            ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x=>x.CountryId == city.State.CountryId), "Id", "Name"));
+            var cityInfo = await _commonService.GetCityInfo(id);
+            if (cityInfo == null) return NotFound();
+            ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x=>x.CountryId == cityInfo.State.CountryId), "Id", "Name"));
             ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
-            return View(city);
+            return View(cityInfo);
         }
 
         public ActionResult GetStates(int id)
@@ -171,22 +153,12 @@ namespace TinyERP4Fun.Controllers
         }
 
         // GET: Cities/Delete/5
+        //[ActionName("Delete")]
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var city = await _context.City.Include(x => x.State)
-                                          .Include(x => x.State.Country)
-                                          .FirstOrDefaultAsync(m => m.Id == id);
-            if (city == null)
-            {
-                return NotFound();
-            }
-
-            return View(city);
+            var cityInfo = await _commonService.GetCityInfo(id);
+            if (cityInfo == null) return NotFound();
+            return View(cityInfo);
         }
 
         // POST: Cities/Delete/5

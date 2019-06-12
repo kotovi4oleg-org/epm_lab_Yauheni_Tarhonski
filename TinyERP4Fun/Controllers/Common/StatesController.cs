@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers
     public class StatesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly ICommonService _commonService;
 
-        public StatesController(DefaultContext context)
+        public StatesController(DefaultContext context, ICommonService commonService)
         {
             _context = context;
+            _commonService = commonService;
         }
 
         // GET: States
@@ -32,18 +35,8 @@ namespace TinyERP4Fun.Controllers
         // GET: States/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var state = await _context.State.Include(x=>x.Country)
-                                      .FirstOrDefaultAsync(m => m.Id == id);
-            if (state == null)
-            {
-                return NotFound();
-            }
-
+            var state = await _commonService.GetStateInfo(id);
+            if (state == null) return NotFound();
             return View(state);
         }
 
@@ -73,16 +66,8 @@ namespace TinyERP4Fun.Controllers
         // GET: States/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var state = await _context.State.FindAsync(id);
-            if (state == null)
-            {
-                return NotFound();
-            }
+            var state = await _commonService.GetStateInfo(id);
+            if (state == null) return NotFound();
             ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
             return View(state);
         }
@@ -125,18 +110,8 @@ namespace TinyERP4Fun.Controllers
         // GET: States/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var state = await _context.State.Include(x => x.Country)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (state == null)
-            {
-                return NotFound();
-            }
-
+            var state = await _commonService.GetStateInfo(id);
+            if (state == null) return NotFound();
             return View(state);
         }
 

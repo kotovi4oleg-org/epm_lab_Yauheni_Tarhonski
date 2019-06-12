@@ -74,6 +74,7 @@ namespace TinyERP4Fun
             //Добавляем шедулер
             services.AddHostedService<TimedHostedServiceUpdateCurrencies>();
             services.AddScoped<IStockService, StockService>();
+            services.AddScoped<ICommonService, CommonService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

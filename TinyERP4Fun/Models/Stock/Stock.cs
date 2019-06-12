@@ -10,7 +10,7 @@ using TinyERP4Fun.Data;
 
 namespace TinyERP4Fun.Models.Stock
 {
-    public class Stock
+    public class Stock: IHaveLongId
     {
         public long Id { get; set; }
         public long ItemId { get; set; }
