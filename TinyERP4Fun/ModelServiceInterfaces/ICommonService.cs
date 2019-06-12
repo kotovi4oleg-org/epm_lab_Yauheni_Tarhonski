@@ -8,6 +8,7 @@ namespace TinyERP4Fun.ModelServiceInterfaces
     public interface ICommonService
     {
         Task<T> GetObject<T>(long? id) where T : class, IHaveLongId;
+        Task UpdateBYNVoid();
         Task<Employee> GetEmployeeInfo(long? id);
         Task<CurrencyRates> GetCurrencyRatesInfo(long? id);
         Task<Person> GetPersonInfo(long? id);

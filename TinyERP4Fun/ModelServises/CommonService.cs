@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
@@ -18,6 +23,105 @@ namespace TinyERP4Fun.ModelServises
         {
             _context = context;
         }
+
+        
+        [DataContract]
+        internal class NbrbCur
+        {
+            [DataMember]
+            // Microsoft.CodeAnalysis.CSharp.Workspaces ругается варнингами на непроинициализированные поля, поэтому.... 
+            // проинициализирую их явно, хоть и неявное поведение мне было понятно и оно меня устраивало.
+            public int Cur_ID = default;
+            [DataMember]
+            public string Cur_Abbreviation = default;
+            [DataMember]
+            public int Cur_Scale = default;
+            [DataMember]
+            public string Cur_DateStart = default;
+            [DataMember]
+            public string Cur_DateEnd = default;
+        }
+        [DataContract]
+        internal class NbrbRate
+        {
+            [DataMember]
+            public int Cur_Scale = default;
+            [DataMember]
+            public double Cur_OfficialRate = default;
+        }
+        private static async Task<string> SendGetRequestAsync(Uri url)
+        {
+            var content = new MemoryStream();
+            try //http
+            {
+                var webReq = WebRequest.Create(url);
+                Task<WebResponse> responseTask = webReq.GetResponseAsync();
+                using (WebResponse response = await responseTask)
+                {
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                        await responseStream.CopyToAsync(content);
+                    }
+                }
+            }
+            catch //https
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                var webReq = WebRequest.Create(url);
+                Task<WebResponse> responseTask = webReq.GetResponseAsync();
+                using (WebResponse response = await responseTask)
+                {
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                        await responseStream.CopyToAsync(content);
+                    }
+                }
+            }
+            return Encoding.ASCII.GetString(content.ToArray());
+        }
+        public async Task UpdateBYNVoid()
+        {
+            Currency baseCurrency = _context.Currency.Where(x => x.Code == Constants.BYNCode).FirstOrDefault();
+            var currencyList = _context.Currency.Where(x => x.Code != Constants.BYNCode && x.Active);
+            string jsonCurList = await SendGetRequestAsync(new Uri(Constants.BYN_CURRENCY_LIST_URL));
+            DataContractJsonSerializer jsonFormatterNBRBCurAr = new DataContractJsonSerializer(typeof(NbrbCur[]));
+            DataContractJsonSerializer jsonFormatterNBRBRate = new DataContractJsonSerializer(typeof(NbrbRate));
+            NbrbCur[] curArray = (NbrbCur[])jsonFormatterNBRBCurAr.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonCurList)));
+
+            foreach (var currency in currencyList)
+            {
+                for (var currencyDate = Constants.baseDate; currencyDate <= DateTime.Today; currencyDate = currencyDate.AddDays(1))
+                {
+
+                    if (_context.CurrencyRates.Where(x => x.DateRate == currencyDate && x.Currency.Code == currency.Code).FirstOrDefault() != null)
+                        continue;
+
+                    var curNBRB = curArray.FirstOrDefault(x => x.Cur_Abbreviation == currency.Code &&
+                                                               DateTime.Parse(x.Cur_DateStart) <= currencyDate &&
+                                                               DateTime.Parse(x.Cur_DateEnd) >= currencyDate
+                                                               );
+
+                    if (curNBRB == null)
+                        continue;
+
+                    string urlRate = Constants.BYN_CURRENCY_RATE_URL + curNBRB.Cur_ID + Constants.BYN_ATTR_DATE + currencyDate;
+                    string jsonRate = await SendGetRequestAsync(new Uri(urlRate));
+                    NbrbRate curRate = jsonFormatterNBRBRate.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonRate))) as NbrbRate;
+                    CurrencyRates currencyRate = new CurrencyRates
+                    {
+                        BaseCurrencyId = baseCurrency.Id,
+                        CurrencyId = currency.Id,
+                        DateRate = currencyDate,
+                        CurrecyScale = curRate.Cur_Scale,
+                        CurrencyRate = (decimal)curRate.Cur_OfficialRate
+                    };
+                    _context.Add(currencyRate);
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
+        
+
         public IQueryable<Company> GetFiltredCompanies(string sortOrder, string searchString)
         {
             IQueryable<Company> result = _context.Company

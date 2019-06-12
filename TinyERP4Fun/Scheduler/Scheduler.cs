@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Controllers;
 using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.ModelServises;
 
 namespace TinyERP4Fun.Scheduler
 {
@@ -36,9 +37,11 @@ namespace TinyERP4Fun.Scheduler
             var options = CommonFunctions.DefaultContextOptions.GetOptions();
             using (var context = new DefaultContext(options))
             {
-                //Временно отключено var CRC = new CurrencyRatesController(context);
-                //Временно отклюлчено _ = CRC.UpdateBYNVoid();
+                var commonService = new CommonService(context);
+                Task updateRates = commonService.UpdateBYNVoid();
+                Task.WaitAll(updateRates);
             }
+            
             
         }
         public Task StopAsync(CancellationToken cancellationToken)
