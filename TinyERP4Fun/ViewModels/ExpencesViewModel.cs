@@ -20,6 +20,7 @@ namespace TinyERP4Fun.ViewModels
         public bool ApprovedFilter { get; set; }
         public bool DeclinedFilter { get; set; }
         public bool NotProcessedFilter { get; set; }
+        public bool AdmFilter { get; set; }
         public string Total { get; set; }
 
     }

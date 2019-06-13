@@ -286,12 +286,9 @@ c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\ob
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Employees\Index.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\Create.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\Delete.g.cshtml.cs
-c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\DeleteAdm.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\Details.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\Edit.g.cshtml.cs
-c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\EditAdm.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\Index.g.cshtml.cs
-c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Expences\IndexAdm.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Home\Index.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Home\Privacy.g.cshtml.cs
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Items\Create.g.cshtml.cs

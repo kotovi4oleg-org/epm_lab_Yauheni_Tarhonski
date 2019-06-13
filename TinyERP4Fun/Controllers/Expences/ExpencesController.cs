@@ -30,8 +30,16 @@ namespace TinyERP4Fun.Controllers
             _userManager = userManager;
             _expencesService = expencesService;
         }
-        // GET: Expences
-
+        //Need rename to IsMemberOfOrOwner(Expences entity, String roles, bool ownerCheck) and relocate to global
+        private bool IsAdminOrOwner(Expences entity, bool ownerCheck)
+        {
+            var currentUser = _userManager.GetUserAsync(User);
+            Task.WaitAll(currentUser);
+            var personRoles = _userManager.GetRolesAsync(currentUser.Result);
+            if (personRoles.Result.Intersect(Constants.rolesExpences_Admin.Split(',').Select(x => x.Trim())).Count() != 0) return true;
+            if (ownerCheck&&entity!=null) return entity.User == currentUser.Result;
+            return false;
+        }
         private async Task<ExpencesViewModel> IndexCreateViewModel(int? pageNumber, ExpencesViewModel expencesViewModel, bool adm)
         {
             var currentUserId = _userManager.GetUserId(User);
@@ -44,21 +52,18 @@ namespace TinyERP4Fun.Controllers
 
         public async Task<IActionResult> Index(int? pageNumber, ExpencesViewModel expencesViewModel)
         {
+            if(expencesViewModel.AdmFilter&&!IsAdminOrOwner(null,false))
+                expencesViewModel.AdmFilter = false;
+
             return View(await IndexCreateViewModel(pageNumber, expencesViewModel, false));
         }
-
-        [Authorize(Roles = Constants.rolesExpences_Admin)]
-        public async Task<IActionResult> IndexAdm(int? pageNumber, ExpencesViewModel expencesViewModel)
-        {
-            return View(await IndexCreateViewModel(pageNumber, expencesViewModel, true));
-        }
-
 
         // GET: Expences/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             var result = await _expencesService.GetExpenceInfo(id);
             if (result == null) return NotFound();
+            if (!IsAdminOrOwner(result,true)) return NotFound();
             return View(result);
         }
         private void SetViewData()
@@ -123,6 +128,7 @@ namespace TinyERP4Fun.Controllers
         {
             var result = await _expencesService.GetExpenceInfo(id);
             if (result == null) return NotFound();
+            if (!IsAdminOrOwner(result, true)) return NotFound();
             SetViewData();
             return View(result);
         }
@@ -150,51 +156,13 @@ namespace TinyERP4Fun.Controllers
             SetViewData();
             return View(expences);
         }
-        [Authorize(Roles = Constants.rolesExpences_Admin)]
-        public async Task<IActionResult> EditAdm(long? id)
-        {
-            var result = await _expencesService.GetExpenceInfo(id);
-            if (result == null) return NotFound();
-            SetViewData();
-            return View(result);
-        }
 
-        // POST: Expences/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = Constants.rolesExpences_Admin)]
-        public async Task<IActionResult> EditAdm(long id, [Bind("Id,DocumentNumber,DocumentDate,DocumentTypeId,PersonId,UserId,OurCompanyId,CompanyId,DesiredPaymentDate,ApprovedPaymentDate,AmountOfPayment,CurrencyId,Approved,Declined,PurposeOfPayment")] Expences expences)
-        {
-            if (id != expences.Id) return NotFound();
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(expences);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ExpencesExists(expences.Id)) return NotFound();
-                    throw;
-                }
-                return RedirectToAction(nameof(IndexAdm));
-            }
-            SetViewData();
-            return View(expences);
-        }
-
-        private async Task DeleteConfirmedCommon(long id)
-        {
-            var expences = await _context.Expences.FindAsync(id);
-            _context.Expences.Remove(expences);
-            await _context.SaveChangesAsync();
-        }
         // GET: Expences/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             var result = await _expencesService.GetExpenceInfo(id);
             if (result == null) return NotFound();
+            if (!IsAdminOrOwner(result, true)) return NotFound();
             return View(result);
         }
 
@@ -203,30 +171,13 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            await DeleteConfirmedCommon(id);
+            var expences = await _context.Expences.FindAsync(id);
+            _context.Expences.Remove(expences);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Expences/Delete/5
-        [Authorize(Roles = Constants.rolesExpences_Admin)]
-        public async Task<IActionResult> DeleteAdm(long? id)
-        {
-            var result = await _expencesService.GetExpenceInfo(id);
-            if (result == null) return NotFound();
-            return View(result);
-        }
-
-        // POST: Expences/Delete/5
-        [HttpPost, ActionName("DeleteAdm")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = Constants.rolesExpences_Admin)]
-        public async Task<IActionResult> DeleteAdmConfirmed(long id)
-        {
-            await DeleteConfirmedCommon(id);
-            return RedirectToAction(nameof(IndexAdm));
-        }
-
-        private bool ExpencesExists(long id)
+         private bool ExpencesExists(long id)
         {
             return _context.Expences.Any(e => e.Id == id);
         }

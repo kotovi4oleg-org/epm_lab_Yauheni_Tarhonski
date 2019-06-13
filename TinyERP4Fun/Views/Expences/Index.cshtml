@@ -9,13 +9,15 @@
 
 <p>
     <a asp-action="Create">@Localization.currentLocalizatin["Create New"]</a>
-    <a asp-action="IndexAdm">@Localization.currentLocalizatin["Administration"]</a>
     <a href="#" onclick="show_filter(); return false"><span id="sp_sel">@Localization.currentLocalizatin["Filter"]</span></a>
     @Model.Total
 </p>
 
 <div id="filter_form" style="display:none">
     <form asp-controller="ExpencesController" asp-action="Index" method="get" name="filter">
+        <p>
+            @Localization.currentLocalizatin["Administration"]: <input type="checkbox" asp-for="AdmFilter" />
+        </p>
         <p>
             @Localization.currentLocalizatin["Currency"]:
             <select asp-for="CurrencyFilter" asp-items="ViewBag.CurrencyFilter as SelectList" class="form-control"></select>
@@ -38,7 +40,7 @@
         <p>
             <input type="submit" value=@Localization.currentLocalizatin["Search"] />
         </p>
-</form>
+    </form>
 </div>
 @**@
 <table class="table">

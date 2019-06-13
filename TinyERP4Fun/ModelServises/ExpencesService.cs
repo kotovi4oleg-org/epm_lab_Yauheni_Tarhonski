@@ -63,7 +63,7 @@ namespace TinyERP4Fun.ModelServises
             if (expencesViewModel.ToFilter != null)
                 defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate != null && x.ApprovedPaymentDate <= expencesViewModel.ToFilter) ||
                                                            (x.ApprovedPaymentDate == null && x.DesiredPaymentDate <= expencesViewModel.ToFilter));
-            if (!adm) defaultContext = defaultContext.Where(x => x.Person.UserId == currentUserId);
+            if (!expencesViewModel.AdmFilter) defaultContext = defaultContext.Where(x => x.Person.UserId == currentUserId);
 
             expencesViewModel.Expences = await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize);
 
