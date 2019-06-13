@@ -16,13 +16,14 @@ namespace TinyERP4Fun.Controllers
     public class PositionsController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly IGeneralService _generalService;
 
-        public PositionsController(DefaultContext context, ICommonService commonService)
+        public PositionsController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _commonService = commonService;
+            _generalService = generalService;
         }
+
 
         // GET: Positions
         public async Task<IActionResult> Index()
@@ -33,7 +34,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _commonService.GetObject<Position>(id);
+            var result = await _generalService.GetObject<Position>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -45,8 +46,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Positions/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Position position)
@@ -63,22 +62,17 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _commonService.GetObject<Position>(id);
+            var result = await _generalService.GetObject<Position>(id);
             if (result == null) return NotFound();
             return View(result);
         }
 
         // POST: Positions/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Position position)
         {
-            if (id != position.Id)
-            {
-                return NotFound();
-            }
+            if (id != position.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -89,14 +83,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PositionExists(position.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!PositionExists(position.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -106,7 +94,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _commonService.GetObject<Position>(id);
+            var result = await _generalService.GetObject<Position>(id);
             if (result == null) return NotFound();
             return View(result);
         }

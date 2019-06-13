@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Common;
 using TinyERP4Fun.Models.Expenses;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +17,12 @@ namespace TinyERP4Fun.Controllers
     public class CostItemsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly IGeneralService _generalService;
 
-        public CostItemsController(DefaultContext context)
+        public CostItemsController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
+            _generalService = generalService;
         }
 
         // GET: CostItems
@@ -31,19 +34,9 @@ namespace TinyERP4Fun.Controllers
         // GET: CostItems/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var costItem = await _context.CostItem
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (costItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(costItem);
+            var result = await _generalService.GetObject<CostItem>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: CostItems/Create
@@ -53,8 +46,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: CostItems/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] CostItem costItem)
@@ -71,17 +62,9 @@ namespace TinyERP4Fun.Controllers
         // GET: CostItems/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var costItem = await _context.CostItem.FindAsync(id);
-            if (costItem == null)
-            {
-                return NotFound();
-            }
-            return View(costItem);
+            var result = await _generalService.GetObject<CostItem>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: CostItems/Edit/5
@@ -122,19 +105,9 @@ namespace TinyERP4Fun.Controllers
         // GET: CostItems/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var costItem = await _context.CostItem
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (costItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(costItem);
+            var result = await _generalService.GetObject<CostItem>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: CostItems/Delete/5

@@ -75,6 +75,8 @@ namespace TinyERP4Fun
             services.AddHostedService<TimedHostedServiceUpdateCurrencies>();
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<ICommonService, CommonService>();
+            services.AddScoped<IExpencesService, ExpencesService>();
+            services.AddScoped<IGeneralService, GeneralService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

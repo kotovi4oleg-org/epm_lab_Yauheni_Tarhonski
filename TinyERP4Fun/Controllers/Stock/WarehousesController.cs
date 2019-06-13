@@ -14,11 +14,12 @@ namespace TinyERP4Fun.Controllers
     public class WarehousesController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly IStockService _stockService;
-        public WarehousesController(DefaultContext context, IStockService stockService)
+        private readonly IGeneralService _generalService;
+
+        public WarehousesController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _stockService = stockService;
+            _generalService = generalService;
         }
 
         // GET: Warehouses
@@ -30,7 +31,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Warehouses/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _stockService.GetObject<Warehouse>(id);
+            var result = await _generalService.GetObject<Warehouse>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -58,7 +59,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Warehouses/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _stockService.GetObject<Warehouse>(id);
+            var result = await _generalService.GetObject<Warehouse>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -68,10 +69,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Warehouse warehouse)
         {
-            if (id != warehouse.Id)
-            {
-                return NotFound();
-            }
+            if (id != warehouse.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -82,14 +80,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WarehouseExists(warehouse.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!WarehouseExists(warehouse.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -99,7 +91,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Warehouses/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _stockService.GetObject<Warehouse>(id);
+            var result = await _generalService.GetObject<Warehouse>(id);
             if (result == null) return NotFound();
             return View(result);
         }

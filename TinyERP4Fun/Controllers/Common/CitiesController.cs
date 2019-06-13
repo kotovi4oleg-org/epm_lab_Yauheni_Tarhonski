@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,44 +31,10 @@ namespace TinyERP4Fun.Controllers
             ViewData["CountrySortParm"] = sortOrder == "country" ? "country_desc" : "country";
             ViewData["CurrentFilter"] = searchString;
 
-            if (searchString != null)
-            {
-                pageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
+            if (searchString != null) pageNumber = 1;
+            else searchString = currentFilter;
 
-            IQueryable<City> result = _context.City.Include(x => x.State).Include(x => x.State.Country);
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                result = result.Where(x => x.Name.Contains(searchString)
-                                       || x.State.Name.Contains(searchString)
-                                       || x.State.Country.Name.Contains(searchString));
-            }
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    result = result.OrderByDescending(x => x.Name);
-                    break;
-                case "state":
-                    result = result.OrderBy(x => x.State.Name).ThenBy(x => x.Name);
-                    break;
-                case "state_desc":
-                    result = result.OrderByDescending(x => x.State.Name).ThenBy(x => x.Name);
-                    break;
-                case "country":
-                    result = result.OrderBy(x => x.State.Country.Name).ThenBy(x => x.Name);
-                    break;
-                case "country_desc":
-                    result = result.OrderByDescending(x => x.State.Country.Name).ThenBy(x => x.Name);
-                    break;
-                default:
-                    result = result.OrderBy(x => x.Name);
-                    break;
-            }
+            IQueryable<City> result = _commonService.GetFiltredCities(sortOrder, searchString);
             return View(await PaginatedList<City>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
@@ -81,12 +45,18 @@ namespace TinyERP4Fun.Controllers
             if (cityInfo == null) return NotFound();
             return View(cityInfo);
         }
-
+        private void SetViewBag (City city)
+        {
+            if (city == null || city.State == null)
+                ViewBag.States = null;
+            else
+                ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == city.State.CountryId), "Id", "Name"));
+            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+        }
         // GET: Cities/Create
         public IActionResult Create()
         {
-            ViewBag.States = null;
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            SetViewBag(null);
             return View();
         }
 
@@ -101,17 +71,17 @@ namespace TinyERP4Fun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag(city);
             return View(city);
         }
 
         // GET: Cities/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var cityInfo = await _commonService.GetCityInfo(id);
-            if (cityInfo == null) return NotFound();
-            ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x=>x.CountryId == cityInfo.State.CountryId), "Id", "Name"));
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
-            return View(cityInfo);
+            var city = await _commonService.GetCityInfo(id);
+            if (city == null) return NotFound();
+            SetViewBag(city);
+            return View(city);
         }
 
         public ActionResult GetStates(int id)
@@ -124,10 +94,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,StateId")] City city)
         {
-            if (id != city.Id)
-            {
-                return NotFound();
-            }
+            if (id != city.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -138,22 +105,16 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CityExists(city.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CityExists(city.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag(city);
             return View(city);
         }
 
         // GET: Cities/Delete/5
-        //[ActionName("Delete")]
         public async Task<IActionResult> Delete(long? id)
         {
             var cityInfo = await _commonService.GetCityInfo(id);

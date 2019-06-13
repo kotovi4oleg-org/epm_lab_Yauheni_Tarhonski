@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Common;
 using TinyERP4Fun.Models.Expenses;
+using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.ModelServises;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -16,10 +18,12 @@ namespace TinyERP4Fun.Controllers
     public class BusinessDirectionsController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly IGeneralService _generalService;
 
-        public BusinessDirectionsController(DefaultContext context)
+        public BusinessDirectionsController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
+            _generalService = generalService;
         }
 
         // GET: BusinessDirections
@@ -31,19 +35,9 @@ namespace TinyERP4Fun.Controllers
         // GET: BusinessDirections/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var businessDirection = await _context.BusinessDirection
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (businessDirection == null)
-            {
-                return NotFound();
-            }
-
-            return View(businessDirection);
+            var result = await _generalService.GetObject<BusinessDirection>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: BusinessDirections/Create
@@ -53,8 +47,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: BusinessDirections/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] BusinessDirection businessDirection)
@@ -71,31 +63,18 @@ namespace TinyERP4Fun.Controllers
         // GET: BusinessDirections/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var businessDirection = await _context.BusinessDirection.FindAsync(id);
-            if (businessDirection == null)
-            {
-                return NotFound();
-            }
-            return View(businessDirection);
+            var result = await _generalService.GetObject<BusinessDirection>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: BusinessDirections/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] BusinessDirection businessDirection)
         {
-            if (id != businessDirection.Id)
-            {
-                return NotFound();
-            }
-
+            if (id != businessDirection.Id) return NotFound();
+            
             if (ModelState.IsValid)
             {
                 try
@@ -105,14 +84,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BusinessDirectionExists(businessDirection.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!BusinessDirectionExists(businessDirection.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -122,19 +95,9 @@ namespace TinyERP4Fun.Controllers
         // GET: BusinessDirections/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var businessDirection = await _context.BusinessDirection
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (businessDirection == null)
-            {
-                return NotFound();
-            }
-
-            return View(businessDirection);
+            var result = await _generalService.GetObject<BusinessDirection>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: BusinessDirections/Delete/5

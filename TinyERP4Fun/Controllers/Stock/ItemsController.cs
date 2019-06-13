@@ -17,11 +17,12 @@ namespace TinyERP4Fun.Controllers
     {
         private readonly DefaultContext _context;
         private readonly IStockService _stockService;
-
-        public ItemsController(DefaultContext context, IStockService stockService)
+        private readonly IGeneralService _generalService;
+        public ItemsController(DefaultContext context, IStockService stockService, IGeneralService generalService)
         {
             _context = context;
             _stockService = stockService;
+            _generalService = generalService;
         }
 
         // GET: Items
@@ -38,11 +39,14 @@ namespace TinyERP4Fun.Controllers
             if (result == null) return NotFound();
             return View(result);
         }
-
+        private void SetViewData()
+        {
+            ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name");
+        }
         // GET: Items/Create
         public IActionResult Create()
         {
-            ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name");
+            SetViewData();
             return View();
         }
 
@@ -53,26 +57,12 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                IFormFile uploadedImage = files.FirstOrDefault();
-                if (uploadedImage != null && uploadedImage.ContentType.ToLower().StartsWith("image/"))
-                {
-
-                    MemoryStream ms = new MemoryStream();
-                    uploadedImage.OpenReadStream().CopyTo(ms);
-                    using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
-                    {
-                        if (image.Width > Constants.maxImageSize || image.Height > Constants.maxImageSize)
-                            return NotFound();
-                        item.Image = ms.ToArray();
-                        item.ContentType = uploadedImage.ContentType;
-                    }
-                }
-
+                _generalService.AddImage(ref item, files);
                 _context.Add(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            SetViewData();
             return View(item);
         }
 
@@ -81,6 +71,7 @@ namespace TinyERP4Fun.Controllers
         {
             var result = await _stockService.GetItemInfo(id);
             if (result == null) return NotFound();
+            SetViewData();
             return View(result);
         }
 
@@ -89,10 +80,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,UnitId")] Item item)
         {
-            if (id != item.Id)
-            {
-                return NotFound();
-            }
+            if (id != item.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -103,17 +91,12 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ItemExists(item.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ItemExists(item.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SetViewData();
             return View(item);
         }
 
@@ -145,54 +128,18 @@ namespace TinyERP4Fun.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(long? id, IList<IFormFile> files)
         {
-            if (id == null)
-                return NotFound();
-
-
-            var item = await _context.Item.FindAsync(id);
-
-            if (item == null)
-                return NotFound();
-
-
-            IFormFile uploadedImage = files.FirstOrDefault();
-            if (uploadedImage == null)
-            {
-                item.Image = null;
-                item.ContentType = null;
-            }
-            else if (uploadedImage.ContentType.ToLower().StartsWith("image/"))
-            {
-                
-                MemoryStream ms = new MemoryStream();
-                uploadedImage.OpenReadStream().CopyTo(ms);
-                using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
-                {
-                    if (image.Width > Constants.maxImageSize || image.Height > Constants.maxImageSize)
-                        return NotFound();
-                    item.Image = ms.ToArray();
-                    item.ContentType = uploadedImage.ContentType;
-                }
-            }
-
+            var item = await _stockService.GetItemInfo(id);
+            if (item == null) return NotFound();
+            _generalService.AddImage(ref item, files);
             _context.Update(item);
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Edit), new { id = item.Id });
         }
         
         [HttpGet]
         public FileStreamResult ViewImage(long? id)
         {
-            if (id == null)
-                return null;
-            var item = _context.Item.Find(id);
-
-            if (item == null||item.Image == null)
-                return null;
-            
-            MemoryStream ms = new MemoryStream(item.Image);
-            return new FileStreamResult(ms, item.ContentType);
+            return _generalService.GetImage<Item>(id);
         }
     }
 }

@@ -14,12 +14,12 @@ namespace TinyERP4Fun.Controllers
     public class UnitsController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly IStockService _stockService;
+        private readonly IGeneralService _generalService;
 
-        public UnitsController(DefaultContext context, IStockService stockService)
+        public UnitsController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _stockService = stockService;
+            _generalService = generalService;
         }
 
         // GET: Units
@@ -31,7 +31,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _stockService.GetObject<Unit>(id);
+            var result = await _generalService.GetObject<Unit>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -59,7 +59,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _stockService.GetObject<Unit>(id);
+            var result = await _generalService.GetObject<Unit>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -69,10 +69,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Unit unit)
         {
-            if (id != unit.Id)
-            {
-                return NotFound();
-            }
+            if (id != unit.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -83,14 +80,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UnitExists(unit.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!UnitExists(unit.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -100,7 +91,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _stockService.GetObject<Unit>(id);
+            var result = await _generalService.GetObject<Unit>(id);
             if (result == null) return NotFound();
             return View(result);
         }

@@ -120,8 +120,40 @@ namespace TinyERP4Fun.ModelServises
             }
             await _context.SaveChangesAsync();
         }
-        
 
+        public IQueryable<City> GetFiltredCities(string sortOrder, string searchString)
+        {
+            IQueryable<City> result = _context.City.Include(x => x.State).Include(x => x.State.Country);
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                result = result.Where(x => x.Name.Contains(searchString)
+                                       || x.State.Name.Contains(searchString)
+                                       || x.State.Country.Name.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    result = result.OrderByDescending(x => x.Name);
+                    break;
+                case "state":
+                    result = result.OrderBy(x => x.State.Name).ThenBy(x => x.Name);
+                    break;
+                case "state_desc":
+                    result = result.OrderByDescending(x => x.State.Name).ThenBy(x => x.Name);
+                    break;
+                case "country":
+                    result = result.OrderBy(x => x.State.Country.Name).ThenBy(x => x.Name);
+                    break;
+                case "country_desc":
+                    result = result.OrderByDescending(x => x.State.Country.Name).ThenBy(x => x.Name);
+                    break;
+                default:
+                    result = result.OrderBy(x => x.Name);
+                    break;
+            }
+            return result;
+        }
         public IQueryable<Company> GetFiltredCompanies(string sortOrder, string searchString)
         {
             IQueryable<Company> result = _context.Company
@@ -165,17 +197,6 @@ namespace TinyERP4Fun.ModelServises
                     break;
             }
             return result;
-        }
-        public async Task<T> GetObject<T> (long? id) where T : class, IHaveLongId
-        {
-            if (id == null) return null;
-
-            T resultObject = await _context.Set<T>()
-                .SingleOrDefaultAsync(m => m.Id == id);
-
-            if (resultObject == null) return null;
-
-            return resultObject;
         }
         public async Task<Employee> GetEmployeeInfo(long? id)
         {

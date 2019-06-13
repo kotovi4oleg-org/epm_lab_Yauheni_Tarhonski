@@ -18,16 +18,6 @@ namespace TinyERP4Fun.ModelServises
         {
             _context = context;
         }
-        public async Task<T> GetObject<T>(long? id) where T : class, IHaveLongId
-        {
-            if (id == null) return null;
-
-            T resultObject = await _context.Set<T>().SingleOrDefaultAsync(m => m.Id == id);
-
-            if (resultObject == null) return null;
-
-            return resultObject;
-        }
         public async Task<Item> GetItemInfo(long? id)
         {
             if (id == null) return null;

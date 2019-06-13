@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Expenses;
+using TinyERP4Fun.ModelServiceInterfaces;
 using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.Controllers
@@ -21,144 +22,59 @@ namespace TinyERP4Fun.Controllers
     {
         private readonly DefaultContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private class Filter
-        {
-            public IEnumerable<long?> currencyFilter = default;
-            public IEnumerable<long?> companyFilter = default;
-            public IEnumerable<long?> ourcompanyFilter = default;
-            public DateTime? fromFilter = default;
-            public DateTime? toFilter = default;
-            public bool approvedFilter = default;
-            public bool declinedFilter = default;
-            public bool notProcessedFilter = default;
-            public bool adm = default;
-        }
+        private readonly IExpencesService _expencesService;
 
-        public ExpencesController(DefaultContext context, UserManager<IdentityUser> userManager)
+        public ExpencesController(DefaultContext context, UserManager<IdentityUser> userManager, IExpencesService expencesService)
         {
             _context = context;
             _userManager = userManager;
+            _expencesService = expencesService;
         }
-
         // GET: Expences
 
-        private async Task<ExpencesViewModel> IndexCreateViewModel(int? pageNumber,
-                                               IEnumerable<long?> currencyFilter,
-                                               IEnumerable<long?> companyFilter,
-                                               IEnumerable<long?> ourcompanyFilter,
-                                               DateTime? fromFilter,
-                                               DateTime? toFilter,
-                                               bool approvedFilter,
-                                               bool declinedFilter,
-                                               bool notProcessedFilter,
-                                               bool adm
-                                               )
+        private async Task<ExpencesViewModel> IndexCreateViewModel(int? pageNumber, ExpencesViewModel expencesViewModel, bool adm)
         {
-            IQueryable<Expences> defaultContext = _context.Expences.Include(e => e.DocumentType)
-                                                                   .Include(e => e.Company)
-                                                                   .Include(e => e.Currency)
-                                                                   .Include(e => e.OurCompany)
-                                                                   .Include(e => e.Person)
-                                                                   .Include(e => e.User);
-            string total = null;
             var currentUserId = _userManager.GetUserId(User);
-
-            if (currencyFilter.Count() != 0)
-            {
-                defaultContext = defaultContext.Where(x => currencyFilter.Contains(x.CurrencyId));
-                if(currencyFilter.Count()==1)
-                        total = Localization.currentLocalizatin["Amount of Expenses"] + ": " + defaultContext.Sum(x => x.AmountOfPayment).ToString();
-            }
-            if (companyFilter.Count() != 0) defaultContext = defaultContext.Where(x => companyFilter.Contains(x.CompanyId));
-            if (ourcompanyFilter.Count() != 0) defaultContext = defaultContext.Where(x => ourcompanyFilter.Contains(x.OurCompanyId));
-            if (fromFilter != null) defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate != null && x.ApprovedPaymentDate >= fromFilter) ||
-                                                                               (x.ApprovedPaymentDate == null && x.DesiredPaymentDate >= fromFilter));
-            if (toFilter != null) defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate != null && x.ApprovedPaymentDate <= toFilter) ||
-                                                                             (x.ApprovedPaymentDate == null && x.DesiredPaymentDate <= toFilter));
-            if (!adm) 
-                defaultContext = defaultContext.Where(x=>x.Person.UserId == currentUserId);
-
-            ExpencesViewModel expencesViewModel = new ExpencesViewModel()
-            {
-                Expences = await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize),
-                CurrencyFilter = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name"),
-                CompanyFilter = new SelectList(_context.Company, "Id", "Name"),
-                OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name"),
-                FromFilter = fromFilter,
-                ToFilter = toFilter,
-                ApprovedFilter = approvedFilter,
-                DeclinedFilter = declinedFilter,
-                NotProcessedFilter = notProcessedFilter,
-                Total = total
-            };
-
+            expencesViewModel = await _expencesService.GetFilteredExpences(pageNumber, expencesViewModel, currentUserId, adm);
+            ViewBag.CurrencyFilter = new SelectList(_context.Currency.Where(x=>x.Active), "Id", "Name");
+            ViewBag.CompanyFilter = new SelectList(_context.Company, "Id", "Name");
+            ViewBag.OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
             return expencesViewModel;
         }
 
-        public async Task<IActionResult> Index(int? pageNumber,
-                                               IEnumerable<long?> currencyFilter,
-                                               IEnumerable<long?> companyFilter,
-                                               IEnumerable<long?> ourcompanyFilter,
-                                               DateTime? fromFilter, 
-                                               DateTime? toFilter, 
-                                               bool approvedFilter, 
-                                               bool declinedFilter, 
-                                               bool notProcessedFilter
-                                               )
+        public async Task<IActionResult> Index(int? pageNumber, ExpencesViewModel expencesViewModel)
         {
-             return View(await IndexCreateViewModel(pageNumber, currencyFilter, companyFilter, ourcompanyFilter, fromFilter,
-                   toFilter, approvedFilter, declinedFilter, notProcessedFilter, false));
+            return View(await IndexCreateViewModel(pageNumber, expencesViewModel, false));
         }
+
         [Authorize(Roles = Constants.rolesExpences_Admin)]
-        public async Task<IActionResult> IndexAdm(int? pageNumber,
-                                       IEnumerable<long?> currencyFilter,
-                                       IEnumerable<long?> companyFilter,
-                                       IEnumerable<long?> ourcompanyFilter,
-                                       DateTime? fromFilter,
-                                       DateTime? toFilter,
-                                       bool approvedFilter,
-                                       bool declinedFilter,
-                                       bool notProcessedFilter
-                                       )
+        public async Task<IActionResult> IndexAdm(int? pageNumber, ExpencesViewModel expencesViewModel)
         {
-            return View(await IndexCreateViewModel(pageNumber, currencyFilter, companyFilter, ourcompanyFilter, fromFilter,
-                               toFilter, approvedFilter, declinedFilter, notProcessedFilter, true));
+            return View(await IndexCreateViewModel(pageNumber, expencesViewModel, true));
         }
+
 
         // GET: Expences/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var expences = await _context.Expences.Include(e => e.DocumentType)
-                                                  .Include(e => e.Company)
-                                                  .Include(e => e.Currency)
-                                                  .Include(e => e.OurCompany)
-                                                  .Include(e => e.Person)
-                                                  .Include(e => e.User)
-                                                  .FirstOrDefaultAsync(m => m.Id == id);
-            if (expences == null)
-            {
-                return NotFound();
-            }
-
-            return View(expences);
+            var result = await _expencesService.GetExpenceInfo(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
-
-        // GET: Expences/Create
-        public IActionResult Create()
+        private void SetViewData()
         {
-            //Получили Id usera
-            var currentUserId= _userManager.GetUserId(User);
+            var currentUserId = _userManager.GetUserId(User);
             ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
             ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
-            ViewData["PersonId"] = new SelectList(_context.Person.Where(x=>x.UserId == currentUserId&& x.UserId!=null) , "Id", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users.Where(x=>x.Id==currentUserId), "Id", "Email");
+            ViewData["PersonId"] = new SelectList(_context.Person.Where(x => x.UserId == currentUserId && x.UserId != null), "Id", "Name");
+            ViewData["UserId"] = new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
+        }
+        // GET: Expences/Create
+        public IActionResult Create()
+        {
+            SetViewData();
             return View();
         }
 
@@ -169,7 +85,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                #region можно улучшить. но не буду (предпочту лишний раз обратиться в базу, возможно зря)
+                #region можно взять юзера из куков. но не буду (предпочту лишний раз обратиться в базу, возможно зря). А делается это так
                 // Получаем user ID не делая дополнительную вылазку в базу
                 /*
                 var claimsIdentity = (ClaimsIdentity)this.User.Identity;
@@ -194,33 +110,21 @@ namespace TinyERP4Fun.Controllers
 
                 //Повторно считали Id пользователя 
                 expences.UserId = _userManager.GetUserId(User);
-
                 _context.Add(expences);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            SetViewData();
             return View(expences);
         }
 
         // GET: Expences/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var expences = await _context.Expences.FindAsync(id);
-            if (expences == null)
-                return NotFound();
-
-            var currentUserId = _userManager.GetUserId(User);
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
-            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
-            ViewData["PersonId"] = new SelectList(_context.Person.Where(x => x.UserId == currentUserId && x.UserId != null), "Id", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
-            return View(expences);
+            var result = await _expencesService.GetExpenceInfo(id);
+            if (result == null) return NotFound();
+            SetViewData();
+            return View(result);
         }
 
         // POST: Expences/Edit/5
@@ -228,11 +132,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,DocumentNumber,DocumentDate,DocumentTypeId,PersonId,UserId,OurCompanyId,CompanyId,DesiredPaymentDate,AmountOfPayment,CurrencyId,PurposeOfPayment")] Expences expences)
         {
-            if (id != expences.Id)
-            {
-                return NotFound();
-            }
-
+            if (id != expences.Id) return NotFound();
             if (ModelState.IsValid)
             {
                 try
@@ -242,37 +142,21 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ExpencesExists(expences.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ExpencesExists(expences.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SetViewData();
             return View(expences);
         }
         [Authorize(Roles = Constants.rolesExpences_Admin)]
         public async Task<IActionResult> EditAdm(long? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var expences = await _context.Expences.FindAsync(id);
-            if (expences == null)
-                return NotFound();
-
-            var currentUserId = _userManager.GetUserId(User);
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
-            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
-            ViewData["PersonId"] = new SelectList(_context.Person.Where(x => x.Id == expences.PersonId), "Id", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
-            return View(expences);
+            var result = await _expencesService.GetExpenceInfo(id);
+            if (result == null) return NotFound();
+            SetViewData();
+            return View(result);
         }
 
         // POST: Expences/Edit/5
@@ -281,11 +165,7 @@ namespace TinyERP4Fun.Controllers
         [Authorize(Roles = Constants.rolesExpences_Admin)]
         public async Task<IActionResult> EditAdm(long id, [Bind("Id,DocumentNumber,DocumentDate,DocumentTypeId,PersonId,UserId,OurCompanyId,CompanyId,DesiredPaymentDate,ApprovedPaymentDate,AmountOfPayment,CurrencyId,Approved,Declined,PurposeOfPayment")] Expences expences)
         {
-            if (id != expences.Id)
-            {
-                return NotFound();
-            }
-
+            if (id != expences.Id) return NotFound();
             if (ModelState.IsValid)
             {
                 try
@@ -295,32 +175,13 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ExpencesExists(expences.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ExpencesExists(expences.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(IndexAdm));
             }
+            SetViewData();
             return View(expences);
-        }
-
-        public async Task<Expences> DeleteCommon(long? id)
-        {
-            if (id == null) return null;
-            var expences = await _context.Expences.Include(e => e.DocumentType)
-                                                  .Include(e => e.Company)
-                                                  .Include(e => e.Currency)
-                                                  .Include(e => e.OurCompany)
-                                                  .Include(e => e.Person)
-                                                  .Include(e => e.User)
-                                                  .FirstOrDefaultAsync(m => m.Id == id);
-
-            return expences;
         }
 
         private async Task DeleteConfirmedCommon(long id)
@@ -332,9 +193,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Expences/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var expences = await DeleteCommon(id);
-            if (expences == null) return NotFound();
-            return View(expences);
+            var result = await _expencesService.GetExpenceInfo(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Expences/Delete/5
@@ -350,9 +211,9 @@ namespace TinyERP4Fun.Controllers
         [Authorize(Roles = Constants.rolesExpences_Admin)]
         public async Task<IActionResult> DeleteAdm(long? id)
         {
-            var expences = await DeleteCommon(id);
-            if (expences == null) return NotFound();
-            return View(expences);
+            var result = await _expencesService.GetExpenceInfo(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: Expences/Delete/5

@@ -29,7 +29,6 @@ namespace TinyERP4Fun.Controllers
             _context = context;
             _commonService = commonService;
         }
-        //"admin, user"
         // GET: People
         [Authorize(Roles = Constants.rolesCommon_User)]
         public async Task<IActionResult> Index(int? pageNumber)
@@ -50,28 +49,23 @@ namespace TinyERP4Fun.Controllers
             return View(person);
         }
 
+        private async Task SetCommonViewBag(long? id)
+        {
+            var defaultAdmin = new List<IdentityUser> { await _userManager.FindByNameAsync(Constants.defaultAdminName) };
+            var usedUsers = _context.Person.Where(x => x.User != null&&x.Id!=id).Select(x => x.User);
+            ViewBag.Users = CommonFunctions.AddFirstItem(new SelectList(_userManager.Users.Except(defaultAdmin).Except(usedUsers), "Id", "Email"));
+            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
+        }
         // GET: People/Create
         [Authorize(Roles = Constants.rolesCommon_Admin)]
         public async Task<IActionResult> Create()
         {
-            /* MSDN:
-            * We don't recommend using ViewBag or ViewData with the Select Tag Helper. 
-            * A view model is more robust at providing MVC metadata and generally less problematic.
-            * Но, т.к. задание тестовое, для упрощения будем все-таки использовать ViewBag.
-            */
-
-            var defaultAdmin = new List<IdentityUser> { await _userManager.FindByNameAsync(Constants.defaultAdminName) };
-            var usedUsers = _context.Person.Where(x => x.User != null).Select(x => x.User);
-            ViewBag.Users = CommonFunctions.AddFirstItem(
-                new SelectList(_userManager.Users.Except(defaultAdmin).Except(usedUsers), "Id", "Email"));
+            await SetCommonViewBag(null);
             ViewBag.Roles = new SelectList(_roleManager.Roles, "Id", "Name");
-            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
             return View();
         }
 
         // POST: People/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constants.rolesCommon_Admin)]
@@ -88,6 +82,8 @@ namespace TinyERP4Fun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            await SetCommonViewBag(null);
+            ViewBag.Roles = new SelectList(_roleManager.Roles, "Id", "Name");
             return View(person);
         }
 
@@ -97,13 +93,7 @@ namespace TinyERP4Fun.Controllers
         {
             var person = await _commonService.GetPersonInfo(id);
             if (person == null) return NotFound();
-
-            var defaultAdmin = new List<IdentityUser> { await _userManager.FindByNameAsync(Constants.defaultAdminName) };
-            var usedUsers = _context.Person.Where(x => x.User != null&&x.Id!=id).Select(x => x.User);
-            ViewBag.Users = CommonFunctions.AddFirstItem(
-                new SelectList(_userManager.Users.Except(defaultAdmin).Except(usedUsers), "Id", "Email"));
-            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
-
+            await SetCommonViewBag(id);
             var personRoles = person.UserId==null?null:await _userManager.GetRolesAsync(person.User);
             var viewmodel = new PersonViewModel
             {
@@ -115,8 +105,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: People/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constants.rolesCommon_Admin)]
@@ -124,10 +112,12 @@ namespace TinyERP4Fun.Controllers
         {
             var person = personViewModel.Person;
             var selectedRoles = personViewModel.SelectedRoles;
-            if (id != person.Id)
-                return NotFound();
+            if (id != person.Id) return NotFound();
             if (!ModelState.IsValid)
-                return View(person);
+            {
+                await SetCommonViewBag(id);
+                return View(personViewModel);
+            }
             
             try
             {
@@ -139,23 +129,18 @@ namespace TinyERP4Fun.Controllers
                     if (selectedRoles != null)
                         await _userManager.AddToRolesAsync(user, selectedRoles);
                 }
-
                 _context.Update(person);
-
                 if (person.IsEmployee && _context.Employee.Where(x=>x.PersonId == person.Id).Count()==0)
-                    {
-                        Employee employee = new Employee { Person = person };
-                        _context.Add(employee);
-                    }
-
+                {
+                    Employee employee = new Employee { Person = person };
+                    _context.Add(employee);
+                }
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PersonExists(person.Id))
-                    return NotFound();
-                else
-                    throw;
+                if (!PersonExists(person.Id)) return NotFound();
+                throw;
             }
             return RedirectToAction(nameof(Index));
         }

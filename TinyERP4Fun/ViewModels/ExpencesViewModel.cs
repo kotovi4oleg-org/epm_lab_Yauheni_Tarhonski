@@ -12,11 +12,11 @@ namespace TinyERP4Fun.ViewModels
     public class ExpencesViewModel
     {
         public PaginatedList<Expences> Expences { get; set; }
-        public SelectList CurrencyFilter { get; set; }
+        public ICollection<long> CurrencyFilter { get; set; }
         public DateTime? FromFilter { get; set; }
         public DateTime? ToFilter { get; set; }
-        public SelectList OurCompanyFilter { get; set; }
-        public SelectList CompanyFilter { get; set; }
+        public ICollection<long> OurCompanyFilter { get; set; }
+        public ICollection<long> CompanyFilter { get; set; }
         public bool ApprovedFilter { get; set; }
         public bool DeclinedFilter { get; set; }
         public bool NotProcessedFilter { get; set; }

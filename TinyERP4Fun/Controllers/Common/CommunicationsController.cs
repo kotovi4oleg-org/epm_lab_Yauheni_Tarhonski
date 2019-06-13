@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Common;
@@ -16,12 +13,12 @@ namespace TinyERP4Fun.Controllers
     public class CommunicationsController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly IGeneralService _generalService;
 
-        public CommunicationsController(DefaultContext context, ICommonService commonService)
+        public CommunicationsController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _commonService = commonService;
+            _generalService = generalService;
         }
 
         // GET: Communications
@@ -33,7 +30,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Communications/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _commonService.GetObject<Communication>(id);
+            var result = await _generalService.GetObject<Communication>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -45,8 +42,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Communications/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Communication communication)
@@ -63,22 +58,17 @@ namespace TinyERP4Fun.Controllers
         // GET: Communications/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _commonService.GetObject<Communication>(id);
+            var result = await _generalService.GetObject<Communication>(id);
             if (result == null) return NotFound();
             return View(result);
         }
 
         // POST: Communications/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Communication communication)
         {
-            if (id != communication.Id)
-            {
-                return NotFound();
-            }
+            if (id != communication.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -89,14 +79,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommunicationExists(communication.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CommunicationExists(communication.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -106,7 +90,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Communications/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _commonService.GetObject<Communication>(id);
+            var result = await _generalService.GetObject<Communication>(id);
             if (result == null) return NotFound();
             return View(result);
         }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Expenses;
+using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -15,10 +16,12 @@ namespace TinyERP4Fun.Controllers
     public class DocumentTypesController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly IGeneralService _generalService;
 
-        public DocumentTypesController(DefaultContext context)
+        public DocumentTypesController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
+            _generalService = generalService;
         }
 
         // GET: DocumentTypes
@@ -30,19 +33,9 @@ namespace TinyERP4Fun.Controllers
         // GET: DocumentTypes/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var documentType = await _context.DocumentType
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (documentType == null)
-            {
-                return NotFound();
-            }
-
-            return View(documentType);
+            var result = await _generalService.GetObject<DocumentType>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // GET: DocumentTypes/Create
@@ -52,8 +45,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: DocumentTypes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] DocumentType documentType)
@@ -70,30 +61,17 @@ namespace TinyERP4Fun.Controllers
         // GET: DocumentTypes/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var documentType = await _context.DocumentType.FindAsync(id);
-            if (documentType == null)
-            {
-                return NotFound();
-            }
-            return View(documentType);
+            var result = await _generalService.GetObject<DocumentType>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: DocumentTypes/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] DocumentType documentType)
         {
-            if (id != documentType.Id)
-            {
-                return NotFound();
-            }
+            if (id != documentType.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -104,14 +82,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DocumentTypeExists(documentType.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!DocumentTypeExists(documentType.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -121,19 +93,9 @@ namespace TinyERP4Fun.Controllers
         // GET: DocumentTypes/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var documentType = await _context.DocumentType
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (documentType == null)
-            {
-                return NotFound();
-            }
-
-            return View(documentType);
+            var result = await _generalService.GetObject<DocumentType>(id);
+            if (result == null) return NotFound();
+            return View(result);
         }
 
         // POST: DocumentTypes/Delete/5

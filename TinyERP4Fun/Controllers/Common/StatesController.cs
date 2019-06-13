@@ -39,11 +39,14 @@ namespace TinyERP4Fun.Controllers
             if (state == null) return NotFound();
             return View(state);
         }
-
+        public void SetViewBag()
+        {
+            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+        }
         // GET: States/Create
         public IActionResult Create()
         {
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            SetViewBag();
             return View();
         }
 
@@ -60,6 +63,7 @@ namespace TinyERP4Fun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag();
             return View(state);
         }
 
@@ -68,7 +72,7 @@ namespace TinyERP4Fun.Controllers
         {
             var state = await _commonService.GetStateInfo(id);
             if (state == null) return NotFound();
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            SetViewBag();
             return View(state);
         }
 
@@ -79,10 +83,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] State state)
         {
-            if (id != state.Id)
-            {
-                return NotFound();
-            }
+            if (id != state.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -93,17 +94,12 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StateExists(state.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!StateExists(state.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag();
             return View(state);
         }
 

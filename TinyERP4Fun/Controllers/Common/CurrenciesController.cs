@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
@@ -17,26 +14,25 @@ namespace TinyERP4Fun.Controllers.Common
     public class CurrenciesController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly IGeneralService _generalService;
 
-        public CurrenciesController(DefaultContext context, ICommonService commonService)
+        public CurrenciesController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _commonService = commonService;
+            _generalService = generalService;
         }
 
         // GET: Currencies
         public async Task<IActionResult> Index(int? pageNumber)
         {
             var defaultContext = _context.Currency.OrderBy(x => x.Name);
-
             return View(await PaginatedList<Currency>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Currencies/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _commonService.GetObject<Currency>(id);
+            var result = await _generalService.GetObject<Currency>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -48,8 +44,6 @@ namespace TinyERP4Fun.Controllers.Common
         }
 
         // POST: Currencies/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Code,Name,Name2,Part001Name,Part001Name2,Active,Base")] Currency currency)
@@ -66,7 +60,7 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _commonService.GetObject<Currency>(id);
+            var result = await _generalService.GetObject<Currency>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -76,10 +70,7 @@ namespace TinyERP4Fun.Controllers.Common
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Code,Name,Name2,Part001Name,Part001Name2,Active,Base")] Currency currency)
         {
-            if (id != currency.Id)
-            {
-                return NotFound();
-            }
+            if (id != currency.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -90,14 +81,8 @@ namespace TinyERP4Fun.Controllers.Common
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CurrencyExists(currency.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CurrencyExists(currency.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -107,7 +92,7 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _commonService.GetObject<Currency>(id);
+            var result = await _generalService.GetObject<Currency>(id);
             if (result == null) return NotFound();
             return View(result);
         }

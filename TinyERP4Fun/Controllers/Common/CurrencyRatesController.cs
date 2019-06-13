@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
@@ -55,12 +47,16 @@ namespace TinyERP4Fun.Controllers
             if (currencyRates == null) return NotFound();
             return View(currencyRates);
         }
-        [Authorize(Roles = Constants.adminRoleName)]
-        // GET: CurrencyRates/Create
-        public IActionResult Create()
+        private void SetViewData()
         {
             ViewData["BaseCurrencyId"] = new SelectList(_context.Currency, "Id", "Code");
             ViewData["CurrencyId"] = new SelectList(_context.Currency, "Id", "Code");
+        }
+        // GET: CurrencyRates/Create
+        [Authorize(Roles = Constants.adminRoleName)]
+        public IActionResult Create()
+        {
+            SetViewData();
             return View();
         }
         [Authorize(Roles = Constants.adminRoleName)]
@@ -75,8 +71,7 @@ namespace TinyERP4Fun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BaseCurrencyId"] = new SelectList(_context.Currency, "Id", "Code", currencyRates.BaseCurrencyId);
-            ViewData["CurrencyId"] = new SelectList(_context.Currency, "Id", "Code", currencyRates.CurrencyId);
+            SetViewData();
             return View(currencyRates);
         }
         [Authorize(Roles = Constants.adminRoleName)]
@@ -85,8 +80,7 @@ namespace TinyERP4Fun.Controllers
         {
             var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
             if (currencyRates == null) return NotFound();
-            ViewData["BaseCurrencyId"] = new SelectList(_context.Currency, "Id", "Id", currencyRates.BaseCurrencyId);
-            ViewData["CurrencyId"] = new SelectList(_context.Currency, "Id", "Id", currencyRates.CurrencyId);
+            SetViewData();
             return View(currencyRates);
         }
         [Authorize(Roles = Constants.adminRoleName)]
@@ -95,10 +89,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,CurrecyScale,CurrencyRate,DateRate,CurrencyId,BaseCurrencyId")] CurrencyRates currencyRates)
         {
-            if (id != currencyRates.Id)
-            {
-                return NotFound();
-            }
+            if (id != currencyRates.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -109,31 +100,24 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CurrencyRatesExists(currencyRates.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CurrencyRatesExists(currencyRates.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BaseCurrencyId"] = new SelectList(_context.Currency, "Id", "Code", currencyRates.BaseCurrencyId);
-            ViewData["CurrencyId"] = new SelectList(_context.Currency, "Id", "Code", currencyRates.CurrencyId);
+            SetViewData();
             return View(currencyRates);
         }
-        [Authorize(Roles = Constants.adminRoleName)]
         // GET: CurrencyRates/Delete/5
+        [Authorize(Roles = Constants.adminRoleName)]
         public async Task<IActionResult> Delete(long? id)
         {
             var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
             if (currencyRates == null) return NotFound();
             return View(currencyRates);
         }
-        [Authorize(Roles = Constants.adminRoleName)]
         // POST: CurrencyRates/Delete/5
+        [Authorize(Roles = Constants.adminRoleName)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -143,7 +127,6 @@ namespace TinyERP4Fun.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool CurrencyRatesExists(long id)
         {
             return _context.CurrencyRates.Any(e => e.Id == id);

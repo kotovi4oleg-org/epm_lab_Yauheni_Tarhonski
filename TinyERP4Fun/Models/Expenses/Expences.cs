@@ -9,7 +9,7 @@ using TinyERP4Fun.Models.Common;
 
 namespace TinyERP4Fun.Models.Expenses
 {
-    public class Expences
+    public class Expences: IHaveLongId
     {
         public long Id { get; set; }
         

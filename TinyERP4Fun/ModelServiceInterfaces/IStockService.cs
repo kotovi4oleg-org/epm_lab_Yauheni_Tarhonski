@@ -9,7 +9,6 @@ namespace TinyERP4Fun.ModelServiceInterfaces
 {
     public interface IStockService
     {
-        Task<T> GetObject<T>(long? id) where T : class, IHaveLongId;
         Task<Item> GetItemInfo(long? id);
         Task Add(Stock stock);
         Task Update(Stock stock);

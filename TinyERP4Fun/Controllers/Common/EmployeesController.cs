@@ -43,19 +43,19 @@ namespace TinyERP4Fun.Controllers
             if (employee == null) return NotFound();
             return View(employee);
         }
-
-        // GET: Employees/Create
-        public IActionResult Create()
+        private void SetViewBag()
         {
             ViewBag.People = CommonFunctions.AddFirstItem(new SelectList(_context.Person, "Id", "FullName"));
             ViewBag.Departments = CommonFunctions.AddFirstItem(new SelectList(_context.Department, "Id", "Name"));
             ViewBag.Positions = CommonFunctions.AddFirstItem(new SelectList(_context.Position, "Id", "Name"));
+        }
+        // GET: Employees/Create
+        public IActionResult Create()
+        {
+            SetViewBag();
             return View();
         }
-
         // POST: Employees/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Address,PersonId,DepartmentId,PositionId")] Employee employee)
@@ -66,6 +66,7 @@ namespace TinyERP4Fun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag();
             return View(employee);
         }
 
@@ -74,24 +75,16 @@ namespace TinyERP4Fun.Controllers
         {
             var employee = await _commonService.GetEmployeeInfo(id);
             if (employee == null) return NotFound();
-            ViewBag.People = CommonFunctions.AddFirstItem(new SelectList(_context.Person, "Id", "FullName"));
-            ViewBag.Departments = CommonFunctions.AddFirstItem(new SelectList(_context.Department, "Id", "Name"));
-            ViewBag.Positions = CommonFunctions.AddFirstItem(new SelectList(_context.Position, "Id", "Name"));
+            SetViewBag();
             return View(employee);
         }
 
         // POST: Employees/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Address,PersonId,DepartmentId,PositionId")] Employee employee)
         {
-
-            if (id != employee.Id)
-            {
-                return NotFound();
-            }
+            if (id != employee.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,17 +95,12 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!EmployeeExists(employee.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag();
             return View(employee);
         }
 
@@ -134,7 +122,6 @@ namespace TinyERP4Fun.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool EmployeeExists(long? id)
         {
             return _context.Employee.Any(e => e.Id == id);

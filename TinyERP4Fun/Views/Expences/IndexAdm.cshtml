@@ -17,8 +17,7 @@
     <form asp-controller="ExpencesController" asp-action="Index" method="get" name="filter">
         <p>
             @Localization.currentLocalizatin["Currency"]:
-            <select asp-for="CurrencyFilter" asp-items="Model.CurrencyFilter" class="form-control">
-            </select>
+            <select asp-for="CurrencyFilter" asp-items="ViewBag.CurrencyFilter as SelectList" class="form-control"></select>
         </p>
         <p>
             @Localization.currentLocalizatin["From"]: <input type="date" asp-for="FromFilter" class="form-control" />
@@ -26,11 +25,9 @@
         </p>
         <p>
             @Localization.currentLocalizatin["Our Company"]:
-            <select asp-for="OurCompanyFilter" asp-items="Model.OurCompanyFilter" class="form-control">
-            </select>
+            <select asp-for="OurCompanyFilter" asp-items="ViewBag.OurCompanyFilter as SelectList" class="form-control"></select>
             @Localization.currentLocalizatin["Company"]:
-            <select asp-for="CompanyFilter" asp-items="Model.CompanyFilter" class="form-control">
-            </select>
+            <select asp-for="CompanyFilter" asp-items="ViewBag.CompanyFilter as SelectList" class="form-control"></select>
         </p>
         <p>
             @Localization.currentLocalizatin["Approved"]: <input type="checkbox" asp-for="ApprovedFilter" />
@@ -40,7 +37,7 @@
         <p>
             <input type="submit" value=@Localization.currentLocalizatin["Search"] />
         </p>
-</form>
+    </form>
 </div>
 @**@
 <table class="table">

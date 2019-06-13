@@ -17,13 +17,14 @@ namespace TinyERP4Fun.Controllers
     public class DepartmentsController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly IGeneralService _generalService;
 
-        public DepartmentsController(DefaultContext context, ICommonService commonService)
+        public DepartmentsController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _commonService = commonService;
+            _generalService = generalService;
         }
+
 
         // GET: Departments
         public async Task<IActionResult> Index(int? pageNumber)
@@ -35,7 +36,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _commonService.GetObject<Department>(id);
+            var result = await _generalService.GetObject<Department>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -47,8 +48,6 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Departments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Department department)
@@ -61,26 +60,19 @@ namespace TinyERP4Fun.Controllers
             }
             return View(department);
         }
-
         // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _commonService.GetObject<Department>(id);
+            var result = await _generalService.GetObject<Department>(id);
             if (result == null) return NotFound();
             return View(result);
         }
-
         // POST: Departments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Department department)
         {
-            if (id != department.Id)
-            {
-                return NotFound();
-            }
+            if (id != department.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -91,14 +83,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DepartmentExists(department.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!DepartmentExists(department.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -108,7 +94,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _commonService.GetObject<Department>(id);
+            var result = await _generalService.GetObject<Department>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -123,7 +109,6 @@ namespace TinyERP4Fun.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool DepartmentExists(long? id)
         {
             return _context.Department.Any(e => e.Id == id);

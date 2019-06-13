@@ -10,6 +10,11 @@ namespace TinyERP4Fun.Models
     {
         string Name { get; }
     }
+    public interface IHaveImage
+    {
+        byte[] Image { get; set; } // ссылка на изображение
+        string ContentType { get; set; } // тип изображения
+    }
     public interface IHaveLongId
     {
         long Id { get; set; }

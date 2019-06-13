@@ -75,8 +75,6 @@ namespace TinyERP4Fun.Controllers
                 FromFilter = fromFilter,
                 ToFilter = toFilter
             };
-
-            ViewData["ItemId"] = new SelectList(_context.Item, "Id", "Name");
             return View(stockPaginatedViewModel);
         }
         public async Task<IActionResult> Details(long? id)
@@ -85,13 +83,16 @@ namespace TinyERP4Fun.Controllers
             if (stock == null) return NotFound();
             return View(stock);
         }
-
-        // GET: Stocks/Create
-        public IActionResult Create()
+        private void SetViewData()
         {
             ViewData["ItemId"] = new SelectList(_context.Item, "Id", "Name");
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
             ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "Id", "Name");
+        }
+        // GET: Stocks/Create
+        public IActionResult Create()
+        {
+            SetViewData();
             return View();
         }
 
@@ -105,6 +106,7 @@ namespace TinyERP4Fun.Controllers
                 await _stockService.Add(stock);
                 return RedirectToAction(nameof(Index));
             }
+            SetViewData();
             return View(stock);
         }
 
@@ -112,12 +114,8 @@ namespace TinyERP4Fun.Controllers
         public async Task<IActionResult> Edit(long? id)
         {
             var stock = await _stockService.GetStockInfo(id);
-            if (stock == null)
-                return NotFound();
-
-            ViewData["ItemId"] = new SelectList(_context.Item, "Id", "Name", stock.ItemId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", stock.UserId);
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "Id", "Name", stock.WarehouseId);
+            if (stock == null) return NotFound();
+            SetViewData();
             return View(stock);
         }
 
@@ -126,10 +124,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,ItemId,Quantity,WarehouseId,UserId,OperDate")] Stock stock)
         {
-            if (id != stock.Id)
-            {
-                return NotFound();
-            }
+            if (id != stock.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -139,17 +134,12 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StockExists(stock.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!StockExists(stock.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SetViewData();
             return View(stock);
         }
 

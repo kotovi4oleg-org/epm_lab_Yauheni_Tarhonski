@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
@@ -17,12 +14,12 @@ namespace TinyERP4Fun.Controllers
     public class CountriesController : Controller
     {
         private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly IGeneralService _generalService;
 
-        public CountriesController(DefaultContext context, ICommonService commonService)
+        public CountriesController(DefaultContext context, IGeneralService generalService)
         {
             _context = context;
-            _commonService = commonService;
+            _generalService = generalService;
         }
 
         // GET: Countries
@@ -35,7 +32,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _commonService.GetObject<Country>(id);
+            var result = await _generalService.GetObject<Country>(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -47,8 +44,7 @@ namespace TinyERP4Fun.Controllers
         }
 
         // POST: Countries/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Country country)
@@ -65,22 +61,17 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _commonService.GetObject<Country>(id);
+            var result = await _generalService.GetObject<Country>(id);
             if (result == null) return NotFound();
             return View(result);
         }
 
         // POST: Countries/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Country country)
         {
-            if (id != country.Id)
-            {
-                return NotFound();
-            }
+            if (id != country.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -91,14 +82,8 @@ namespace TinyERP4Fun.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CountryExists(country.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CountryExists(country.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -108,7 +93,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _commonService.GetObject<Country>(id);
+            var result = await _generalService.GetObject<Country>(id);
             if (result == null) return NotFound();
             return View(result);
         }

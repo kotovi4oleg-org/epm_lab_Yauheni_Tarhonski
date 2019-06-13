@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,20 +54,30 @@ namespace TinyERP4Fun.Controllers
             return View(company);
         }
 
-        // GET: Companies/Create
-        public IActionResult Create()
+        private void SetViewBag(Company company)
         {
-            ViewBag.Cities = null;
-            ViewBag.States = null;
+            if (company==null||company.CityId == null)
+            {
+                ViewBag.Cities = ViewBag.States = null;
+            }
+            else
+            {
+                ViewBag.Cities = CommonFunctions.AddFirstItem(new SelectList(_context.City.Where(x => x.StateId == company.City.StateId), "Id", "Name"));
+                ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == company.City.State.CountryId), "Id", "Name"));
+            }
             ViewBag.Currencies = CommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name"));
             ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
             ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+        }
+
+        // GET: Companies/Create
+        public IActionResult Create()
+        {
+            SetViewBag(null);
             return View();
         }
 
         // POST: Companies/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,TIN,TIN2,Address,Address2,OurCompany,CityId,HeadCompanyId,BaseCurrencyId")] Company company)
@@ -80,6 +88,7 @@ namespace TinyERP4Fun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            SetViewBag(company);
             return View(company);
         }
 
@@ -88,20 +97,7 @@ namespace TinyERP4Fun.Controllers
         {
             var company = await _commonService.GetCompanyInfo(id);
             if (company == null) return NotFound();
-
-            if (company.CityId == null)
-            {
-                ViewBag.Cities = null;
-                ViewBag.States = null;
-            }
-            else
-            {
-                ViewBag.Cities = CommonFunctions.AddFirstItem(new SelectList(_context.City.Where(x => x.StateId == company.City.StateId), "Id", "Name"));
-                ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == company.City.State.CountryId), "Id", "Name"));
-            }
-            ViewBag.Currencies = CommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name"));
-            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            SetViewBag(company);
             return View(company);
         }
 
@@ -114,18 +110,22 @@ namespace TinyERP4Fun.Controllers
         {
             if (id != company.Id) return NotFound();
 
-            if (!ModelState.IsValid) return View(company);
-            try
+            if (ModelState.IsValid) //return View(company)
             {
-                _context.Update(company);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Update(company);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CompanyExists(company.Id)) return NotFound();
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CompanyExists(company.Id)) return NotFound();
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+            SetViewBag(company);
+            return View(company);
         }
 
         // GET: Companies/Delete/5
