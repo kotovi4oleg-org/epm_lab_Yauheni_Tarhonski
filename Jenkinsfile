@@ -17,7 +17,7 @@ pipeline {
                     done'''
                     sh "dotnet ${scannerBuild} begin /k:${projectKey} /n:${projectKey} /v:1.0 /d:sonar.host.url=${SONAR_HOST_URL} /d:sonar.login=${SONAR_AUTH_TOKEN} /d:sonar.cs.opencover.reportsPaths=$WORKSPACE/coverage.opencover.xml"
                     sh 'dotnet build'
-                    sh "dotnet ${scannerBuild} end"
+                    sh "dotnet ${scannerBuild} end /d:sonar.login=${SONAR_AUTH_TOKEN}"
                     sh "java -jar /etc/sonar-cnes-report.jar -p ${projectKey} -s ${SONAR_HOST_URL} -t ${SONAR_AUTH_TOKEN}"
                 }
             }
