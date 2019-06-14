@@ -44,29 +44,29 @@ namespace TinyERP4Fun.ModelServises
             if (expencesViewModel.CurrencyFilter != null)
             {
                 var currencyFilter = expencesViewModel.CurrencyFilter;
-                if (currencyFilter != null && currencyFilter.Count() != 0)
+                if (currencyFilter.Count != 0)
                 {
                     defaultContext = defaultContext.Where(x => currencyFilter.Contains(x.CurrencyId));
-                    if (currencyFilter.Count() == 1)
+                    if (currencyFilter.Count == 1)
                         total = Localization.currentLocalizatin["Amount of Expenses"] + ": " + defaultContext.Sum(x => x.AmountOfPayment).ToString();
                 }
             }
 
-            if (expencesViewModel.CompanyFilter != null && expencesViewModel.CompanyFilter.Count() != 0)
+            if (expencesViewModel.CompanyFilter != null && expencesViewModel.CompanyFilter.Count != 0)
                 defaultContext = defaultContext.Where(x => expencesViewModel.CompanyFilter.Contains(x.CompanyId));
-            if (expencesViewModel.OurCompanyFilter != null && expencesViewModel.OurCompanyFilter.Count() != 0)
+            if (expencesViewModel.OurCompanyFilter != null && expencesViewModel.OurCompanyFilter.Count != 0)
                 defaultContext = defaultContext.Where(x => expencesViewModel.OurCompanyFilter.Contains(x.OurCompanyId));
 
             if (expencesViewModel.FromFilter != null)
-                defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate != null && x.ApprovedPaymentDate >= expencesViewModel.FromFilter) ||
-                                                                               (x.ApprovedPaymentDate == null && x.DesiredPaymentDate >= expencesViewModel.FromFilter));
+                defaultContext = defaultContext.Where(x => x.ApprovedPaymentDate >= expencesViewModel.FromFilter ||
+                                                           x.DesiredPaymentDate >= expencesViewModel.FromFilter);
             if (expencesViewModel.ToFilter != null)
-                defaultContext = defaultContext.Where(x => (x.ApprovedPaymentDate != null && x.ApprovedPaymentDate <= expencesViewModel.ToFilter) ||
-                                                           (x.ApprovedPaymentDate == null && x.DesiredPaymentDate <= expencesViewModel.ToFilter));
+                defaultContext = defaultContext.Where(x => x.ApprovedPaymentDate <= expencesViewModel.ToFilter ||
+                                                           x.DesiredPaymentDate <= expencesViewModel.ToFilter);
             if (!expencesViewModel.AdmFilter) defaultContext = defaultContext.Where(x => x.Person.UserId == currentUserId);
 
             expencesViewModel.Expences = await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize);
-
+            expencesViewModel.Total = total;
             return expencesViewModel;
         }
     }

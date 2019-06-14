@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Person : IHaveName, IHaveLongId
+    public class Person : IHaveName, IHaveLongId, IHaveUser
     {
         public long Id { get; set; }
         public string Name { get; private set; }

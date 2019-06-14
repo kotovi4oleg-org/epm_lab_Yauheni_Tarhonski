@@ -19,6 +19,7 @@ namespace TinyERP4Fun.ModelServises
         {
             _context = context;
         }
+
         public async Task<T> GetObject<T>(long? id) where T : class, IHaveLongId
         {
             if (id == null) return null;

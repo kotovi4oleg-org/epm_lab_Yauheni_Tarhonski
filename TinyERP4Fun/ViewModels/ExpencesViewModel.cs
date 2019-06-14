@@ -12,6 +12,7 @@ namespace TinyERP4Fun.ViewModels
     public class ExpencesViewModel
     {
         public PaginatedList<Expences> Expences { get; set; }
+        public Expences SingleRecord { get; set; }
         public ICollection<long> CurrencyFilter { get; set; }
         public DateTime? FromFilter { get; set; }
         public DateTime? ToFilter { get; set; }
@@ -22,6 +23,5 @@ namespace TinyERP4Fun.ViewModels
         public bool NotProcessedFilter { get; set; }
         public bool AdmFilter { get; set; }
         public string Total { get; set; }
-
     }
 }

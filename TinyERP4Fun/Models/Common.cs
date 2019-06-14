@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace TinyERP4Fun.Models
@@ -9,6 +10,11 @@ namespace TinyERP4Fun.Models
     public interface IHaveName
     {
         string Name { get; }
+    }
+    public interface IHaveUser
+    {
+        string UserId { get; set; }
+        IdentityUser User { get; set; }
     }
     public interface IHaveImage
     {

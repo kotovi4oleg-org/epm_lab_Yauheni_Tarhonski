@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
-using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Expenses;
 using TinyERP4Fun.ModelServiceInterfaces;
 using TinyERP4Fun.ViewModels;
@@ -30,7 +25,6 @@ namespace TinyERP4Fun.Controllers
             _userManager = userManager;
             _expencesService = expencesService;
         }
-        //Need rename to IsMemberOfOrOwner(Expences entity, String roles, bool ownerCheck) and relocate to global
         private bool IsAdminOrOwner(Expences entity, bool ownerCheck)
         {
             var currentUser = _userManager.GetUserAsync(User);
@@ -45,17 +39,17 @@ namespace TinyERP4Fun.Controllers
             var currentUserId = _userManager.GetUserId(User);
             expencesViewModel = await _expencesService.GetFilteredExpences(pageNumber, expencesViewModel, currentUserId, adm);
             ViewBag.CurrencyFilter = new SelectList(_context.Currency.Where(x=>x.Active), "Id", "Name");
-            ViewBag.CompanyFilter = new SelectList(_context.Company, "Id", "Name");
+            ViewBag.CompanyFilter = new SelectList(_context.Expences.Select(x => x.Company).Distinct(), "Id", "Name");
             ViewBag.OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
             return expencesViewModel;
         }
 
         public async Task<IActionResult> Index(int? pageNumber, ExpencesViewModel expencesViewModel)
         {
-            if(expencesViewModel.AdmFilter&&!IsAdminOrOwner(null,false))
+            if (expencesViewModel.AdmFilter&&!IsAdminOrOwner(null,false))
                 expencesViewModel.AdmFilter = false;
-
-            return View(await IndexCreateViewModel(pageNumber, expencesViewModel, false));
+            var model = await IndexCreateViewModel(pageNumber, expencesViewModel, false);
+            return View(model);
         }
 
         // GET: Expences/Details/5
