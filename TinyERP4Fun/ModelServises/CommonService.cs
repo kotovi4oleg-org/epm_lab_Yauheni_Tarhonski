@@ -23,23 +23,36 @@ namespace TinyERP4Fun.ModelServises
         {
             _context = context;
         }
-
         
+        [DataContract]
+        internal class NbrbCurOrg
+        {
+            [DataMember]
+            public int Cur_ID { get; set; }
+            [DataMember]
+            public string Cur_Abbreviation { get; set; }
+            [DataMember]
+            public int Cur_Scale { get; set; }
+            [DataMember]
+            public string Cur_DateStart { get; set; }
+            [DataMember]
+            public string Cur_DateEnd { get; set; }
+        }
         [DataContract]
         internal class NbrbCur
         {
             [DataMember]
             // Microsoft.CodeAnalysis.CSharp.Workspaces ругается варнингами на непроинициализированные поля, поэтому.... 
             // проинициализирую их явно, хоть и неявное поведение мне было понятно и оно меня устраивало.
-            public int Cur_ID = default;
+            public int Cur_ID { get; set; }
             [DataMember]
-            public string Cur_Abbreviation = default;
+            public string Cur_Abbreviation { get; set; }
             [DataMember]
-            public int Cur_Scale = default;
+            public int Cur_Scale { get; set; }
             [DataMember]
-            public string Cur_DateStart = default;
+            public string Cur_DateStart { get; set; }
             [DataMember]
-            public string Cur_DateEnd = default;
+            public string Cur_DateEnd { get; set; }
         }
         [DataContract]
         internal class NbrbRate
@@ -51,52 +64,57 @@ namespace TinyERP4Fun.ModelServises
         }
         private static async Task<string> SendGetRequestAsync(Uri url)
         {
-            var content = new MemoryStream();
-            try //http
+            string result;
+            using (var content = new MemoryStream())
             {
-                var webReq = WebRequest.Create(url);
-                Task<WebResponse> responseTask = webReq.GetResponseAsync();
-                using (WebResponse response = await responseTask)
+                try //http
                 {
-                    using (Stream responseStream = response.GetResponseStream())
+                    var webReq = WebRequest.Create(url);
+                    Task<WebResponse> responseTask = webReq.GetResponseAsync();
+                    using (WebResponse response = await responseTask)
                     {
-                        await responseStream.CopyToAsync(content);
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            await responseStream.CopyToAsync(content);
+                        }
                     }
                 }
-            }
-            catch //https
-            {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                var webReq = WebRequest.Create(url);
-                Task<WebResponse> responseTask = webReq.GetResponseAsync();
-                using (WebResponse response = await responseTask)
+                catch //https
                 {
-                    using (Stream responseStream = response.GetResponseStream())
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    var webReq = WebRequest.Create(url);
+                    Task<WebResponse> responseTask = webReq.GetResponseAsync();
+                    using (WebResponse response = await responseTask)
                     {
-                        await responseStream.CopyToAsync(content);
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            await responseStream.CopyToAsync(content);
+                        }
                     }
                 }
+                result = Encoding.ASCII.GetString(content.ToArray());
             }
-            return Encoding.ASCII.GetString(content.ToArray());
+
+            return result;
         }
         public async Task UpdateBYNVoid()
         {
-            Currency baseCurrency = _context.Currency.Where(x => x.Code == Constants.BYNCode).FirstOrDefault();
+            Currency baseCurrency = await _context.Currency.Where(x => x.Code == Constants.BYNCode).SingleOrDefaultAsync();
             var currencyList = _context.Currency.Where(x => x.Code != Constants.BYNCode && x.Active);
             string jsonCurList = await SendGetRequestAsync(new Uri(Constants.BYN_CURRENCY_LIST_URL));
             DataContractJsonSerializer jsonFormatterNBRBCurAr = new DataContractJsonSerializer(typeof(NbrbCur[]));
             DataContractJsonSerializer jsonFormatterNBRBRate = new DataContractJsonSerializer(typeof(NbrbRate));
             NbrbCur[] curArray = (NbrbCur[])jsonFormatterNBRBCurAr.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(jsonCurList)));
-
+            var addedRates = new List<CurrencyRates>();
             foreach (var currency in currencyList)
             {
                 for (var currencyDate = Constants.baseDate; currencyDate <= DateTime.Today; currencyDate = currencyDate.AddDays(1))
                 {
 
-                    if (_context.CurrencyRates.Where(x => x.DateRate == currencyDate && x.Currency.Code == currency.Code).FirstOrDefault() != null)
+                    if (await _context.CurrencyRates.Where(x => x.DateRate == currencyDate && x.Currency.Code == currency.Code).SingleOrDefaultAsync() != null)
                         continue;
 
-                    var curNBRB = curArray.FirstOrDefault(x => x.Cur_Abbreviation == currency.Code &&
+                    var curNBRB = curArray.SingleOrDefault(x => x.Cur_Abbreviation == currency.Code &&
                                                                DateTime.Parse(x.Cur_DateStart) <= currencyDate &&
                                                                DateTime.Parse(x.Cur_DateEnd) >= currencyDate
                                                                );
@@ -115,10 +133,15 @@ namespace TinyERP4Fun.ModelServises
                         CurrecyScale = curRate.Cur_Scale,
                         CurrencyRate = (decimal)curRate.Cur_OfficialRate
                     };
-                    _context.Add(currencyRate);
+                    addedRates.Add(currencyRate);
                 }
             }
-            await _context.SaveChangesAsync();
+            if (addedRates.Count>0)
+            {
+                await _context.AddRangeAsync(addedRates);
+                await _context.SaveChangesAsync();
+            }
+            
         }
 
         public IQueryable<City> GetFiltredCities(string sortOrder, string searchString)
@@ -212,7 +235,6 @@ namespace TinyERP4Fun.ModelServises
         public async Task<CurrencyRates> GetCurrencyRatesInfo(long? id)
         {
             if (id == null) return null;
-
             var resultObject = await _context.CurrencyRates
                                              .Include(c => c.BaseCurrency)
                                              .Include(c => c.Currency)

@@ -45,9 +45,9 @@ namespace TinyERP4Fun.Controllers
         }
         private void SetViewBag()
         {
-            ViewBag.People = CommonFunctions.AddFirstItem(new SelectList(_context.Person, "Id", "FullName"));
-            ViewBag.Departments = CommonFunctions.AddFirstItem(new SelectList(_context.Department, "Id", "Name"));
-            ViewBag.Positions = CommonFunctions.AddFirstItem(new SelectList(_context.Position, "Id", "Name"));
+            ViewBag.People = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Person, "Id", "FullName"));
+            ViewBag.Departments = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Department, "Id", "Name"));
+            ViewBag.Positions = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Position, "Id", "Name"));
         }
         // GET: Employees/Create
         public IActionResult Create()

@@ -73,7 +73,10 @@ namespace TinyERP4Fun
 
             //Добавляем шедулер
             services.AddHostedService<TimedHostedServiceUpdateCurrencies>();
+
             services.AddScoped<IStockService, StockService>();
+            services.AddScoped<IItemService, ItemService>();
+
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IExpencesService, ExpencesService>();
             services.AddScoped<IGeneralService, GeneralService>();
@@ -100,6 +103,7 @@ namespace TinyERP4Fun
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+            app.UseStatusCodePages();
 
             app.UseMvc(routes =>
             {

@@ -10,38 +10,34 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Stock;
 using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.ModelServises;
 
 namespace TinyERP4Fun.Controllers
 {
     public class ItemsController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IStockService _stockService;
-        private readonly IGeneralService _generalService;
-        public ItemsController(DefaultContext context, IStockService stockService, IGeneralService generalService)
+        private readonly IItemService _itemService;
+        public ItemsController(IItemService itemService)
         {
-            _context = context;
-            _stockService = stockService;
-            _generalService = generalService;
+            _itemService = itemService;
         }
 
         // GET: Items
         public async Task<IActionResult> Index()
         {
-            var defaultContext = _context.Item.Include(i => i.Unit);
-            return View(await defaultContext.ToListAsync());
+            return View(await _itemService.GetItemsList());
         }
 
         // GET: Items/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _stockService.GetItemInfo(id);
+            var result = await _itemService.GetItem(id);
             if (result == null) return NotFound();
             return View(result);
         }
         private void SetViewData()
         {
-            ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name");
+            ViewData["UnitId"] = _itemService.GetUnitIds();
         }
         // GET: Items/Create
         public IActionResult Create()
@@ -57,9 +53,8 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _generalService.AddImage(ref item, files);
-                _context.Add(item);
-                await _context.SaveChangesAsync();
+                ServicesCommonFunctions.AddImage(ref item, files);
+                await _itemService.AddItem(item);
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -69,7 +64,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Items/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _stockService.GetItemInfo(id);
+            var result = await _itemService.GetItem(id, true);
             if (result == null) return NotFound();
             SetViewData();
             return View(result);
@@ -84,16 +79,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(item);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ItemExists(item.Id)) return NotFound();
-                    throw;
-                }
+                if(!await _itemService.UpdateItem(item)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -103,7 +89,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Items/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _stockService.GetItemInfo(id);
+            var result = await _itemService.GetItem(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -113,33 +99,26 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var item = await _context.Item.FindAsync(id);
-            _context.Item.Remove(item);
-            await _context.SaveChangesAsync();
+            await _itemService.DeleteItem(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ItemExists(long id)
-        {
-            return _context.Item.Any(e => e.Id == id);
-        }
-
-        
         [HttpPost]
         public async Task<IActionResult> UploadImage(long? id, IList<IFormFile> files)
         {
-            var item = await _stockService.GetItemInfo(id);
+            var item = await _itemService.GetItem(id);
             if (item == null) return NotFound();
-            _generalService.AddImage(ref item, files);
-            _context.Update(item);
-            await _context.SaveChangesAsync();
+            ServicesCommonFunctions.AddImage(ref item, files);
+            await _itemService.UpdateItem(item);
             return RedirectToAction(nameof(Edit), new { id = item.Id });
         }
         
         [HttpGet]
         public FileStreamResult ViewImage(long? id)
         {
-            return _generalService.GetImage<Item>(id);
+            var entityTask = _itemService.GetItem(id); 
+            Task.WaitAll(entityTask);
+            return ServicesCommonFunctions.GetImage(entityTask.Result);
         }
     }
 }

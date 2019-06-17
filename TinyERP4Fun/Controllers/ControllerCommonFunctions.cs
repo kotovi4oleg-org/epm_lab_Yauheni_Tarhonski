@@ -13,7 +13,7 @@ using TinyERP4Fun.Data;
 namespace TinyERP4Fun.Controllers
 {
     
-    public static class CommonFunctions
+    public static class ControllerCommonFunctions
     {
         public static class DefaultContextOptions
         {

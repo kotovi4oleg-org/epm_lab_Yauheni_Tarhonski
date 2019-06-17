@@ -2,30 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace TinyERP4Fun.Models
 {
-    public interface IHaveName
-    {
-        string Name { get; }
-    }
-    public interface IHaveUser
-    {
-        string UserId { get; set; }
-        IdentityUser User { get; set; }
-    }
-    public interface IHaveImage
-    {
-        byte[] Image { get; set; } // ссылка на изображение
-        string ContentType { get; set; } // тип изображения
-    }
-    public interface IHaveLongId
-    {
-        long Id { get; set; }
-    }
-
     public class PaginatedList<T> : List<T>
     {
         public int PageIndex { get; private set; }
@@ -35,7 +15,6 @@ namespace TinyERP4Fun.Models
         {
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-
             this.AddRange(items);
         }
 

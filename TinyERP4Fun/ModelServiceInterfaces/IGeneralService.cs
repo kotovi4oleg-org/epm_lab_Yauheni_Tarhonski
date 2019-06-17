@@ -9,7 +9,5 @@ namespace TinyERP4Fun.ModelServiceInterfaces
     public interface IGeneralService
     {
         Task<T> GetObject<T>(long? id) where T : class, IHaveLongId;
-        void AddImage<T>(ref T entity, IList<IFormFile> files) where T:IHaveImage;
-        FileStreamResult GetImage<T>(long? id) where T : class, IHaveLongId, IHaveImage;
     }
 }

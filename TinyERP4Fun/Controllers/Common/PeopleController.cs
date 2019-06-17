@@ -53,8 +53,8 @@ namespace TinyERP4Fun.Controllers
         {
             var defaultAdmin = new List<IdentityUser> { await _userManager.FindByNameAsync(Constants.defaultAdminName) };
             var usedUsers = _context.Person.Where(x => x.User != null&&x.Id!=id).Select(x => x.User);
-            ViewBag.Users = CommonFunctions.AddFirstItem(new SelectList(_userManager.Users.Except(defaultAdmin).Except(usedUsers), "Id", "Email"));
-            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
+            ViewBag.Users = ControllerCommonFunctions.AddFirstItem(new SelectList(_userManager.Users.Except(defaultAdmin).Except(usedUsers), "Id", "Email"));
+            ViewBag.Companies = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
         }
         // GET: People/Create
         [Authorize(Roles = Constants.rolesCommon_Admin)]

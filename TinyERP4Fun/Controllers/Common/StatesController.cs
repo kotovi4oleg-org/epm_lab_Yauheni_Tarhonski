@@ -41,7 +41,7 @@ namespace TinyERP4Fun.Controllers
         }
         public void SetViewBag()
         {
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
         }
         // GET: States/Create
         public IActionResult Create()

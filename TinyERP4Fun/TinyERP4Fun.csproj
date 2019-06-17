@@ -27,6 +27,12 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="ModelServises\Common\" />
+    <Folder Include="ModelServises\Expences\" />
+  </ItemGroup>
+
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>React</TypeScriptJSXEmit>

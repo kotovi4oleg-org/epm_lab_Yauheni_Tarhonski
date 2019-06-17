@@ -36,6 +36,7 @@ namespace TinyERP4Fun.Controllers
         }
         private async Task<ExpencesViewModel> IndexCreateViewModel(int? pageNumber, ExpencesViewModel expencesViewModel, bool adm)
         {
+            //Настройку хранения фильтров не реализовывал. В планах - хранить фильтры в базе для каждого сочетания пользователь/модуль
             var currentUserId = _userManager.GetUserId(User);
             expencesViewModel = await _expencesService.GetFilteredExpences(pageNumber, expencesViewModel, currentUserId, adm);
             ViewBag.CurrencyFilter = new SelectList(_context.Currency.Where(x=>x.Active), "Id", "Name");

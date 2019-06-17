@@ -50,8 +50,8 @@ namespace TinyERP4Fun.Controllers
             if (city == null || city.State == null)
                 ViewBag.States = null;
             else
-                ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == city.State.CountryId), "Id", "Name"));
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+                ViewBag.States = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == city.State.CountryId), "Id", "Name"));
+            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
         }
         // GET: Cities/Create
         public IActionResult Create()

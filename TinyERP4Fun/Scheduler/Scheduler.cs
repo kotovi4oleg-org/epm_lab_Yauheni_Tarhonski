@@ -33,7 +33,7 @@ namespace TinyERP4Fun.Scheduler
          private void DoWork(object state)
         {
             _logger.LogInformation("Timed Background Service is working.");
-            var options = CommonFunctions.DefaultContextOptions.GetOptions();
+            var options = ControllerCommonFunctions.DefaultContextOptions.GetOptions();
             using (var context = new DefaultContext(options))
             {
                 var commonService = new CommonService(context);

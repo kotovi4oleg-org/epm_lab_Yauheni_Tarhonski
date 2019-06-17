@@ -62,12 +62,12 @@ namespace TinyERP4Fun.Controllers
             }
             else
             {
-                ViewBag.Cities = CommonFunctions.AddFirstItem(new SelectList(_context.City.Where(x => x.StateId == company.City.StateId), "Id", "Name"));
-                ViewBag.States = CommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == company.City.State.CountryId), "Id", "Name"));
+                ViewBag.Cities = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.City.Where(x => x.StateId == company.City.StateId), "Id", "Name"));
+                ViewBag.States = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == company.City.State.CountryId), "Id", "Name"));
             }
-            ViewBag.Currencies = CommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name"));
-            ViewBag.Companies = CommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
-            ViewBag.Countries = CommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            ViewBag.Currencies = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name"));
+            ViewBag.Companies = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
+            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
         }
 
         // GET: Companies/Create
