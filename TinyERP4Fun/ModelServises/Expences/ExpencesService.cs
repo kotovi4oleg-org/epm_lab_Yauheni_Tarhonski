@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,28 +12,45 @@ using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class ExpencesService: IExpencesService
+    public class ExpencesService : BaseService, IExpencesService
     {
-        private readonly DefaultContext _context;
-        public ExpencesService(DefaultContext context)
+        public ExpencesService(DefaultContext context) : base(context)
         {
-            _context = context;
         }
-        public async Task<Expences> GetExpenceInfo(long? id)
+        public async Task<Expences> GetAsync(long? id, bool tracking = false)
         {
             if (id == null) return null;
-            var resultObject = await _context.Expences.Include(e => e.DocumentType)
+            if (tracking)
+                return await _context.Expences.Include(e => e.DocumentType)
                                                       .Include(e => e.Company)
                                                       .Include(e => e.Currency)
                                                       .Include(e => e.OurCompany)
                                                       .Include(e => e.Person)
                                                       .Include(e => e.User)
                                                       .SingleOrDefaultAsync(m => m.Id == id);
-            if (resultObject == null) return null;
-            return resultObject;
+            else
+                return await _context.Expences.Include(e => e.DocumentType)
+                                                      .Include(e => e.Company)
+                                                      .Include(e => e.Currency)
+                                                      .Include(e => e.OurCompany)
+                                                      .Include(e => e.Person)
+                                                      .Include(e => e.User)
+                                                      .AsNoTracking()
+                                                      .SingleOrDefaultAsync(m => m.Id == id);
         }
-
-        public async Task<ExpencesViewModel> GetFilteredExpences(int? pageNumber, ExpencesViewModel expencesViewModel, string currentUserId, bool adm)
+        public async Task AddAsync(Expences entity)
+        {
+            await ServicesCommonFunctions.AddObject(entity, _context);
+        }
+        public async Task<bool> UpdateAsync(Expences entity)
+        {
+            return await ServicesCommonFunctions.UpdateObject(entity, _context);
+        }
+        public async Task DeleteAsync(long id)
+        {
+            await ServicesCommonFunctions.DeleteObject<Expences>(id, _context);
+        }
+        public async Task<ExpencesViewModel> GetFilteredContentAsync(int? pageNumber, ExpencesViewModel expencesViewModel, string currentUserId, bool adm)
         {
             IQueryable<Expences> defaultContext = _context.Expences.Include(e => e.DocumentType)
                                                                    .Include(e => e.Company)
@@ -68,6 +86,30 @@ namespace TinyERP4Fun.ModelServises
             expencesViewModel.Expences = await PaginatedList<Expences>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize);
             expencesViewModel.Total = total;
             return expencesViewModel;
+        }
+        public SelectList GetCurrenciesIds()
+        {
+            return new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
+        }
+        public SelectList GetCompaniesIds()
+        {
+            return new SelectList(_context.Expences.Select(x => x.Company).Distinct(), "Id", "Name");
+        }
+        public SelectList GetOurCompaniesIds()
+        {
+            return new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
+        }
+        public SelectList GetDocumentTypesIds()
+        {
+            return new SelectList(_context.DocumentType, "Id", "Name");
+        }
+        public SelectList GetPersonsIds(string currentUserId)
+        {
+            return new SelectList(_context.Person.Where(x => x.UserId == currentUserId && x.UserId != null), "Id", "Name");
+        }
+        public SelectList GetUsersIds(string currentUserId)
+        {
+            return new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
         }
     }
 }

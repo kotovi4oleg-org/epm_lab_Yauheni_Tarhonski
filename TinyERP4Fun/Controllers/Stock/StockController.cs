@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Stock;
 using TinyERP4Fun.ModelServiceInterfaces;
@@ -16,15 +13,12 @@ namespace TinyERP4Fun.Controllers
 {
     public class StockController : Controller
     {
-        private readonly DefaultContext _context;
         private readonly IStockService _stockService;
 
-        public StockController(DefaultContext context, IStockService stockService)
+        public StockController(IStockService stockService)
         {
-            _context = context;
             _stockService = stockService;
         }
-
 
         // GET: Stocks
         public async Task<IActionResult> Movements(int? pageNumber,
@@ -40,8 +34,8 @@ namespace TinyERP4Fun.Controllers
             StockMovementsViewModel stockMovementsViewModel = new StockMovementsViewModel()
             {
                 Stock = await PaginatedList<Stock>.CreateAsync(filteredContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize),
-                ItemFilter = new SelectList(_context.Item, "Id", "Name"),
-                WarehouseFilter = new SelectList(_context.Warehouse, "Id", "Name"),
+                ItemFilter = _stockService.GetItemIds(),
+                WarehouseFilter = _stockService.GetWarehouseIds(),
                 FromFilter = fromFilter,
                 ToFilter = toFilter
             };
@@ -56,22 +50,12 @@ namespace TinyERP4Fun.Controllers
                                    )
         {
             var emptyStringList = new string[] { };
-            var filteredContext = _stockService.GetFiltredContent(fromFilter, toFilter, itemFilter, warehouseFilter, emptyStringList);
-            //Это очень красивая строка  объясняет как делать множественный групбай: var result31 = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId }).Select(group => new { group.Key, Count = group.Sum(p=>p.Quantity) }).ToListAsync();
-            var result = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId })
-                                                .Select(group => new StockViewModel()
-                                                {
-                                                    Item = group.FirstOrDefault().Item,
-                                                    ItemId = group.Key.ItemId,
-                                                    Warehouse = group.FirstOrDefault().Warehouse,
-                                                    WarehouseId = group.Key.WarehouseId,
-                                                    Quantity = group.Sum(s => s.Quantity)
-                                                }).ToListAsync();
+            var result = await _stockService.GetGroupedContentAsync(fromFilter, toFilter, itemFilter, warehouseFilter, emptyStringList);
             StockPaginatedViewModel stockPaginatedViewModel = new StockPaginatedViewModel()
             {
                 StockViewModels = PaginatedList<StockViewModel>.Create(result, pageNumber ?? 1, Constants.pageSize),
-                ItemFilter = new SelectList(_context.Item, "Id", "Name"),
-                WarehouseFilter = new SelectList(_context.Warehouse, "Id", "Name"),
+                ItemFilter = _stockService.GetItemIds(),
+                WarehouseFilter = _stockService.GetWarehouseIds(),
                 FromFilter = fromFilter,
                 ToFilter = toFilter
             };
@@ -79,15 +63,15 @@ namespace TinyERP4Fun.Controllers
         }
         public async Task<IActionResult> Details(long? id)
         {
-            var stock = await _stockService.GetStockInfo(id);
+            var stock = await _stockService.GetAsync(id);
             if (stock == null) return NotFound();
             return View(stock);
         }
         private void SetViewData()
         {
-            ViewData["ItemId"] = new SelectList(_context.Item, "Id", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "Id", "Name");
+            ViewData["ItemId"] = _stockService.GetItemIds();
+            ViewData["UserId"] = _stockService.GetUsersIds();
+            ViewData["WarehouseId"] = _stockService.GetWarehouseIds();
         }
         // GET: Stocks/Create
         public IActionResult Create()
@@ -103,7 +87,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _stockService.Add(stock);
+                await _stockService.AddAsync(stock);
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -113,7 +97,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Stocks/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var stock = await _stockService.GetStockInfo(id);
+            var stock = await _stockService.GetAsync(id, true);
             if (stock == null) return NotFound();
             SetViewData();
             return View(stock);
@@ -128,15 +112,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    await _stockService.Update(stock);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StockExists(stock.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _stockService.UpdateAsync(stock)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -146,7 +122,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Stocks/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var stock = await _stockService.GetStockInfo(id);
+            var stock = await _stockService.GetAsync(id);
             if (stock == null) return NotFound();
             return View(stock);
         }
@@ -156,13 +132,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            await _stockService.Remove(id);
+            await _stockService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool StockExists(long id)
-        {
-            return _context.Stock.Any(e => e.Id == id);
         }
     }
 }

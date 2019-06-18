@@ -47,11 +47,11 @@ namespace TinyERP4Fun
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            /**/
+
             services.AddDbContext<DefaultContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            /**/
+
             services.AddIdentity<IdentityUser, IdentityRole>()
                 //AddDefaultIdentity<IdentityUser>()
                 //.AddDefaultUI(UIFramework.Bootstrap4)
@@ -74,12 +74,20 @@ namespace TinyERP4Fun
             //Добавляем шедулер
             services.AddHostedService<TimedHostedServiceUpdateCurrencies>();
 
+            //DI
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IWarehouseService, WarehouseService>();
+            services.AddScoped<IUnitServise, UnitServise>();
+            services.AddScoped<IExpencesService, ExpencesService>();
+            services.AddScoped<IBusinessDirectionsService, BusinessDirectionsService>();
+            services.AddScoped<ICostItemsService, CostItemsService>();
+            services.AddScoped<IDocumentTypesService, DocumentTypesService>();
 
             services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<IExpencesService, ExpencesService>();
             services.AddScoped<IGeneralService, GeneralService>();
+
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

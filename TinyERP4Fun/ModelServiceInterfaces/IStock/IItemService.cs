@@ -8,13 +8,8 @@ using TinyERP4Fun.Models.Stock;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface IItemService
+    public interface IItemService: IAllServises<Item>, ISimpleList<Item>
     {
-        Task<Item> GetItem(long? id, bool tracking = false);
-        Task AddItem(Item item);
-        Task<bool> UpdateItem(Item item);
-        Task DeleteItem(long id);
-        Task<IEnumerable<Item>> GetItemsList();
         SelectList GetUnitIds();
     }
 }

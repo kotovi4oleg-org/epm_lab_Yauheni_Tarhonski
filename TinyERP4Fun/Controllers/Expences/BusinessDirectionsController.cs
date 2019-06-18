@@ -17,25 +17,23 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class BusinessDirectionsController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
+        private readonly IBusinessDirectionsService _businessDirectionsService;
 
-        public BusinessDirectionsController(DefaultContext context, IGeneralService generalService)
+        public BusinessDirectionsController(IBusinessDirectionsService businessDirectionsService)
         {
-            _context = context;
-            _generalService = generalService;
+            _businessDirectionsService = businessDirectionsService;
         }
 
         // GET: BusinessDirections
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BusinessDirection.ToListAsync());
+            return View(await _businessDirectionsService.GetListAsync());
         }
 
         // GET: BusinessDirections/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<BusinessDirection>(id);
+            var result = await _businessDirectionsService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -53,8 +51,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(businessDirection);
-                await _context.SaveChangesAsync();
+                await _businessDirectionsService.AddAsync(businessDirection);
                 return RedirectToAction(nameof(Index));
             }
             return View(businessDirection);
@@ -63,7 +60,7 @@ namespace TinyERP4Fun.Controllers
         // GET: BusinessDirections/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<BusinessDirection>(id);
+            var result = await _businessDirectionsService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -77,16 +74,7 @@ namespace TinyERP4Fun.Controllers
             
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(businessDirection);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BusinessDirectionExists(businessDirection.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _businessDirectionsService.UpdateAsync(businessDirection)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(businessDirection);
@@ -95,7 +83,7 @@ namespace TinyERP4Fun.Controllers
         // GET: BusinessDirections/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<BusinessDirection>(id);
+            var result = await _businessDirectionsService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -105,15 +93,9 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var businessDirection = await _context.BusinessDirection.FindAsync(id);
-            _context.BusinessDirection.Remove(businessDirection);
-            await _context.SaveChangesAsync();
+            await _businessDirectionsService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BusinessDirectionExists(long? id)
-        {
-            return _context.BusinessDirection.Any(e => e.Id == id);
-        }
     }
 }

@@ -7089,11 +7089,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4FunTests\\TinyERP4FunTests.csproj",
+      "projectUniqueName": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4FunTests\\TinyERP4FunTests.csproj",
       "projectName": "TinyERP4FunTests",
-      "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4FunTests\\TinyERP4FunTests.csproj",
+      "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4FunTests\\TinyERP4FunTests.csproj",
       "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4FunTests\\obj\\",
+      "outputPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4FunTests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\ProgramData\\Xamarin\\NuGet\\",
@@ -7114,8 +7114,8 @@
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {
-              "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj"
+            "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {
+              "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj"
             }
           }
         }

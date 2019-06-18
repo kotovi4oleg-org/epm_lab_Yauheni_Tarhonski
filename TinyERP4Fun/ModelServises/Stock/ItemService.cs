@@ -11,46 +11,43 @@ using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class ItemService: IItemService
+    public class ItemService :BaseService, IItemService
     {
-        private readonly DefaultContext _context;
-
-        public ItemService(DefaultContext context)
+        public ItemService(DefaultContext context) : base(context)
         {
-            _context = context;
         }
-        public async Task<IEnumerable<Item>> GetItemsList()
+        public async Task<IEnumerable<Item>> GetListAsync()
         {
             var defaultContext = _context.Item.Include(i => i.Unit);
-            return await defaultContext.ToListAsync();
+            return await defaultContext.AsNoTracking().ToListAsync();
         }
-        public async Task<Item> GetItem(long? id, bool tracking = false)
+        public async Task<Item> GetAsync(long? id, bool tracking = false)
         {
             if (id == null) return null;
             Item resultObject;
             if(tracking) resultObject = await _context.Item.Include(x => x.Unit)
                                                            .SingleOrDefaultAsync(m => m.Id == id);
-            else resultObject = await _context.Item.AsNoTracking().Include(x => x.Unit)
-                                                                  .SingleOrDefaultAsync(m => m.Id == id);
+            else resultObject = await _context.Item.Include(x => x.Unit)
+                                                   .AsNoTracking()
+                                                   .SingleOrDefaultAsync(m => m.Id == id);
             if (resultObject == null) return null;
             return resultObject;
         }
-        public async Task AddItem(Item item)
+        public async Task AddAsync(Item entity)
         {
-            await ServicesCommonFunctions.AddObject(item, _context);
+            await ServicesCommonFunctions.AddObject(entity, _context);
         }
-        public async Task<bool> UpdateItem(Item item)
+        public async Task<bool> UpdateAsync(Item entity)
         {
-            return await ServicesCommonFunctions.UpdateObject(item, _context);
+            return await ServicesCommonFunctions.UpdateObject(entity, _context);
         }
-        public async Task DeleteItem(long id)
+        public async Task DeleteAsync(long id)
         {
             await ServicesCommonFunctions.DeleteObject<Item>(id, _context);
         }
-
         public SelectList GetUnitIds()
         {
-            return new SelectList(_context.Unit, "Id", "Name"); 
+            return new SelectList(_context.Unit.AsNoTracking(), "Id", "Name"); 
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,34 +8,33 @@ using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Stock;
 using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class StockService: IStockService
+    public class StockService : BaseService, IStockService
     {
-        private readonly DefaultContext _context;
-
-        public StockService(DefaultContext context)
+        public StockService(DefaultContext context) : base(context)
         {
-            _context = context;
         }
-        public async Task<Item> GetItemInfo(long? id)
+
+        #region Public
+        public async Task<Stock> GetAsync(long? id, bool tracking = false)
         {
             if (id == null) return null;
-
-            var resultObject = await _context.Item.Include(x => x.Unit)
-                                                  .SingleOrDefaultAsync(m => m.Id == id);
-            if (resultObject == null) return null;
-            return resultObject;
-        }
-        public async Task<Stock> GetStockInfo(long? id)
-        {
-            if (id == null) return null;
-            return await _context.Stock
-                                 .Include(s => s.Item)
-                                 .Include(s => s.User)
-                                 .Include(s => s.Warehouse)
-                                 .SingleOrDefaultAsync(s => s.Id == id);
+            if (tracking)
+                return await _context.Stock
+                                     .Include(s => s.Item)
+                                     .Include(s => s.User)
+                                     .Include(s => s.Warehouse)
+                                     .SingleOrDefaultAsync(s => s.Id == id);
+            else
+                return await _context.Stock
+                                     .Include(s => s.Item)
+                                     .Include(s => s.User)
+                                     .Include(s => s.Warehouse)
+                                     .AsNoTracking()
+                                     .SingleOrDefaultAsync(s => s.Id == id);
         }
         public IQueryable<Stock> GetFiltredContent(DateTime? fromFilter,
                                                    DateTime? toFilter,
@@ -52,45 +52,88 @@ namespace TinyERP4Fun.ModelServises
 
             return filteredContext;
         }
-        public async Task Add(Stock stock)
+        public async Task<List<StockViewModel>> GetGroupedContentAsync(DateTime? fromFilter,
+                                                   DateTime? toFilter,
+                                                   IEnumerable<long?> itemFilter,
+                                                   IEnumerable<long?> warehouseFilter,
+                                                   IEnumerable<string> userFilter
+                                                   )
+        {
+            var filteredContext = GetFiltredContent(fromFilter, toFilter, itemFilter, warehouseFilter, userFilter);
+            //Это очень красивая строка  объясняет как делать множественный групбай: var result31 = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId }).Select(group => new { group.Key, Count = group.Sum(p=>p.Quantity) }).ToListAsync();
+            var result = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId })
+                                              .Select(group => new StockViewModel()
+                                                                    {
+                                                                        Item = group.FirstOrDefault().Item,
+                                                                        ItemId = group.Key.ItemId,
+                                                                        Warehouse = group.FirstOrDefault().Warehouse,
+                                                                        WarehouseId = group.Key.WarehouseId,
+                                                                        Quantity = group.Sum(s => s.Quantity)
+                                                                    })
+                                              .AsNoTracking()
+                                              .ToListAsync();
+            return result;
+        }
+        public async Task AddAsync(Stock stock)
         {
             if (stock.Quantity < 0) await CheckAddState(stock);
             _context.Add(stock);
             await _context.SaveChangesAsync();
         }
-        public async Task Remove(long id)
+        public async Task DeleteAsync(long id)
         {
             var stock = await _context.Stock.FindAsync(id);
             if (stock.Quantity > 0) await CheckDelState(stock);
             _context.Stock.Remove(stock);
             await _context.SaveChangesAsync();
         }
-        public async Task Update(Stock stock)
+        public async Task<bool> UpdateAsync(Stock stock)
         {
-
-            var oldstock = await _context.Stock.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stock.Id);
-
-            if (oldstock.WarehouseId!=stock.WarehouseId|| oldstock.ItemId != stock.ItemId)
+            try
             {
-                await CheckDelState(oldstock);
-                await CheckAddState(stock);
-            }
-            else
-            {
+                var oldstock = await _context.Stock.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stock.Id);
+
+                if (oldstock.WarehouseId != stock.WarehouseId || oldstock.ItemId != stock.ItemId)
+                {
+                    await CheckDelState(oldstock);
+                    await CheckAddState(stock);
+                }
+                else
+                {
+                    await CheckUpdateState(stock);
+                }
+
                 await CheckUpdateState(stock);
+                _context.Update(stock);
+                await _context.SaveChangesAsync();
+                return true;
             }
-            
-            await CheckUpdateState(stock);
-            _context.Update(stock);
-            await _context.SaveChangesAsync();
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ServicesCommonFunctions.EntityExists<Stock>(stock.Id, _context)) return false;
+                throw;
+            }
         }
-
         public void ClearHistory(DateTime date)
         {
             throw new NotImplementedException();
         }
+        public SelectList GetItemIds()
+        {
+            return new SelectList(_context.Item.AsNoTracking(), "Id", "Name");
+        }
+        public SelectList GetUsersIds()
+        {
+            return new SelectList(_context.Users.AsNoTracking(), "Id", "Email");
+        }
+        public SelectList GetWarehouseIds()
+        {
+            return new SelectList(_context.Warehouse.AsNoTracking(), "Id", "Name");
+        }
+        #endregion Public
 
-        private async Task CheckState(Stock stock,bool del)
+        #region Private
+        private async Task CheckState(Stock stock, bool del)
         {
             decimal quantity = del ? 0 : stock.Quantity;
             var sumBefore = quantity + await _context.Stock.Where(x => x.ItemId == stock.ItemId &&
@@ -119,8 +162,9 @@ namespace TinyERP4Fun.ModelServises
         }
         private async Task CheckUpdateState(Stock stock)
         {
-            await CheckState(stock,false);
+            await CheckState(stock, false);
         }
+        #endregion Private
 
     }
 }

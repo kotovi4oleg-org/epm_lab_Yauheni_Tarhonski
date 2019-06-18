@@ -3,9 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Expenses;
 using TinyERP4Fun.ModelServiceInterfaces;
 using TinyERP4Fun.ViewModels;
@@ -15,39 +12,36 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesExpences_User)]
     public class ExpencesController : Controller
     {
-        private readonly DefaultContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IExpencesService _expencesService;
 
-        public ExpencesController(DefaultContext context, UserManager<IdentityUser> userManager, IExpencesService expencesService)
+        public ExpencesController(UserManager<IdentityUser> userManager, IExpencesService expencesService)
         {
-            _context = context;
             _userManager = userManager;
             _expencesService = expencesService;
         }
-        private bool IsAdminOrOwner(Expences entity, bool ownerCheck)
+        private async Task<bool> IsAdminOrOwner(Expences entity, bool ownerCheck)
         {
-            var currentUser = _userManager.GetUserAsync(User);
-            Task.WaitAll(currentUser);
-            var personRoles = _userManager.GetRolesAsync(currentUser.Result);
+            var currentUser = await _userManager.GetUserAsync(User);
+            var personRoles = _userManager.GetRolesAsync(currentUser);
             if (personRoles.Result.Intersect(Constants.rolesExpences_Admin.Split(',').Select(x => x.Trim())).Count() != 0) return true;
-            if (ownerCheck&&entity!=null) return entity.User == currentUser.Result;
+            if (ownerCheck&&entity!=null) return entity.User == currentUser;
             return false;
         }
         private async Task<ExpencesViewModel> IndexCreateViewModel(int? pageNumber, ExpencesViewModel expencesViewModel, bool adm)
         {
             //Настройку хранения фильтров не реализовывал. В планах - хранить фильтры в базе для каждого сочетания пользователь/модуль
             var currentUserId = _userManager.GetUserId(User);
-            expencesViewModel = await _expencesService.GetFilteredExpences(pageNumber, expencesViewModel, currentUserId, adm);
-            ViewBag.CurrencyFilter = new SelectList(_context.Currency.Where(x=>x.Active), "Id", "Name");
-            ViewBag.CompanyFilter = new SelectList(_context.Expences.Select(x => x.Company).Distinct(), "Id", "Name");
-            ViewBag.OurCompanyFilter = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
+            expencesViewModel = await _expencesService.GetFilteredContentAsync(pageNumber, expencesViewModel, currentUserId, adm);
+            ViewBag.CurrencyFilter = _expencesService.GetCurrenciesIds();
+            ViewBag.CompanyFilter = _expencesService.GetCompaniesIds();
+            ViewBag.OurCompanyFilter = _expencesService.GetOurCompaniesIds();
             return expencesViewModel;
         }
 
         public async Task<IActionResult> Index(int? pageNumber, ExpencesViewModel expencesViewModel)
         {
-            if (expencesViewModel.AdmFilter&&!IsAdminOrOwner(null,false))
+            if (expencesViewModel.AdmFilter&&!await IsAdminOrOwner(null,false))
                 expencesViewModel.AdmFilter = false;
             var model = await IndexCreateViewModel(pageNumber, expencesViewModel, false);
             return View(model);
@@ -56,20 +50,20 @@ namespace TinyERP4Fun.Controllers
         // GET: Expences/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _expencesService.GetExpenceInfo(id);
+            var result = await _expencesService.GetAsync(id);
             if (result == null) return NotFound();
-            if (!IsAdminOrOwner(result,true)) return NotFound();
+            if (!await IsAdminOrOwner(result,true)) return NotFound();
             return View(result);
         }
         private void SetViewData()
         {
             var currentUserId = _userManager.GetUserId(User);
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentType, "Id", "Name");
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency.Where(x => x.Active), "Id", "Name");
-            ViewData["OurCompanyId"] = new SelectList(_context.Company.Where(x => x.OurCompany), "Id", "Name");
-            ViewData["PersonId"] = new SelectList(_context.Person.Where(x => x.UserId == currentUserId && x.UserId != null), "Id", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users.Where(x => x.Id == currentUserId), "Id", "Email");
+            ViewData["CompanyId"] = _expencesService.GetCompaniesIds();
+            ViewData["CurrencyId"] = _expencesService.GetCurrenciesIds();
+            ViewData["OurCompanyId"] = _expencesService.GetOurCompaniesIds();
+            ViewData["DocumentTypeId"] = _expencesService.GetDocumentTypesIds();
+            ViewData["PersonId"] = _expencesService.GetPersonsIds(currentUserId);
+            ViewData["UserId"] = _expencesService.GetUsersIds(currentUserId);
         }
         // GET: Expences/Create
         public IActionResult Create()
@@ -108,10 +102,8 @@ namespace TinyERP4Fun.Controllers
                 /**/
                 #endregion
 
-                //Повторно считали Id пользователя 
                 expences.UserId = _userManager.GetUserId(User);
-                _context.Add(expences);
-                await _context.SaveChangesAsync();
+                await _expencesService.AddAsync(expences);
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -121,9 +113,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Expences/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _expencesService.GetExpenceInfo(id);
+            var result = await _expencesService.GetAsync(id, true);
             if (result == null) return NotFound();
-            if (!IsAdminOrOwner(result, true)) return NotFound();
+            if (!await IsAdminOrOwner(result, true)) return NotFound();
             SetViewData();
             return View(result);
         }
@@ -136,16 +128,7 @@ namespace TinyERP4Fun.Controllers
             if (id != expences.Id) return NotFound();
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(expences);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ExpencesExists(expences.Id)) return NotFound();
-                    throw;
-                }
+                if(!await _expencesService.UpdateAsync(expences)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -155,9 +138,9 @@ namespace TinyERP4Fun.Controllers
         // GET: Expences/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _expencesService.GetExpenceInfo(id);
+            var result = await _expencesService.GetAsync(id);
             if (result == null) return NotFound();
-            if (!IsAdminOrOwner(result, true)) return NotFound();
+            if (!await IsAdminOrOwner(result, true)) return NotFound();
             return View(result);
         }
 
@@ -166,15 +149,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var expences = await _context.Expences.FindAsync(id);
-            _context.Expences.Remove(expences);
-            await _context.SaveChangesAsync();
+            await _expencesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-         private bool ExpencesExists(long id)
-        {
-            return _context.Expences.Any(e => e.Id == id);
         }
     }
 }

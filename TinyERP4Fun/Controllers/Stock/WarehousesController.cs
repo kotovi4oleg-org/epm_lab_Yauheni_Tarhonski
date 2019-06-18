@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Stock;
 using TinyERP4Fun.ModelServiceInterfaces;
 
@@ -13,35 +7,29 @@ namespace TinyERP4Fun.Controllers
 {
     public class WarehousesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
-
-        public WarehousesController(DefaultContext context, IGeneralService generalService)
+        private readonly IWarehouseService _warehouseService;
+        public WarehousesController( IWarehouseService warehouseService)
         {
-            _context = context;
-            _generalService = generalService;
-        }
 
+            _warehouseService = warehouseService;
+        }
         // GET: Warehouses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Warehouse.ToListAsync());
+            return View(await _warehouseService.GetListAsync());
         }
-
         // GET: Warehouses/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<Warehouse>(id);
+            var result = await _warehouseService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
-
         // GET: Warehouses/Create
         public IActionResult Create()
         {
             return View();
         }
-
         // POST: Warehouses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -49,21 +37,18 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(warehouse);
-                await _context.SaveChangesAsync();
+                await _warehouseService.AddAsync(warehouse);
                 return RedirectToAction(nameof(Index));
             }
             return View(warehouse);
         }
-
         // GET: Warehouses/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<Warehouse>(id);
+            var result = await _warehouseService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
-
         // POST: Warehouses/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -73,43 +58,25 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(warehouse);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!WarehouseExists(warehouse.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _warehouseService.UpdateAsync(warehouse)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(warehouse);
         }
-
         // GET: Warehouses/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<Warehouse>(id);
+            var result = await _warehouseService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
-
         // POST: Warehouses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var warehouse = await _context.Warehouse.FindAsync(id);
-            _context.Warehouse.Remove(warehouse);
-            await _context.SaveChangesAsync();
+            await _warehouseService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool WarehouseExists(long id)
-        {
-            return _context.Warehouse.Any(e => e.Id == id);
         }
     }
 }

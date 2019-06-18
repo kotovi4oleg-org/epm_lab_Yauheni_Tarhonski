@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Data;
 using TinyERP4Fun.Models.Expenses;
 using TinyERP4Fun.ModelServiceInterfaces;
 
@@ -15,25 +9,22 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesExpences_User)]
     public class DocumentTypesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
-
-        public DocumentTypesController(DefaultContext context, IGeneralService generalService)
+        private readonly IDocumentTypesService _documentTypesService;
+        public DocumentTypesController(IDocumentTypesService documentTypesService)
         {
-            _context = context;
-            _generalService = generalService;
+            _documentTypesService = documentTypesService;
         }
 
         // GET: DocumentTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DocumentType.ToListAsync());
+            return View(await _documentTypesService.GetListAsync());
         }
 
         // GET: DocumentTypes/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<DocumentType>(id);
+            var result = await _documentTypesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -51,8 +42,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(documentType);
-                await _context.SaveChangesAsync();
+                await _documentTypesService.AddAsync(documentType);
                 return RedirectToAction(nameof(Index));
             }
             return View(documentType);
@@ -61,7 +51,7 @@ namespace TinyERP4Fun.Controllers
         // GET: DocumentTypes/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<DocumentType>(id);
+            var result = await _documentTypesService.GetAsync(id,true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -75,16 +65,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(documentType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DocumentTypeExists(documentType.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _documentTypesService.UpdateAsync(documentType)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(documentType);
@@ -93,7 +74,7 @@ namespace TinyERP4Fun.Controllers
         // GET: DocumentTypes/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<DocumentType>(id);
+            var result = await _documentTypesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -103,15 +84,9 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var documentType = await _context.DocumentType.FindAsync(id);
-            _context.DocumentType.Remove(documentType);
-            await _context.SaveChangesAsync();
+            await _documentTypesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DocumentTypeExists(long? id)
-        {
-            return _context.DocumentType.Any(e => e.Id == id);
-        }
     }
 }

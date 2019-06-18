@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="ModelServises\Common\" />
-    <Folder Include="ModelServises\Expences\" />
   </ItemGroup>
 
 
