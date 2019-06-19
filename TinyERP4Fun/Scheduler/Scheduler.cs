@@ -36,12 +36,12 @@ namespace TinyERP4Fun.Scheduler
             var options = ControllerCommonFunctions.DefaultContextOptions.GetOptions();
             using (var context = new DefaultContext(options))
             {
-                var commonService = new CommonService(context);
-                Task updateRates = commonService.UpdateBYNVoid();
+                var _currencyRatesService = new CurrencyRatesService(context);
+                Task updateRates = _currencyRatesService.UpdateBYNVoid();
                 Task.WaitAll(updateRates);
             }
-            
-            
+
+
         }
         public Task StopAsync(CancellationToken cancellationToken)
         {

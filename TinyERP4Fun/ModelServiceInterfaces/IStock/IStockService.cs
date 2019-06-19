@@ -8,7 +8,7 @@ using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface IStockService : IAllServises<Stock>
+    public interface IStockService : IBaseService<Stock>
     {
         void ClearHistory(DateTime date);
         IQueryable<Stock> GetFiltredContent(DateTime? fromFilter,

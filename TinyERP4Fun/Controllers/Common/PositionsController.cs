@@ -15,26 +15,24 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class PositionsController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
+        private readonly IPositionsService _positionsService;
 
-        public PositionsController(DefaultContext context, IGeneralService generalService)
+        public PositionsController(IPositionsService positionsService)
         {
-            _context = context;
-            _generalService = generalService;
+            _positionsService = positionsService;
         }
 
 
         // GET: Positions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Position.ToListAsync());
+            return View(await _positionsService.GetListAsync());
         }
 
         // GET: Positions/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<Position>(id);
+            var result = await _positionsService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -52,8 +50,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(position);
-                await _context.SaveChangesAsync();
+                await _positionsService.AddAsync(position);
                 return RedirectToAction(nameof(Index));
             }
             return View(position);
@@ -62,7 +59,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<Position>(id);
+            var result = await _positionsService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -76,16 +73,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(position);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PositionExists(position.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _positionsService.UpdateAsync(position)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(position);
@@ -94,7 +82,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Positions/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<Position>(id);
+            var result = await _positionsService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -104,15 +92,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var position = await _context.Position.FindAsync(id);
-            _context.Position.Remove(position);
-            await _context.SaveChangesAsync();
+            await _positionsService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PositionExists(long? id)
-        {
-            return _context.Position.Any(e => e.Id == id);
         }
     }
 }

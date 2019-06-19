@@ -13,26 +13,23 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class CountriesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
+        private readonly ICountriesService _countriesService;
 
-        public CountriesController(DefaultContext context, IGeneralService generalService)
+        public CountriesController(ICountriesService countriesService)
         {
-            _context = context;
-            _generalService = generalService;
+            _countriesService = countriesService;
         }
 
         // GET: Countries
         public async Task<IActionResult> Index(int? pageNumber)
         {
-            var defaultContext = _context.Country.OrderBy(x => x.Name);
-            return View(await PaginatedList<Country>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
+            return View(await PaginatedList<Country>.CreateAsync(_countriesService.GetIQueryable(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Countries/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<Country>(id);
+            var result = await _countriesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -51,8 +48,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(country);
-                await _context.SaveChangesAsync();
+                await _countriesService.AddAsync(country);
                 return RedirectToAction(nameof(Index));
             }
             return View(country);
@@ -61,7 +57,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<Country>(id);
+            var result = await _countriesService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -75,16 +71,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(country);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CountryExists(country.Id)) return NotFound();
-                    throw;
-                }
+                if(!await _countriesService.UpdateAsync(country)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(country);
@@ -93,7 +80,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Countries/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<Country>(id);
+            var result = await _countriesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -103,15 +90,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var country = await _context.Country.FindAsync(id);
-            _context.Country.Remove(country);
-            await _context.SaveChangesAsync();
+            await _countriesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CountryExists(long? id)
-        {
-            return _context.Country.Any(e => e.Id == id);
         }
     }
 }

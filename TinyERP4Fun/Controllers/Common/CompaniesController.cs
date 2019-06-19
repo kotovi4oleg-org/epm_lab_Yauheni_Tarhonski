@@ -14,21 +14,20 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class CompaniesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        
+        private readonly ICompaniesService _companiesService;
 
-        public CompaniesController(DefaultContext context, ICommonService commonService)
+        public CompaniesController(ICompaniesService companiesService)
         {
-            _context = context;
-            _commonService = commonService;
+            _companiesService = companiesService;
         }
-        public ActionResult GetCities(int id)
+        public ActionResult GetCities(long stateId)
         {
-            return PartialView(_context.City.Where(x => x.StateId == id).ToList());
+            return PartialView(_companiesService.GetCities(stateId));
         }
-        public ActionResult GetStates(int id)
+        public ActionResult GetStates(long countryId)
         {
-            return PartialView(_context.State.Where(x => x.CountryId == id).ToList());
+            return PartialView(_companiesService.GetCities(countryId));
         }
         // GET: Companies
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
@@ -42,14 +41,14 @@ namespace TinyERP4Fun.Controllers
             if (searchString != null) pageNumber = 1;
             else searchString = currentFilter;
 
-            IQueryable<Company> result = _commonService.GetFiltredCompanies(sortOrder, searchString);
+            IQueryable<Company> result = _companiesService.GetFiltredContent(sortOrder, searchString);
             return View(await PaginatedList<Company>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var company = await _commonService.GetCompanyInfo(id);
+            var company = await _companiesService.GetAsync(id);
             if (company == null) return NotFound();
             return View(company);
         }
@@ -57,17 +56,15 @@ namespace TinyERP4Fun.Controllers
         private void SetViewBag(Company company)
         {
             if (company==null||company.CityId == null)
-            {
                 ViewBag.Cities = ViewBag.States = null;
-            }
             else
             {
-                ViewBag.Cities = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.City.Where(x => x.StateId == company.City.StateId), "Id", "Name"));
-                ViewBag.States = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == company.City.State.CountryId), "Id", "Name"));
+                ViewBag.Cities = _companiesService.GetCitiesIds(company.City.StateId);
+                ViewBag.States = _companiesService.GetStatesIds(company.City.State.CountryId);
             }
-            ViewBag.Currencies = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Currency, "Id", "Name"));
-            ViewBag.Companies = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Company, "Id", "Name"));
-            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+            ViewBag.Currencies = _companiesService.GetCurrenciesIds();
+            ViewBag.Companies = _companiesService.GetCompaniesIds();
+            ViewBag.Countries = _companiesService.GetCountriesIds();
         }
 
         // GET: Companies/Create
@@ -84,8 +81,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
+                await _companiesService.AddAsync(company);
                 return RedirectToAction(nameof(Index));
             }
             SetViewBag(company);
@@ -95,33 +91,22 @@ namespace TinyERP4Fun.Controllers
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var company = await _commonService.GetCompanyInfo(id);
+            var company = await _companiesService.GetAsync(id, true);
             if (company == null) return NotFound();
             SetViewBag(company);
             return View(company);
         }
 
         // POST: Companies/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,TIN,TIN2,Address,Address2,OurCompany,CityId,HeadCompanyId,BaseCurrencyId")] Company company)
         {
             if (id != company.Id) return NotFound();
 
-            if (ModelState.IsValid) //return View(company)
+            if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id)) return NotFound();
-                    throw;
-                }
+                if(!await _companiesService.UpdateAsync(company)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewBag(company);
@@ -131,7 +116,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var company = await _commonService.GetCompanyInfo(id);
+            var company = await _companiesService.GetAsync(id);
             if (company == null) return NotFound();
             return View(company);
         }
@@ -141,15 +126,9 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var company = await _context.Company.FindAsync(id);
-            _context.Company.Remove(company);
-            await _context.SaveChangesAsync();
+            await _companiesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CompanyExists(long? id)
-        {
-            return _context.Company.Any(e => e.Id == id);
-        }
     }
 }

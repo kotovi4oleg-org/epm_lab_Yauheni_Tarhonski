@@ -14,13 +14,10 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class CitiesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
-
-        public CitiesController(DefaultContext context, ICommonService commonService)
+        private readonly ICitiesService _citiesService;
+        public CitiesController(ICitiesService citiesService)
         {
-            _context = context;
-            _commonService = commonService;
+            _citiesService = citiesService;
         }
 
         // GET: Cities
@@ -34,14 +31,14 @@ namespace TinyERP4Fun.Controllers
             if (searchString != null) pageNumber = 1;
             else searchString = currentFilter;
 
-            IQueryable<City> result = _commonService.GetFiltredCities(sortOrder, searchString);
+            IQueryable<City> result = _citiesService.GetFiltredCities(sortOrder, searchString);
             return View(await PaginatedList<City>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Cities/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var cityInfo = await _commonService.GetCityInfo(id);
+            var cityInfo = await _citiesService.GetAsync(id);
             if (cityInfo == null) return NotFound();
             return View(cityInfo);
         }
@@ -50,8 +47,8 @@ namespace TinyERP4Fun.Controllers
             if (city == null || city.State == null)
                 ViewBag.States = null;
             else
-                ViewBag.States = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.State.Where(x => x.CountryId == city.State.CountryId), "Id", "Name"));
-            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Country, "Id", "Name"));
+                ViewBag.States = _citiesService.GetStatesIds(city.State.CountryId);
+            ViewBag.Countries = _citiesService.GetCountriesIds();
         }
         // GET: Cities/Create
         public IActionResult Create()
@@ -67,8 +64,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(city);
-                await _context.SaveChangesAsync();
+                await _citiesService.AddAsync(city);
                 return RedirectToAction(nameof(Index));
             }
             SetViewBag(city);
@@ -78,15 +74,15 @@ namespace TinyERP4Fun.Controllers
         // GET: Cities/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var city = await _commonService.GetCityInfo(id);
+            var city = await _citiesService.GetAsync(id,true);
             if (city == null) return NotFound();
             SetViewBag(city);
             return View(city);
         }
 
-        public ActionResult GetStates(int id)
+        public ActionResult GetStates(long id)
         {
-            return PartialView(_context.State.Where(x => x.CountryId == id).ToList());
+            return PartialView(_citiesService.GetStates(id));
         }
 
         // POST: Cities/Edit/5
@@ -98,16 +94,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(city);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CityExists(city.Id)) return NotFound();
-                    throw;
-                }
+                if(!await _citiesService.UpdateAsync(city)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewBag(city);
@@ -117,7 +104,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Cities/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var cityInfo = await _commonService.GetCityInfo(id);
+            var cityInfo = await _citiesService.GetAsync(id);
             if (cityInfo == null) return NotFound();
             return View(cityInfo);
         }
@@ -127,15 +114,9 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var city = await _context.City.FindAsync(id);
-            _context.City.Remove(city);
-            await _context.SaveChangesAsync();
+            await _citiesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CityExists(long? id)
-        {
-            return _context.City.Any(e => e.Id == id);
-        }
     }
 }

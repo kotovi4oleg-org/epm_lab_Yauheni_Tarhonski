@@ -29,11 +29,6 @@ namespace TinyERP4Fun.Controllers
                 return options;
             }
         }
-        internal static SelectList AddFirstItem(SelectList list)
-                {
-                    List<SelectListItem> _list = list.ToList();
-                    _list.Insert(0, new SelectListItem() { Value = null, Text = "" });
-                    return new SelectList(_list, "Value", "Text");
-                }
+
     }
 }

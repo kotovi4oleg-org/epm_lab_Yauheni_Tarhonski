@@ -13,26 +13,23 @@ namespace TinyERP4Fun.Controllers.Common
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class CurrenciesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
+        private readonly ICurrenciesService _currenciesService;
 
-        public CurrenciesController(DefaultContext context, IGeneralService generalService)
+        public CurrenciesController(ICurrenciesService currenciesService)
         {
-            _context = context;
-            _generalService = generalService;
+            _currenciesService = currenciesService;
         }
 
         // GET: Currencies
         public async Task<IActionResult> Index(int? pageNumber)
         {
-            var defaultContext = _context.Currency.OrderBy(x => x.Name);
-            return View(await PaginatedList<Currency>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
+            return View(await PaginatedList<Currency>.CreateAsync(_currenciesService.GetIQueryable(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Currencies/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<Currency>(id);
+            var result = await _currenciesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -50,8 +47,7 @@ namespace TinyERP4Fun.Controllers.Common
         {
             if (ModelState.IsValid)
             {
-                _context.Add(currency);
-                await _context.SaveChangesAsync();
+                await _currenciesService.AddAsync(currency);
                 return RedirectToAction(nameof(Index));
             }
             return View(currency);
@@ -60,7 +56,7 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<Currency>(id);
+            var result = await _currenciesService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -74,16 +70,7 @@ namespace TinyERP4Fun.Controllers.Common
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(currency);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CurrencyExists(currency.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _currenciesService.UpdateAsync(currency)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(currency);
@@ -92,7 +79,7 @@ namespace TinyERP4Fun.Controllers.Common
         // GET: Currencies/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<Currency>(id);
+            var result = await _currenciesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -102,15 +89,9 @@ namespace TinyERP4Fun.Controllers.Common
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var currency = await _context.Currency.FindAsync(id);
-            _context.Currency.Remove(currency);
-            await _context.SaveChangesAsync();
+            await _currenciesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CurrencyExists(long? id)
-        {
-            return _context.Currency.Any(e => e.Id == id);
-        }
     }
 }

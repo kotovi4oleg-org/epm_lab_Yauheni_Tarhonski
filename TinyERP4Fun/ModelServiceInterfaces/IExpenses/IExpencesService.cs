@@ -9,7 +9,7 @@ using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface IExpencesService: IAllServises<Expences>
+    public interface IExpencesService: IBaseService<Expences>
     {
         Task<ExpencesViewModel> GetFilteredContentAsync(int? pageNumber, ExpencesViewModel expencesViewModel, string currentUserId, bool adm);
         SelectList GetCurrenciesIds();

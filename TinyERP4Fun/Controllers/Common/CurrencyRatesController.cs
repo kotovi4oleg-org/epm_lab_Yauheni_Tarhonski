@@ -13,44 +13,37 @@ namespace TinyERP4Fun.Controllers
 {
     public class CurrencyRatesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly ICurrencyRatesService _currencyRatesService;
 
-        public CurrencyRatesController(DefaultContext context, ICommonService commonService)
+        public CurrencyRatesController(ICurrencyRatesService currencyRatesService)
         {
-            _context = context;
-            _commonService = commonService;
+            _currencyRatesService = currencyRatesService;
         }
 
          [Authorize(Roles = Constants.rolesCommon_Admin)]
         public async Task<IActionResult> UpdateBYN()
         {
-            await _commonService.UpdateBYNVoid();
+            await _currencyRatesService.UpdateBYNVoid();
             return RedirectToAction(nameof(Index));
-
         }
 
         // GET: CurrencyRates
         public async Task<IActionResult> Index(int? pageNumber)
         {
-            var defaultContext = _context.CurrencyRates.Include(c => c.BaseCurrency)
-                                                       .Include(c => c.Currency)
-                                                       .OrderByDescending(x => x.DateRate)
-                                                       .ThenBy(x => x.Currency.Name);
-            return View(await PaginatedList<CurrencyRates>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
+            return View(await PaginatedList<CurrencyRates>.CreateAsync(_currencyRatesService.GetIQueryable(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: CurrencyRates/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
+            var currencyRates = await _currencyRatesService.GetAsync(id);
             if (currencyRates == null) return NotFound();
             return View(currencyRates);
         }
         private void SetViewData()
         {
-            ViewData["BaseCurrencyId"] = new SelectList(_context.Currency, "Id", "Code");
-            ViewData["CurrencyId"] = new SelectList(_context.Currency, "Id", "Code");
+            ViewData["BaseCurrencyId"] = _currencyRatesService.GetCurrenciesIds();
+            ViewData["CurrencyId"] = _currencyRatesService.GetCurrenciesIds();
         }
         // GET: CurrencyRates/Create
         [Authorize(Roles = Constants.adminRoleName)]
@@ -67,8 +60,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(currencyRates);
-                await _context.SaveChangesAsync();
+                await _currencyRatesService.AddAsync(currencyRates);
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -78,7 +70,7 @@ namespace TinyERP4Fun.Controllers
         // GET: CurrencyRates/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
+            var currencyRates = await _currencyRatesService.GetAsync(id, true);
             if (currencyRates == null) return NotFound();
             SetViewData();
             return View(currencyRates);
@@ -93,16 +85,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(currencyRates);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CurrencyRatesExists(currencyRates.Id)) return NotFound();
-                    throw;
-                }
+                if (! await _currencyRatesService.UpdateAsync(currencyRates)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewData();
@@ -112,7 +95,7 @@ namespace TinyERP4Fun.Controllers
         [Authorize(Roles = Constants.adminRoleName)]
         public async Task<IActionResult> Delete(long? id)
         {
-            var currencyRates = await _commonService.GetCurrencyRatesInfo(id);
+            var currencyRates = await _currencyRatesService.GetAsync(id);
             if (currencyRates == null) return NotFound();
             return View(currencyRates);
         }
@@ -122,14 +105,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var currencyRates = await _context.CurrencyRates.FindAsync(id);
-            _context.CurrencyRates.Remove(currencyRates);
-            await _context.SaveChangesAsync();
+            await _currencyRatesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-        private bool CurrencyRatesExists(long id)
-        {
-            return _context.CurrencyRates.Any(e => e.Id == id);
         }
     }
 }

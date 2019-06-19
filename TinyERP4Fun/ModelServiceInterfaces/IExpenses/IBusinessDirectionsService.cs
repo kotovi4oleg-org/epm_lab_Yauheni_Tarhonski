@@ -6,7 +6,7 @@ using TinyERP4Fun.Models.Expenses;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface IBusinessDirectionsService : IAllServises<BusinessDirection>, ISimpleList<BusinessDirection>
+    public interface IBusinessDirectionsService : IBaseService<BusinessDirection>
     {
     }
 }

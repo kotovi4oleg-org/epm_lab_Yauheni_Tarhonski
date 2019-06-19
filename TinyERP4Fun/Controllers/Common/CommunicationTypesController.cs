@@ -12,23 +12,21 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class CommunicationTypesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
+        private readonly ICommunicationTypesService _communicationTypesService;
 
-        public CommunicationTypesController(DefaultContext context, IGeneralService generalService)
+        public CommunicationTypesController(ICommunicationTypesService communicationTypesService)
         {
-            _context = context;
-            _generalService = generalService;
+            _communicationTypesService = communicationTypesService;
         }
         // GET: CommunicationTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CommunicationType.ToListAsync());
+            return View(await _communicationTypesService.GetListAsync());
         }
         // GET: CommunicationTypes/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<CommunicationType>(id);
+            var result = await _communicationTypesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -44,8 +42,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(communicationType);
-                await _context.SaveChangesAsync();
+                await _communicationTypesService.AddAsync(communicationType);
                 return RedirectToAction(nameof(Index));
             }
             return View(communicationType);
@@ -54,7 +51,7 @@ namespace TinyERP4Fun.Controllers
         // GET: CommunicationTypes/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<CommunicationType>(id);
+            var result = await _communicationTypesService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -67,16 +64,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(communicationType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CommunicationTypeExists(communicationType.Id)) return NotFound();
-                    throw;
-                }
+                if(!await _communicationTypesService.UpdateAsync(communicationType)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(communicationType);
@@ -85,7 +73,7 @@ namespace TinyERP4Fun.Controllers
         // GET: CommunicationTypes/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<CommunicationType>(id);
+            var result = await _communicationTypesService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -94,14 +82,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var communicationType = await _context.CommunicationType.FindAsync(id);
-            _context.CommunicationType.Remove(communicationType);
-            await _context.SaveChangesAsync();
+            await _communicationTypesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-        private bool CommunicationTypeExists(long? id)
-        {
-            return _context.CommunicationType.Any(e => e.Id == id);
         }
     }
 }

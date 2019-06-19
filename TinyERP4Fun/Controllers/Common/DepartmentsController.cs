@@ -16,27 +16,24 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class DepartmentsController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly IGeneralService _generalService;
+        private readonly IDepartmentsService _departmentsService;
 
-        public DepartmentsController(DefaultContext context, IGeneralService generalService)
+        public DepartmentsController(IDepartmentsService departmentsService)
         {
-            _context = context;
-            _generalService = generalService;
+            _departmentsService = departmentsService;
         }
 
 
         // GET: Departments
         public async Task<IActionResult> Index(int? pageNumber)
         {
-            var defaultContext = _context.Department.OrderBy(x => x.Name);
-            return View(await PaginatedList<Department>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
+            return View(await PaginatedList<Department>.CreateAsync(_departmentsService.GetIQueryable(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _generalService.GetObject<Department>(id);
+            var result = await _departmentsService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -54,8 +51,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
+                await _departmentsService.AddAsync(department);
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -63,7 +59,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _generalService.GetObject<Department>(id);
+            var result = await _departmentsService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -76,16 +72,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepartmentExists(department.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _departmentsService.UpdateAsync(department)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -94,7 +81,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _generalService.GetObject<Department>(id);
+            var result = await _departmentsService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -104,14 +91,9 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var department = await _context.Department.FindAsync(id);
-            _context.Department.Remove(department);
-            await _context.SaveChangesAsync();
+            await _departmentsService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        private bool DepartmentExists(long? id)
-        {
-            return _context.Department.Any(e => e.Id == id);
-        }
+
     }
 }

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
@@ -13,6 +16,41 @@ namespace TinyERP4Fun.ModelServises
 {
     public static class ServicesCommonFunctions
     {
+        internal static async Task<string> SendGetRequestAsync(Uri url)
+        {
+            string result;
+            using (var content = new MemoryStream())
+            {
+                try //http
+                {
+                    var webReq = WebRequest.Create(url);
+                    Task<WebResponse> responseTask = webReq.GetResponseAsync();
+                    using (WebResponse response = await responseTask)
+                    {
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            await responseStream.CopyToAsync(content);
+                        }
+                    }
+                }
+                catch //https
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    var webReq = WebRequest.Create(url);
+                    Task<WebResponse> responseTask = webReq.GetResponseAsync();
+                    using (WebResponse response = await responseTask)
+                    {
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            await responseStream.CopyToAsync(content);
+                        }
+                    }
+                }
+                result = Encoding.ASCII.GetString(content.ToArray());
+            }
+
+            return result;
+        }
         public static void AddImage<T>(ref T entity, IList<IFormFile> files) where T : IHaveImage
         {
             IFormFile uploadedImage = files.FirstOrDefault();
@@ -45,6 +83,15 @@ namespace TinyERP4Fun.ModelServises
             MemoryStream ms = new MemoryStream(entity.Image);
             return new FileStreamResult(ms, entity.ContentType); 
         }
+        public static async Task<IEnumerable<T>> GetListAsync<T>(DefaultContext _context) where T : class
+        {
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
+        }
+        public static IQueryable<T> GetIQueryable<T>(DefaultContext _context) where T : class
+        {
+            return _context.Set<T>().AsNoTracking();
+        }
+
         public static async Task<T> GetObject<T>(long? id, DefaultContext _context, bool tracking = false) where T : class, IHaveLongId
         {
             if (id == null) return null;
@@ -53,7 +100,6 @@ namespace TinyERP4Fun.ModelServises
                 resultObject = await _context.Set<T>().SingleOrDefaultAsync(t => t.Id == id);
             else
                 resultObject = await _context.Set<T>().AsNoTracking().SingleOrDefaultAsync(t => t.Id == id);
-            if (resultObject == null) return null;
             return resultObject;
         }
         public static async Task AddObject<T>(T entity, DefaultContext _context) where T : class, IHaveLongId
@@ -84,6 +130,12 @@ namespace TinyERP4Fun.ModelServises
         public static bool EntityExists<T>(long id, DefaultContext _context) where T : class, IHaveLongId
         {
             return _context.Set<T>().Any(e => e.Id == id);
+        }
+        internal static SelectList AddFirstItem(SelectList list)
+        {
+            List<SelectListItem> _list = list.ToList();
+            _list.Insert(0, new SelectListItem() { Value = null, Text = "" });
+            return new SelectList(_list, "Value", "Text");
         }
     }
 }

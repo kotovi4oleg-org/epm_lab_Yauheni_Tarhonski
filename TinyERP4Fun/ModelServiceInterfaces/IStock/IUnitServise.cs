@@ -6,7 +6,7 @@ using TinyERP4Fun.Models.Stock;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface IUnitServise : IAllServises<Unit>, ISimpleList<Unit>
+    public interface IUnitService : IBaseService<Unit>
     {
     }
 }

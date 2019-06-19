@@ -11,17 +11,17 @@ using TinyERP4Fun.ModelServiceInterfaces;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class ItemService :BaseService, IItemService
+    public class ItemService :BaseService<Item>, IItemService
     {
         public ItemService(DefaultContext context) : base(context)
         {
         }
-        public async Task<IEnumerable<Item>> GetListAsync()
+        public override async Task<IEnumerable<Item>> GetListAsync()
         {
-            var defaultContext = _context.Item.Include(i => i.Unit);
+            var defaultContext = _context.Item.Include(x => x.Unit);
             return await defaultContext.AsNoTracking().ToListAsync();
         }
-        public async Task<Item> GetAsync(long? id, bool tracking = false)
+        public override async Task<Item> GetAsync(long? id, bool tracking = false)
         {
             if (id == null) return null;
             Item resultObject;
@@ -33,19 +33,7 @@ namespace TinyERP4Fun.ModelServises
             if (resultObject == null) return null;
             return resultObject;
         }
-        public async Task AddAsync(Item entity)
-        {
-            await ServicesCommonFunctions.AddObject(entity, _context);
-        }
-        public async Task<bool> UpdateAsync(Item entity)
-        {
-            return await ServicesCommonFunctions.UpdateObject(entity, _context);
-        }
-        public async Task DeleteAsync(long id)
-        {
-            await ServicesCommonFunctions.DeleteObject<Item>(id, _context);
-        }
-        public SelectList GetUnitIds()
+        public SelectList GetUnitsIds()
         {
             return new SelectList(_context.Unit.AsNoTracking(), "Id", "Name"); 
         }

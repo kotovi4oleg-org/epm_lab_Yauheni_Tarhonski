@@ -31,7 +31,7 @@ namespace TinyERP4Fun.Controllers
         }
         private void SetViewData()
         {
-            ViewData["UnitId"] = _itemService.GetUnitIds();
+            ViewData["UnitId"] = _itemService.GetUnitsIds();
         }
         // GET: Items/Create
         public IActionResult Create()

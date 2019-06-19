@@ -12,14 +12,14 @@ using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class StockService : BaseService, IStockService
+    public class StockService : BaseService<Stock>, IStockService
     {
         public StockService(DefaultContext context) : base(context)
         {
         }
 
         #region Public
-        public async Task<Stock> GetAsync(long? id, bool tracking = false)
+        public override async Task<Stock> GetAsync(long? id, bool tracking = false)
         {
             if (id == null) return null;
             if (tracking)
@@ -74,20 +74,20 @@ namespace TinyERP4Fun.ModelServises
                                               .ToListAsync();
             return result;
         }
-        public async Task AddAsync(Stock stock)
+        public override async Task AddAsync(Stock stock)
         {
             if (stock.Quantity < 0) await CheckAddState(stock);
             _context.Add(stock);
             await _context.SaveChangesAsync();
         }
-        public async Task DeleteAsync(long id)
+        public override async Task DeleteAsync(long id)
         {
             var stock = await _context.Stock.FindAsync(id);
             if (stock.Quantity > 0) await CheckDelState(stock);
             _context.Stock.Remove(stock);
             await _context.SaveChangesAsync();
         }
-        public async Task<bool> UpdateAsync(Stock stock)
+        public override async Task<bool> UpdateAsync(Stock stock)
         {
             try
             {

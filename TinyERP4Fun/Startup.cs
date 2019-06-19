@@ -78,14 +78,26 @@ namespace TinyERP4Fun
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IWarehouseService, WarehouseService>();
-            services.AddScoped<IUnitServise, UnitServise>();
+            services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IExpencesService, ExpencesService>();
             services.AddScoped<IBusinessDirectionsService, BusinessDirectionsService>();
             services.AddScoped<ICostItemsService, CostItemsService>();
             services.AddScoped<IDocumentTypesService, DocumentTypesService>();
 
-            services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<IGeneralService, GeneralService>();
+            services.AddScoped<ICurrencyRatesService, CurrencyRatesService>();
+            services.AddScoped<ICitiesService, CitiesService>();
+            services.AddScoped<ICommunicationsService, CommunicationsService>();
+            services.AddScoped<ICommunicationTypesService, CommunicationTypesService>();
+            services.AddScoped<ICompaniesService, CompaniesService>();
+            services.AddScoped<ICountriesService, CountriesService>();
+            services.AddScoped<ICurrenciesService, CurrenciesService>();
+            services.AddScoped<ICurrencyRatesService, CurrencyRatesService>();
+            services.AddScoped<IDepartmentsService, DepartmentsService>();
+
+            services.AddScoped<IEmployeesService, EmployeesService>();
+            services.AddScoped<IPeopleService, PeopleService>();
+            services.AddScoped<IPositionsService, PositionsService>();
+            services.AddScoped<IStatesService, StatesService>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

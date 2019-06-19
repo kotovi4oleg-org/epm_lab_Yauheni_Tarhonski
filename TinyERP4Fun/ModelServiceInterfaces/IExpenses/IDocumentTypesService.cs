@@ -6,7 +6,7 @@ using TinyERP4Fun.Models.Expenses;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface IDocumentTypesService : IAllServises<DocumentType>, ISimpleList<DocumentType>
+    public interface IDocumentTypesService : IBaseService<DocumentType>
     {
     }
 }

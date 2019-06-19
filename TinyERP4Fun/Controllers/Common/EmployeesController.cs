@@ -16,38 +16,31 @@ namespace TinyERP4Fun.Controllers
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class EmployeesController : Controller
     {
-        private readonly DefaultContext _context;
-        private readonly ICommonService _commonService;
+        private readonly IEmployeesService _employeesService;
 
-        public EmployeesController(DefaultContext context,ICommonService commonService)
+        public EmployeesController(IEmployeesService employeesService)
         {
-            _context = context;
-            _commonService = commonService;
+            _employeesService = employeesService;
         }
 
         // GET: Employees
         public async Task<IActionResult> Index(int? pageNumber)
         {
-            var defaultContext =  _context.Employee.Include(x => x.Person)
-                                               .Include(x => x.Department)
-                                               .Include(x => x.Position)
-                                               .OrderBy(x => x.Person.LastName)
-                                               .ThenBy(x => x.Person.FirstName);
-            return View(await PaginatedList<Employee>.CreateAsync(defaultContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
+            return View(await PaginatedList<Employee>.CreateAsync(_employeesService.GetIQueryable(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Employees/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var employee = await _commonService.GetEmployeeInfo(id);
+            var employee = await _employeesService.GetAsync(id);
             if (employee == null) return NotFound();
             return View(employee);
         }
         private void SetViewBag()
         {
-            ViewBag.People = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Person, "Id", "FullName"));
-            ViewBag.Departments = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Department, "Id", "Name"));
-            ViewBag.Positions = ControllerCommonFunctions.AddFirstItem(new SelectList(_context.Position, "Id", "Name"));
+            ViewBag.People = _employeesService.GetPersonsIds();
+            ViewBag.Departments = _employeesService.GetDepartmentsIds();
+            ViewBag.Positions = _employeesService.GetPositionsIds();
         }
         // GET: Employees/Create
         public IActionResult Create()
@@ -62,8 +55,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
+                await _employeesService.AddAsync(employee);
                 return RedirectToAction(nameof(Index));
             }
             SetViewBag();
@@ -73,7 +65,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var employee = await _commonService.GetEmployeeInfo(id);
+            var employee = await _employeesService.GetAsync(id, true);
             if (employee == null) return NotFound();
             SetViewBag();
             return View(employee);
@@ -88,16 +80,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EmployeeExists(employee.Id)) return NotFound();
-                    throw;
-                }
+                if (!await _employeesService.UpdateAsync(employee)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             SetViewBag();
@@ -107,7 +90,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var employee = await _commonService.GetEmployeeInfo(id);
+            var employee = await _employeesService.GetAsync(id);
             if (employee == null) return NotFound();
             return View(employee);
         }
@@ -117,14 +100,8 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var employee = await _context.Employee.FindAsync(id);
-            _context.Employee.Remove(employee);
-            await _context.SaveChangesAsync();
+            await _employeesService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-        private bool EmployeeExists(long? id)
-        {
-            return _context.Employee.Any(e => e.Id == id);
         }
     }
 }

@@ -13,23 +13,23 @@ namespace TinyERP4Fun.Controllers
 {
     public class UnitsController : Controller
     {
-        private readonly IUnitServise _unitServise;
+        private readonly IUnitService _unitService;
 
-        public UnitsController(IUnitServise unitServise)
+        public UnitsController(IUnitService unitService)
         {
-            _unitServise = unitServise;
+            _unitService = unitService;
         }
 
         // GET: Units
         public async Task<IActionResult> Index()
         {
-            return View(await _unitServise.GetListAsync());
+            return View(await _unitService.GetListAsync());
         }
 
         // GET: Units/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var result = await _unitServise.GetAsync(id);
+            var result = await _unitService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -47,7 +47,7 @@ namespace TinyERP4Fun.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _unitServise.AddAsync(unit);
+                await _unitService.AddAsync(unit);
                 return RedirectToAction(nameof(Index));
             }
             return View(unit);
@@ -56,7 +56,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            var result = await _unitServise.GetAsync(id, true);
+            var result = await _unitService.GetAsync(id, true);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -70,7 +70,7 @@ namespace TinyERP4Fun.Controllers
 
             if (ModelState.IsValid)
             {
-                if (!await _unitServise.UpdateAsync(unit)) return NotFound();
+                if (!await _unitService.UpdateAsync(unit)) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(unit);
@@ -79,7 +79,7 @@ namespace TinyERP4Fun.Controllers
         // GET: Units/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            var result = await _unitServise.GetAsync(id);
+            var result = await _unitService.GetAsync(id);
             if (result == null) return NotFound();
             return View(result);
         }
@@ -89,7 +89,7 @@ namespace TinyERP4Fun.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            await _unitServise.DeleteAsync(id);
+            await _unitService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

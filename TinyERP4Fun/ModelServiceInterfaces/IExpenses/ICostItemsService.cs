@@ -6,7 +6,7 @@ using TinyERP4Fun.Models.Expenses;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface ICostItemsService : IAllServises<CostItem>, ISimpleList<CostItem>
+    public interface ICostItemsService : IBaseService<CostItem>
     {
     }
 }

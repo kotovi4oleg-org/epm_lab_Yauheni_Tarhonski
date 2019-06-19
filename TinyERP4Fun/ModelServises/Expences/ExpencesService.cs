@@ -12,12 +12,12 @@ using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class ExpencesService : BaseService, IExpencesService
+    public class ExpencesService : BaseService<Expences>, IExpencesService
     {
         public ExpencesService(DefaultContext context) : base(context)
         {
         }
-        public async Task<Expences> GetAsync(long? id, bool tracking = false)
+        public override async Task<Expences> GetAsync(long? id, bool tracking = false)
         {
             if (id == null) return null;
             if (tracking)
@@ -37,18 +37,6 @@ namespace TinyERP4Fun.ModelServises
                                                       .Include(e => e.User)
                                                       .AsNoTracking()
                                                       .SingleOrDefaultAsync(m => m.Id == id);
-        }
-        public async Task AddAsync(Expences entity)
-        {
-            await ServicesCommonFunctions.AddObject(entity, _context);
-        }
-        public async Task<bool> UpdateAsync(Expences entity)
-        {
-            return await ServicesCommonFunctions.UpdateObject(entity, _context);
-        }
-        public async Task DeleteAsync(long id)
-        {
-            await ServicesCommonFunctions.DeleteObject<Expences>(id, _context);
         }
         public async Task<ExpencesViewModel> GetFilteredContentAsync(int? pageNumber, ExpencesViewModel expencesViewModel, string currentUserId, bool adm)
         {
