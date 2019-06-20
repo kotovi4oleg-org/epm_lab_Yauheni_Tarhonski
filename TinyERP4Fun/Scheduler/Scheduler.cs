@@ -36,8 +36,8 @@ namespace TinyERP4Fun.Scheduler
             var options = ControllerCommonFunctions.DefaultContextOptions.GetOptions();
             using (var context = new DefaultContext(options))
             {
-                var _currencyRatesService = new CurrencyRatesService(context);
-                Task updateRates = _currencyRatesService.UpdateBYNVoid();
+                var _updateCurrencyRatesService = new UpdateCurrencyRatesService(context);
+                Task updateRates = _updateCurrencyRatesService.UpdateBYNVoid();
                 Task.WaitAll(updateRates);
             }
 

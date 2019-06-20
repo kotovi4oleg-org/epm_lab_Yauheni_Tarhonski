@@ -98,7 +98,7 @@ namespace TinyERP4Fun
             services.AddScoped<IPeopleService, PeopleService>();
             services.AddScoped<IPositionsService, PositionsService>();
             services.AddScoped<IStatesService, StatesService>();
-
+            services.AddScoped<IUpdateCurrencyRatesService, UpdateCurrencyRatesService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

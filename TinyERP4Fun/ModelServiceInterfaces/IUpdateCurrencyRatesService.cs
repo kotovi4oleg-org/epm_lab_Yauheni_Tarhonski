@@ -6,8 +6,8 @@ using TinyERP4Fun.Models.Common;
 
 namespace TinyERP4Fun.ModelServiceInterfaces
 {
-    public interface ICurrencyRatesService : IBaseService<CurrencyRates>
+    public interface IUpdateCurrencyRatesService
     {
-        SelectList GetCurrenciesIds();
+        Task UpdateBYNVoid();
     }
 }

@@ -14,16 +14,17 @@ namespace TinyERP4Fun.Controllers
     public class CurrencyRatesController : Controller
     {
         private readonly ICurrencyRatesService _currencyRatesService;
-
-        public CurrencyRatesController(ICurrencyRatesService currencyRatesService)
+        private readonly IUpdateCurrencyRatesService _updateCurrencyRatesService;
+        public CurrencyRatesController(ICurrencyRatesService currencyRatesService, IUpdateCurrencyRatesService updateCurrencyRatesService)
         {
             _currencyRatesService = currencyRatesService;
+            _updateCurrencyRatesService = updateCurrencyRatesService;
         }
 
          [Authorize(Roles = Constants.rolesCommon_Admin)]
         public async Task<IActionResult> UpdateBYN()
         {
-            await _currencyRatesService.UpdateBYNVoid();
+            await _updateCurrencyRatesService.UpdateBYNVoid();
             return RedirectToAction(nameof(Index));
         }
 
