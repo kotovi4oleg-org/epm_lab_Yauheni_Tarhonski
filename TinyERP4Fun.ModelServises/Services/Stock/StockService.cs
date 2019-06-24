@@ -124,12 +124,7 @@ namespace TinyERP4Fun.ModelServises
                        .GroupBy(x => x.OperDate)
                        .OrderBy(x => x.Key)
                        .Select(x => new DateDecimal (x.Key, x.Sum(y => y.Quantity)));
-            
-            //Момент, который мне не очень нра. Хотелось бы обойтись исключительно IQueryable.
-            var sumCheckAllFinal = AggregateSequence(sumCheckAll, sumBefore);
-            //Если исключительно IQueryable невозможен, то лучше эту проверку выкинуть в функцию AggregateSequence(и сделать её void).
-            var sumCheck = sumCheckAllFinal.Where(x => x.Sum < 0);
-            if (sumCheck.Count() > 0) throw new ArgumentException("st02:Wrong balance on date " + sumCheck.First().Date.ToString() + "Quantity = " + sumCheck.First().Sum.ToString());
+            AggregateSequenceCheck(sumCheckAll, sumBefore);
         }
         private class DateDecimal
         {
@@ -141,13 +136,13 @@ namespace TinyERP4Fun.ModelServises
             }
         }
 
-        private IEnumerable<DateDecimal> AggregateSequence(IQueryable<DateDecimal> sourse, decimal init)
+        private void AggregateSequenceCheck(IQueryable<DateDecimal> sourse, decimal init)
         {
             decimal partialSum = init;
             foreach (var memb in sourse)
             {
-                yield return new DateDecimal(memb.Date, partialSum + memb.Sum);
                 partialSum += memb.Sum;
+                if (partialSum < 0) throw new ArgumentException("st02:Wrong balance on date " + memb.Date.ToString() + "Quantity = " + partialSum.ToString());
             }
         }
 
