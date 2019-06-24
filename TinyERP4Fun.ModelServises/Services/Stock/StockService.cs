@@ -118,13 +118,24 @@ namespace TinyERP4Fun.ModelServises
                                                 x.Id != stock.Id
                                                 ).SumAsync(x => x.Quantity);
             if (sumBefore < 0) throw new ArgumentException("st01:Wrong balance on date " + stock.OperDate + "Quantity = " + sumBefore.ToString());
+ 
+            var sumCheckAll2 = _context.Stock
+                       .Where(x => x.ItemId == stock.ItemId && x.WarehouseId == stock.WarehouseId && x.OperDate > stock.OperDate && x.Id != stock.Id);
 
-            var sumCheckAll = _context.Stock
-                       .Where(x => x.ItemId == stock.ItemId && x.WarehouseId == stock.WarehouseId && x.OperDate > stock.OperDate && x.Id != stock.Id)
-                       .GroupBy(x => x.OperDate)
-                       .OrderBy(x => x.Key)
-                       .Select(x => new DateDecimal (x.Key, x.Sum(y => y.Quantity)));
-            AggregateSequenceCheck(sumCheckAll, sumBefore);
+            var sumCheckAll31 = from first in sumCheckAll2
+                                from second in sumCheckAll2
+                                where first.OperDate >= second.OperDate
+                                select new { first.OperDate, Sum = second.Quantity, second.Id }
+                                ;
+            var sumCheckAll32 = sumCheckAll31.GroupBy(x => new { x.OperDate, x.Id }).OrderBy(x => x.Key.OperDate);
+            var sumCheckAll33 = sumCheckAll32.Select(x => new { x.Key.OperDate, x.FirstOrDefault().Sum });
+            var sumCheckAll34 = sumCheckAll33.GroupBy(x => x.OperDate).Select(x => new { x.Key, Sum = x.Sum(y => y.Sum) });
+            var sumCheckAll35 = sumCheckAll34.Where(x =>  x.Sum < - sumBefore);
+            
+            if (sumCheckAll35.Count() > 0)
+                throw new ArgumentException("st02:Wrong balance on date " + sumCheckAll35.First().Key.ToString()  
+                                            + "Quantity = " + (sumCheckAll35.First().Sum + sumBefore).ToString());
+
         }
         private class DateDecimal
         {
@@ -133,16 +144,6 @@ namespace TinyERP4Fun.ModelServises
             public DateDecimal (DateTime date, decimal sum)
             {
                 Date = date; Sum = sum;
-            }
-        }
-
-        private void AggregateSequenceCheck(IQueryable<DateDecimal> sourse, decimal init)
-        {
-            decimal partialSum = init;
-            foreach (var memb in sourse)
-            {
-                partialSum += memb.Sum;
-                if (partialSum < 0) throw new ArgumentException("st02:Wrong balance on date " + memb.Date.ToString() + "Quantity = " + partialSum.ToString());
             }
         }
 
