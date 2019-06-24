@@ -29,7 +29,9 @@
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.1.0",
           "Microsoft.NETCore.App": "2.2.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
-          "System.Drawing.Common": "4.5.1"
+          "TinyERP4Fun.Data": "1.0.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0",
+          "TinyERP4Fun.ModelServises": "1.0.0"
         },
         "runtime": {
           "TinyERP4Fun.dll": {}
@@ -609,6 +611,43 @@
         }
       },
       "System.Threading.Tasks.Extensions/4.5.2": {},
+      "TinyERP4Fun.Data/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0"
+        },
+        "runtime": {
+          "TinyERP4Fun.Data.dll": {}
+        },
+        "compile": {
+          "TinyERP4Fun.Data.dll": {}
+        }
+      },
+      "TinyERP4Fun.InterfacesAndModels/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0"
+        },
+        "runtime": {
+          "TinyERP4Fun.InterfacesAndModels.dll": {}
+        },
+        "compile": {
+          "TinyERP4Fun.InterfacesAndModels.dll": {}
+        }
+      },
+      "TinyERP4Fun.ModelServises/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0",
+          "System.Drawing.Common": "4.5.1",
+          "TinyERP4Fun.Data": "1.0.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0"
+        },
+        "runtime": {
+          "TinyERP4Fun.ModelServises.dll": {}
+        },
+        "compile": {
+          "TinyERP4Fun.ModelServises.dll": {}
+        }
+      },
       "Microsoft.AspNet.WebApi.Client/5.2.6": {
         "dependencies": {
           "Newtonsoft.Json": "11.0.2",
@@ -3799,6 +3838,21 @@
       "sha512": "sha512-BG/TNxDFv0svAzx8OiMXDlsHfGw623BZ8tCXw4YLhDFDvDhNUEV58jKYMGRnkbJNm7c3JNNJDiN7JBMzxRBR2w==",
       "path": "system.threading.tasks.extensions/4.5.2",
       "hashPath": "system.threading.tasks.extensions.4.5.2.nupkg.sha512"
+    },
+    "TinyERP4Fun.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TinyERP4Fun.InterfacesAndModels/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TinyERP4Fun.ModelServises/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "Microsoft.AspNet.WebApi.Client/5.2.6": {
       "type": "package",

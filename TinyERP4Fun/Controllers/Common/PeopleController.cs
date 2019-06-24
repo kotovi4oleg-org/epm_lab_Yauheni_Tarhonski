@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.Controllers
@@ -41,15 +35,15 @@ namespace TinyERP4Fun.Controllers
 
         private async Task SetCommonViewBag(long? id)
         {
-            ViewBag.Users = await _peopleService.GetUsersIds(id);
-            ViewBag.Companies = _peopleService.GetCompaniesIds();
+            ViewBag.Users = ControllerCommonFunctions.AddFirstItem(new SelectList(await _peopleService.GetUsersIds(id), "Id", "Name"));
+            ViewBag.Companies = ControllerCommonFunctions.AddFirstItem(new SelectList(_peopleService.GetCompaniesIds(), "Id", "Name"));
         }
         // GET: People/Create
         [Authorize(Roles = Constants.rolesCommon_Admin)]
         public async Task<IActionResult> Create()
         {
             await SetCommonViewBag(null);
-            ViewBag.Roles = _peopleService.GetRolesIds();
+            ViewBag.Roles = new SelectList(_peopleService.GetRolesIds(), "Id", "Name");
             return View();
         }
 
@@ -65,7 +59,7 @@ namespace TinyERP4Fun.Controllers
                 return RedirectToAction(nameof(Index));
             }
             await SetCommonViewBag(null);
-            ViewBag.Roles = _peopleService.GetRolesIds();
+            ViewBag.Roles = new SelectList(_peopleService.GetRolesIds(), "Id", "Name");
             return View(person);
         }
 
@@ -80,7 +74,7 @@ namespace TinyERP4Fun.Controllers
             var viewmodel = new PersonViewModel
             {
                 Person = person,
-                RolesList = _peopleService.GetRolesNames(),
+                RolesList = new SelectList(_peopleService.GetRolesNames(),"Id","Name"),
                 SelectedRoles = personRoles
             };
             return View(viewmodel);
@@ -99,7 +93,7 @@ namespace TinyERP4Fun.Controllers
                 await SetCommonViewBag(id);
                 return View(personViewModel);
             }
-            if (!await _peopleService.UpdateAsync(personViewModel)) return NotFound();
+            if (!await _peopleService.UpdateAsync(personViewModel.Person, personViewModel.SelectedRoles)) return NotFound();
             return RedirectToAction(nameof(Index));
         }
 

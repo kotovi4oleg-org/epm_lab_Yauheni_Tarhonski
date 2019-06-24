@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -38,9 +38,9 @@ namespace TinyERP4Fun.Controllers
         }
         private void SetViewBag()
         {
-            ViewBag.People = _employeesService.GetPersonsIds();
-            ViewBag.Departments = _employeesService.GetDepartmentsIds();
-            ViewBag.Positions = _employeesService.GetPositionsIds();
+            ViewBag.People = ControllerCommonFunctions.AddFirstItem(new SelectList(_employeesService.GetPersonsIds(), "Id", "Name"));
+            ViewBag.Departments = ControllerCommonFunctions.AddFirstItem(new SelectList(_employeesService.GetDepartmentsIds(), "Id", "Name"));
+            ViewBag.Positions = ControllerCommonFunctions.AddFirstItem(new SelectList(_employeesService.GetPositionsIds(), "Id", "Name"));
         }
         // GET: Employees/Create
         public IActionResult Create()

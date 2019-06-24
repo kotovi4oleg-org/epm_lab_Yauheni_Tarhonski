@@ -341,3 +341,9 @@ c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\ob
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\TinyERP4Fun.pdb
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\TinyERP4Fun.csproj.CopyComplete
 c:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\obj\Debug\netcoreapp2.2\Razor\Views\Companies\DDPartial.g.cshtml.cs
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.pdb

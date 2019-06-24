@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TinyERP4Fun.Models.Stock;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Controllers
 {

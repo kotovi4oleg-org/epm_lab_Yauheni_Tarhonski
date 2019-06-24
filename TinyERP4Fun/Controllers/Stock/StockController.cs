@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Stock;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.ViewModels;
 
 
@@ -34,8 +36,8 @@ namespace TinyERP4Fun.Controllers
             StockMovementsViewModel stockMovementsViewModel = new StockMovementsViewModel()
             {
                 Stock = await PaginatedList<Stock>.CreateAsync(filteredContext.AsNoTracking(), pageNumber ?? 1, Constants.pageSize),
-                ItemFilter = _stockService.GetItemIds(),
-                WarehouseFilter = _stockService.GetWarehouseIds(),
+                ItemFilter = new SelectList(_stockService.GetItemsIds(), "Id", "Name"),
+                WarehouseFilter = new SelectList(_stockService.GetWarehousesIds(), "Id", "Name"),
                 FromFilter = fromFilter,
                 ToFilter = toFilter
             };
@@ -50,12 +52,24 @@ namespace TinyERP4Fun.Controllers
                                    )
         {
             var emptyStringList = new string[] { };
-            var result = await _stockService.GetGroupedContentAsync(fromFilter, toFilter, itemFilter, warehouseFilter, emptyStringList);
+            var filteredContext = _stockService.GetFiltredContent(fromFilter, toFilter, itemFilter, warehouseFilter, emptyStringList);
+            //Это очень красивая строка  объясняет как делать множественный групбай: var result31 = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId }).Select(group => new { group.Key, Count = group.Sum(p=>p.Quantity) }).ToListAsync();
+            var result = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId })
+                                              .Select(group => new StockViewModel()
+                                              {
+                                                  Item = group.FirstOrDefault().Item,
+                                                  ItemId = group.Key.ItemId,
+                                                  Warehouse = group.FirstOrDefault().Warehouse,
+                                                  WarehouseId = group.Key.WarehouseId,
+                                                  Quantity = group.Sum(s => s.Quantity)
+                                              })
+                                              .AsNoTracking()
+                                              .ToListAsync();
             StockPaginatedViewModel stockPaginatedViewModel = new StockPaginatedViewModel()
             {
                 StockViewModels = PaginatedList<StockViewModel>.Create(result, pageNumber ?? 1, Constants.pageSize),
-                ItemFilter = _stockService.GetItemIds(),
-                WarehouseFilter = _stockService.GetWarehouseIds(),
+                ItemFilter = new SelectList(_stockService.GetItemsIds(), "Id","Name"),
+                WarehouseFilter = new SelectList(_stockService.GetWarehousesIds(), "Id", "Name"),
                 FromFilter = fromFilter,
                 ToFilter = toFilter
             };
@@ -69,9 +83,9 @@ namespace TinyERP4Fun.Controllers
         }
         private void SetViewData()
         {
-            ViewData["ItemId"] = _stockService.GetItemIds();
-            ViewData["UserId"] = _stockService.GetUsersIds();
-            ViewData["WarehouseId"] = _stockService.GetWarehouseIds();
+            ViewData["ItemId"] = new SelectList(_stockService.GetItemsIds(), "Id", "Name");
+            ViewData["UserId"] = new SelectList(_stockService.GetUsersIds(), "Id", "Name");
+            ViewData["WarehouseId"] = new SelectList(_stockService.GetWarehousesIds(), "Id", "Name");
         }
         // GET: Stocks/Create
         public IActionResult Create()

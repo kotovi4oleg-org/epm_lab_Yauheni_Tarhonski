@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -38,7 +38,8 @@ namespace TinyERP4Fun.Controllers
         }
         public void SetViewBag()
         {
-            ViewBag.Countries = _statesService.GetCountriesIds();
+            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(
+                new SelectList(_statesService.GetCountriesIds(), "Id", "Name"));
         }
         // GET: States/Create
         public IActionResult Create()

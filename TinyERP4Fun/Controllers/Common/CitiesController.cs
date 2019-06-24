@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -47,8 +46,10 @@ namespace TinyERP4Fun.Controllers
             if (city == null || city.State == null)
                 ViewBag.States = null;
             else
-                ViewBag.States = _citiesService.GetStatesIds(city.State.CountryId);
-            ViewBag.Countries = _citiesService.GetCountriesIds();
+                ViewBag.States = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_citiesService.GetStatesIds(city.State.CountryId),"Id","Name"));
+            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_citiesService.GetCountriesIds(), "Id", "Name"));
         }
         // GET: Cities/Create
         public IActionResult Create()

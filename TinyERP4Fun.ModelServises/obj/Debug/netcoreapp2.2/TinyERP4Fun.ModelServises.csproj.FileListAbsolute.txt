@@ -1,0 +1,16 @@
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.deps.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.csprojAssemblyReference.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.csproj.CoreCompileInputs.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.AssemblyInfoInputs.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.AssemblyInfo.cs
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.csproj.CopyComplete
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\obj\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.runtimeconfig.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.ModelServises.runtimeconfig.dev.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServises\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.pdb

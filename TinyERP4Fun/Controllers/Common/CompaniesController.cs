@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -21,13 +21,13 @@ namespace TinyERP4Fun.Controllers
         {
             _companiesService = companiesService;
         }
-        public ActionResult GetCities(long stateId)
+        public async Task<ActionResult> GetCities(long stateId)
         {
-            return PartialView(_companiesService.GetCities(stateId));
+            return PartialView(await _companiesService.GetCities(stateId));
         }
-        public ActionResult GetStates(long countryId)
+        public async Task<ActionResult> GetStates(long countryId)
         {
-            return PartialView(_companiesService.GetCities(countryId));
+            return PartialView(await _companiesService.GetStates(countryId));
         }
         // GET: Companies
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
@@ -59,12 +59,17 @@ namespace TinyERP4Fun.Controllers
                 ViewBag.Cities = ViewBag.States = null;
             else
             {
-                ViewBag.Cities = _companiesService.GetCitiesIds(company.City.StateId);
-                ViewBag.States = _companiesService.GetStatesIds(company.City.State.CountryId);
+                ViewBag.Cities = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_companiesService.GetCitiesIds(company.City.StateId),"Id","Name"));
+                ViewBag.States = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_companiesService.GetStatesIds(company.City.State.CountryId),"Id","Name"));
             }
-            ViewBag.Currencies = _companiesService.GetCurrenciesIds();
-            ViewBag.Companies = _companiesService.GetCompaniesIds();
-            ViewBag.Countries = _companiesService.GetCountriesIds();
+            ViewBag.Currencies = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_companiesService.GetCurrenciesIds(), "Id", "Name"));
+            ViewBag.Companies = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_companiesService.GetCompaniesIds(), "Id", "Name"));
+            ViewBag.Countries = ControllerCommonFunctions.AddFirstItem(
+                    new SelectList(_companiesService.GetCountriesIds(), "Id", "Name"));
         }
 
         // GET: Companies/Create

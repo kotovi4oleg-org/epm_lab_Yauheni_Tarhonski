@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TinyERP4Fun.Models.Stock;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.ModelServises;
 
 namespace TinyERP4Fun.Controllers
@@ -31,7 +32,7 @@ namespace TinyERP4Fun.Controllers
         }
         private void SetViewData()
         {
-            ViewData["UnitId"] = _itemService.GetUnitsIds();
+            ViewData["UnitId"] = new SelectList(_itemService.GetUnitsIds(), "Id", "Name");
         }
         // GET: Items/Create
         public IActionResult Create()
@@ -108,11 +109,10 @@ namespace TinyERP4Fun.Controllers
         }
         
         [HttpGet]
-        public FileStreamResult ViewImage(long? id)
+        public async Task<FileStreamResult> ViewImage(long? id)
         {
-            var entityTask = _itemService.GetAsync(id); 
-            Task.WaitAll(entityTask);
-            return ServicesCommonFunctions.GetImage(entityTask.Result);
+            var entityTask = await _itemService.GetAsync(id);
+            return ServicesCommonFunctions.GetImage(entityTask);
         }
     }
 }

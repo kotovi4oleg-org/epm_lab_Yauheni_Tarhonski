@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -6,24 +6,19 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Data\Migrations\20190521084045_210519-5.cs" />
-    <Compile Remove="Data\Migrations\20190521084045_210519-5.Designer.cs" />
-    <Compile Remove="Migrations\20190530103440_300519NewBase2.cs" />
-    <Compile Remove="Migrations\20190530103440_300519NewBase2.Designer.cs" />
-    <Compile Remove="Migrations\20190604085203_040619-1.cs" />
-    <Compile Remove="Migrations\20190604085203_040619-1.Designer.cs" />
-    <Compile Remove="Migrations\20190604131734_040619-3.cs" />
-    <Compile Remove="Migrations\20190604131734_040619-3.Designer.cs" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\TinyERP4Fun.Data\TinyERP4Fun.Data.csproj" />
+    <ProjectReference Include="..\TinyERP4Fun.ModelServiceInterfaces\TinyERP4Fun.InterfacesAndModels.csproj" />
+    <ProjectReference Include="..\TinyERP4Fun.ModelServises\TinyERP4Fun.ModelServises.csproj" />
   </ItemGroup>
 
 

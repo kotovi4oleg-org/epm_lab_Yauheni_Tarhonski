@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Controllers
 {
@@ -43,8 +43,8 @@ namespace TinyERP4Fun.Controllers
         }
         private void SetViewData()
         {
-            ViewData["BaseCurrencyId"] = _currencyRatesService.GetCurrenciesIds();
-            ViewData["CurrencyId"] = _currencyRatesService.GetCurrenciesIds();
+            ViewData["BaseCurrencyId"] = new SelectList(_currencyRatesService.GetCurrenciesIds(), "Id", "Name");
+            ViewData["CurrencyId"] = new SelectList(_currencyRatesService.GetCurrenciesIds(), "Id", "Name");
         }
         // GET: CurrencyRates/Create
         [Authorize(Roles = Constants.adminRoleName)]

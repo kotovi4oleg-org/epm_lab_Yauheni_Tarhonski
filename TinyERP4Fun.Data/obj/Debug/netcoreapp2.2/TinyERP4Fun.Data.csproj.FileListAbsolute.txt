@@ -1,0 +1,14 @@
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.deps.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.csproj.CoreCompileInputs.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.AssemblyInfoInputs.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.AssemblyInfo.cs
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.csprojAssemblyReference.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.csproj.CopyComplete
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\obj\Debug\netcoreapp2.2\TinyERP4Fun.Data.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.runtimeconfig.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.Data.runtimeconfig.dev.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.Data\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.pdb

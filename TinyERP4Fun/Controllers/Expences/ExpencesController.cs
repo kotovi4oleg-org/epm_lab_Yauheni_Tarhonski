@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TinyERP4Fun.Models.Expenses;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.ViewModels;
 
 namespace TinyERP4Fun.Controllers
@@ -28,18 +29,21 @@ namespace TinyERP4Fun.Controllers
             if (ownerCheck&&entity!=null) return entity.User == currentUser;
             return false;
         }
-        private async Task<ExpencesViewModel> IndexCreateViewModel(int? pageNumber, ExpencesViewModel expencesViewModel, bool adm)
+        private async Task<ExpencesFiltrerModel> IndexCreateViewModel(int? pageNumber, ExpencesFiltrerModel expencesViewModel, bool adm)
         {
             //Настройку хранения фильтров не реализовывал. В планах - хранить фильтры в базе для каждого сочетания пользователь/модуль
             var currentUserId = _userManager.GetUserId(User);
             expencesViewModel = await _expencesService.GetFilteredContentAsync(pageNumber, expencesViewModel, currentUserId, adm);
-            ViewBag.CurrencyFilter = _expencesService.GetCurrenciesIds();
-            ViewBag.CompanyFilter = _expencesService.GetCompaniesIds();
-            ViewBag.OurCompanyFilter = _expencesService.GetOurCompaniesIds();
+            ViewBag.CurrencyFilter = new SelectList(_expencesService.GetCurrenciesIds(),"Id","Name");
+            ViewBag.CompanyFilter = new SelectList(_expencesService.GetCompaniesIds(), "Id", "Name");
+            ViewBag.OurCompanyFilter = new SelectList(_expencesService.GetOurCompaniesIds(), "Id", "Name");
+            if (!string.IsNullOrEmpty(expencesViewModel.Total))
+                expencesViewModel.Total = Localization.currentLocalizatin["Amount of Expenses"] + ": " + expencesViewModel.Total;
+
             return expencesViewModel;
         }
 
-        public async Task<IActionResult> Index(int? pageNumber, ExpencesViewModel expencesViewModel)
+        public async Task<IActionResult> Index(int? pageNumber, ExpencesFiltrerModel expencesViewModel)
         {
             if (expencesViewModel.AdmFilter&&!await IsAdminOrOwner(null,false))
                 expencesViewModel.AdmFilter = false;
@@ -58,12 +62,12 @@ namespace TinyERP4Fun.Controllers
         private void SetViewData()
         {
             var currentUserId = _userManager.GetUserId(User);
-            ViewData["CompanyId"] = _expencesService.GetCompaniesIds();
-            ViewData["CurrencyId"] = _expencesService.GetCurrenciesIds();
-            ViewData["OurCompanyId"] = _expencesService.GetOurCompaniesIds();
-            ViewData["DocumentTypeId"] = _expencesService.GetDocumentTypesIds();
-            ViewData["PersonId"] = _expencesService.GetPersonsIds(currentUserId);
-            ViewData["UserId"] = _expencesService.GetUsersIds(currentUserId);
+            ViewData["CompanyId"] = new SelectList(_expencesService.GetCompaniesIds(), "Id", "Name");
+            ViewData["CurrencyId"] = new SelectList(_expencesService.GetCurrenciesIds(), "Id", "Name");
+            ViewData["OurCompanyId"] = new SelectList(_expencesService.GetOurCompaniesIds(), "Id", "Name");
+            ViewData["DocumentTypeId"] = new SelectList(_expencesService.GetDocumentTypesIds(), "Id", "Name");
+            ViewData["PersonId"] = new SelectList(_expencesService.GetPersonsIds(currentUserId), "Id", "Name");
+            ViewData["UserId"] = new SelectList(_expencesService.GetUsersIds(currentUserId), "Id", "Name");
         }
         // GET: Expences/Create
         public IActionResult Create()

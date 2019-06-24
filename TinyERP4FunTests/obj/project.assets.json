@@ -2138,13 +2138,58 @@
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.1.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
-          "System.Drawing.Common": "4.5.1"
+          "TinyERP4Fun.Data": "1.0.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0",
+          "TinyERP4Fun.ModelServises": "1.0.0"
         },
         "compile": {
           "bin/placeholder/TinyERP4Fun.dll": {}
         },
         "runtime": {
           "bin/placeholder/TinyERP4Fun.dll": {}
+        }
+      },
+      "TinyERP4Fun.Data/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/TinyERP4Fun.Data.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TinyERP4Fun.Data.dll": {}
+        }
+      },
+      "TinyERP4Fun.InterfacesAndModels/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0"
+        },
+        "compile": {
+          "bin/placeholder/TinyERP4Fun.InterfacesAndModels.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TinyERP4Fun.InterfacesAndModels.dll": {}
+        }
+      },
+      "TinyERP4Fun.ModelServises/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0",
+          "System.Drawing.Common": "4.5.1",
+          "TinyERP4Fun.Data": "1.0.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/TinyERP4Fun.ModelServises.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TinyERP4Fun.ModelServises.dll": {}
         }
       }
     }
@@ -7070,6 +7115,21 @@
       "type": "project",
       "path": "../TinyERP4Fun/TinyERP4Fun.csproj",
       "msbuildProject": "../TinyERP4Fun/TinyERP4Fun.csproj"
+    },
+    "TinyERP4Fun.Data/1.0.0": {
+      "type": "project",
+      "path": "../TinyERP4Fun.Data/TinyERP4Fun.Data.csproj",
+      "msbuildProject": "../TinyERP4Fun.Data/TinyERP4Fun.Data.csproj"
+    },
+    "TinyERP4Fun.InterfacesAndModels/1.0.0": {
+      "type": "project",
+      "path": "../TinyERP4Fun.ModelServiceInterfaces/TinyERP4Fun.InterfacesAndModels.csproj",
+      "msbuildProject": "../TinyERP4Fun.ModelServiceInterfaces/TinyERP4Fun.InterfacesAndModels.csproj"
+    },
+    "TinyERP4Fun.ModelServises/1.0.0": {
+      "type": "project",
+      "path": "../TinyERP4Fun.ModelServises/TinyERP4Fun.ModelServises.csproj",
+      "msbuildProject": "../TinyERP4Fun.ModelServises/TinyERP4Fun.ModelServises.csproj"
     }
   },
   "projectFileDependencyGroups": {

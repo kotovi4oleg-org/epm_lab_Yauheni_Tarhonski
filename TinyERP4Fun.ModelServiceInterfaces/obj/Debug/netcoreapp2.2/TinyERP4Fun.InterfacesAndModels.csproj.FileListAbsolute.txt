@@ -1,0 +1,11 @@
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.deps.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.runtimeconfig.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.runtimeconfig.dev.json
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\bin\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.pdb
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\obj\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.csprojAssemblyReference.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\obj\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.csproj.CoreCompileInputs.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\obj\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.AssemblyInfoInputs.cache
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\obj\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.AssemblyInfo.cs
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\obj\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.dll
+C:\Users\Yauheni_Tarhonski\source\repos\epm_lab_Yauheni_Tarhonski\TinyERP4Fun.ModelServiceInterfaces\obj\Debug\netcoreapp2.2\TinyERP4Fun.InterfacesAndModels.pdb

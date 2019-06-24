@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TinyERP4Fun.Scheduler;
 using TinyERP4Fun.Controllers;
-using TinyERP4Fun.ModelServiceInterfaces;
+using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.ModelServises;
 
 namespace TinyERP4Fun

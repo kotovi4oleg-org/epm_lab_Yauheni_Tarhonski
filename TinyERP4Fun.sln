@@ -5,7 +5,13 @@ VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyERP4Fun", "TinyERP4Fun\TinyERP4Fun.csproj", "{1332FB27-70BB-465B-ADB5-5CF082B6E1AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyERP4FunTests", "TinyERP4FunTests\TinyERP4FunTests.csproj", "{8EF04486-B997-4628-8AD3-0390A391C073}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyERP4FunTests", "TinyERP4FunTests\TinyERP4FunTests.csproj", "{8EF04486-B997-4628-8AD3-0390A391C073}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyERP4Fun.ModelServises", "TinyERP4Fun.ModelServises\TinyERP4Fun.ModelServises.csproj", "{7E072B4D-5292-4713-8679-8B9DF487DE8D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyERP4Fun.InterfacesAndModels", "TinyERP4Fun.ModelServiceInterfaces\TinyERP4Fun.InterfacesAndModels.csproj", "{3E28CB5D-62A5-4BDC-B540-6F9FE972803C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyERP4Fun.Data", "TinyERP4Fun.Data\TinyERP4Fun.Data.csproj", "{A2DB450B-5079-447F-80A6-1274797F6E96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{8EF04486-B997-4628-8AD3-0390A391C073}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EF04486-B997-4628-8AD3-0390A391C073}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EF04486-B997-4628-8AD3-0390A391C073}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E072B4D-5292-4713-8679-8B9DF487DE8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E072B4D-5292-4713-8679-8B9DF487DE8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E072B4D-5292-4713-8679-8B9DF487DE8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E072B4D-5292-4713-8679-8B9DF487DE8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E28CB5D-62A5-4BDC-B540-6F9FE972803C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E28CB5D-62A5-4BDC-B540-6F9FE972803C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E28CB5D-62A5-4BDC-B540-6F9FE972803C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E28CB5D-62A5-4BDC-B540-6F9FE972803C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2DB450B-5079-447F-80A6-1274797F6E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2DB450B-5079-447F-80A6-1274797F6E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2DB450B-5079-447F-80A6-1274797F6E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2DB450B-5079-447F-80A6-1274797F6E96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

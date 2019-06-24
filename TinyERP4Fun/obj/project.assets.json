@@ -4682,6 +4682,49 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "TinyERP4Fun.Data/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/TinyERP4Fun.Data.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TinyERP4Fun.Data.dll": {}
+        }
+      },
+      "TinyERP4Fun.InterfacesAndModels/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0"
+        },
+        "compile": {
+          "bin/placeholder/TinyERP4Fun.InterfacesAndModels.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TinyERP4Fun.InterfacesAndModels.dll": {}
+        }
+      },
+      "TinyERP4Fun.ModelServises/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "dependencies": {
+          "Microsoft.AspNetCore.App": "2.2.0",
+          "System.Drawing.Common": "4.5.1",
+          "TinyERP4Fun.Data": "1.0.0",
+          "TinyERP4Fun.InterfacesAndModels": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/TinyERP4Fun.ModelServises.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TinyERP4Fun.ModelServises.dll": {}
+        }
       }
     }
   },
@@ -12541,6 +12584,21 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "TinyERP4Fun.Data/1.0.0": {
+      "type": "project",
+      "path": "../TinyERP4Fun.Data/TinyERP4Fun.Data.csproj",
+      "msbuildProject": "../TinyERP4Fun.Data/TinyERP4Fun.Data.csproj"
+    },
+    "TinyERP4Fun.InterfacesAndModels/1.0.0": {
+      "type": "project",
+      "path": "../TinyERP4Fun.ModelServiceInterfaces/TinyERP4Fun.InterfacesAndModels.csproj",
+      "msbuildProject": "../TinyERP4Fun.ModelServiceInterfaces/TinyERP4Fun.InterfacesAndModels.csproj"
+    },
+    "TinyERP4Fun.ModelServises/1.0.0": {
+      "type": "project",
+      "path": "../TinyERP4Fun.ModelServises/TinyERP4Fun.ModelServises.csproj",
+      "msbuildProject": "../TinyERP4Fun.ModelServises/TinyERP4Fun.ModelServises.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -12550,7 +12608,9 @@
       "Microsoft.CodeAnalysis.CSharp.Workspaces >= 3.1.0",
       "Microsoft.NETCore.App >= 2.2.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 2.2.3",
-      "System.Drawing.Common >= 4.5.1"
+      "TinyERP4Fun.Data >= 1.0.0",
+      "TinyERP4Fun.InterfacesAndModels >= 1.0.0",
+      "TinyERP4Fun.ModelServises >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -12561,11 +12621,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
+      "projectUniqueName": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
       "projectName": "TinyERP4Fun",
-      "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
+      "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
       "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\obj\\",
+      "outputPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\ProgramData\\Xamarin\\NuGet\\",
@@ -12585,7 +12645,17 @@
       },
       "frameworks": {
         "netcoreapp2.2": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
+              "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj"
+            },
+            "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
+              "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
+            },
+            "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj": {
+              "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -12621,10 +12691,6 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[2.2.3, )"
-          },
-          "System.Drawing.Common": {
-            "target": "Package",
-            "version": "[4.5.1, )"
           }
         },
         "imports": [
