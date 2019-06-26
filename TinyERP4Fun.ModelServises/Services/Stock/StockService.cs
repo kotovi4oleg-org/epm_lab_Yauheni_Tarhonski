@@ -119,22 +119,22 @@ namespace TinyERP4Fun.ModelServises
                                                 ).SumAsync(x => x.Quantity);
             if (sumBefore < 0) throw new ArgumentException("st01:Wrong balance on date " + stock.OperDate + "Quantity = " + sumBefore.ToString());
  
-            var sumCheckAll2 = _context.Stock
+            var sumCheck = _context.Stock
                        .Where(x => x.ItemId == stock.ItemId && x.WarehouseId == stock.WarehouseId && x.OperDate > stock.OperDate && x.Id != stock.Id);
 
-            var sumCheckAll31 = from first in sumCheckAll2
-                                from second in sumCheckAll2
+            var sumCheck2 = from first in sumCheck
+                                from second in sumCheck
                                 where first.OperDate >= second.OperDate
                                 select new { first.OperDate, Sum = second.Quantity, second.Id }
                                 ;
-            var sumCheckAll32 = sumCheckAll31.GroupBy(x => new { x.OperDate, x.Id }).OrderBy(x => x.Key.OperDate);
-            var sumCheckAll33 = sumCheckAll32.Select(x => new { x.Key.OperDate, x.FirstOrDefault().Sum });
-            var sumCheckAll34 = sumCheckAll33.GroupBy(x => x.OperDate).Select(x => new { x.Key, Sum = x.Sum(y => y.Sum) });
-            var sumCheckAll35 = sumCheckAll34.Where(x =>  x.Sum < - sumBefore);
+            var sumCheck3 = sumCheck2.GroupBy(x => new { x.OperDate, x.Id }).OrderBy(x => x.Key.OperDate);
+            var sumCheck4 = sumCheck3.Select(x => new { x.Key.OperDate, x.FirstOrDefault().Sum });
+            var sumCheck5 = sumCheck4.GroupBy(x => x.OperDate).Select(x => new { x.Key, Sum = x.Sum(y => y.Sum) });
+            var sumCheck6 = sumCheck5.Where(x =>  x.Sum < - sumBefore);
             
-            if (sumCheckAll35.Count() > 0)
-                throw new ArgumentException("st02:Wrong balance on date " + sumCheckAll35.First().Key.ToString()  
-                                            + "Quantity = " + (sumCheckAll35.First().Sum + sumBefore).ToString());
+            if (sumCheck6.Count() > 0)
+                throw new ArgumentException("st02:Wrong balance on date " + sumCheck6.First().Key.ToString()  
+                                            + "Quantity = " + (sumCheck6.First().Sum + sumBefore).ToString());
 
         }
         private class DateDecimal

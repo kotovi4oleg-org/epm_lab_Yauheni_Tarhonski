@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "b7ed8d45703d373b756cda2482458e3819bc9be1"
+    "signature": "cc0b6de6ef3fd46dfd7441636ce94653b9bf7889"
   },
   "compilationOptions": {},
   "targets": {
@@ -9,6 +9,7 @@
       "TinyERP4FunTests/1.0.0": {
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "16.0.1",
+          "RhinoMocks": "3.6.1",
           "TinyERP4Fun": "1.0.0",
           "xunit": "2.4.0",
           "xunit.runner.visualstudio": "2.4.0"
@@ -719,6 +720,14 @@
           "lib/netstandard1.6/NuGet.Frameworks.dll": {
             "assemblyVersion": "4.7.0.5",
             "fileVersion": "4.7.0.5148"
+          }
+        }
+      },
+      "RhinoMocks/3.6.1": {
+        "runtime": {
+          "lib/net/Rhino.Mocks.dll": {
+            "assemblyVersion": "3.6.0.0",
+            "fileVersion": "3.6.0.0"
           }
         }
       },
@@ -1720,6 +1729,13 @@
       "sha512": "sha512-qbXaB76XYUVLocLBs8Z9TS/ERGK2wm797feO+0JEPFvT7o7MRadOR77mqaSD4J1k8G+DlZQyq+MlkCuxrkr3ag==",
       "path": "nuget.frameworks/4.7.0",
       "hashPath": "nuget.frameworks.4.7.0.nupkg.sha512"
+    },
+    "RhinoMocks/3.6.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0HjdR7PVVUDz9Db5cLzU0Dquay8MhoCoZ8PJRZOo10Iysq4m+mjl2aaxc4eWztvZ6S1v/NYW5xv1qul0ToN21w==",
+      "path": "rhinomocks/3.6.1",
+      "hashPath": "rhinomocks.3.6.1.nupkg.sha512"
     },
     "runtime.native.System/4.0.0": {
       "type": "package",

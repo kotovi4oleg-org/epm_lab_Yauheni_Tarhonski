@@ -10,7 +10,20 @@ namespace TinyERP4Fun.Models.Common
     {
         public long Id { get; set; }
         public string Name { get; private set; }
-        public string FullName { get; private set; }
+        private string fullName;
+        public string FullName
+        {
+            get
+            {
+                return fullName;
+            }
+            private set
+            {
+                fullName = value?.Trim();
+                Name = FullName;
+            }
+        }
+
         private string firstName;
         public string FirstName
         {
@@ -20,9 +33,8 @@ namespace TinyERP4Fun.Models.Common
             }
             set
             {
-                firstName = value;
-                FullName = string.Join(' ', new[] { firstName, lastName });
-                Name = FullName;
+                firstName = value?.Trim();
+                FullName = CombineNames(firstName, lastName);
             }
         }
         private string lastName;
@@ -34,10 +46,13 @@ namespace TinyERP4Fun.Models.Common
             }
             set
             {
-                lastName = value;
-                FullName = string.Join(' ', new[] { firstName, lastName });
-                Name = FullName;
+                lastName = value?.Trim();
+                FullName = CombineNames(firstName, lastName);
             }
+        }
+        private string CombineNames(string _firstName, string _lastName)
+        {
+            return string.Join(' ', new[] { _firstName, _lastName });
         }
         [DataType(DataType.Date)]
         public DateTime? Birthday { get; set; }
