@@ -82,7 +82,7 @@ namespace TinyERP4FunTests.InterfacesAndModelsTests.ModelsTests
         public void FullName_Are_Trimed()
         {
             // arrange
-            var person = new Person();
+            Person person = new Person();
 
             // act
             person.FirstName = " First ";

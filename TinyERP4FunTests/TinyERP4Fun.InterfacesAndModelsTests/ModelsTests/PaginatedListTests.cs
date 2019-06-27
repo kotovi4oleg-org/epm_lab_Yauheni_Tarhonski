@@ -11,7 +11,7 @@ namespace TinyERP4FunTests.InterfacesAndModelsTests.ModelsTests
     public class PaginatedListTests
     {
         [Fact]
-        public void PaginatedListConstructorTest()
+        public void EmptyTest()
         {
 
         }
