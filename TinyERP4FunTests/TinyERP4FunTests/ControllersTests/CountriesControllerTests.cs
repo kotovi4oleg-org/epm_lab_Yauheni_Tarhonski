@@ -16,44 +16,61 @@ using TinyERP4Fun.Data;
 
 namespace Tests.TinyERP4FunTests
 {
-    public class CountriesControllerTests
+    internal static class EntitiesMock
     {
-        readonly Type indexResultType = typeof(PaginatedList<Country>);
-        readonly string indexActionName = "Index";
-        private Country GetSingleEntity()
+        public static CountriesController ValidController { get; set; }
+        public static CountriesController NotValidController { get; set; }
+        public static Mock<ICountriesService> Mock { get; set; }
+        public static readonly Country singleEntity = new Country { Id = 2, Name = "Belarus" };
+        public static void Initialize()//out CountriesController controller)
         {
-            return new Country { Name = "Belarus" };
-        }
-        private IQueryable<Country> GetTestEntities()
-        {
-            Country[] result = { new Country { Name = "Netherlands" },
-                new Country { Name = "Poland"},
-                new Country { Name = "Belarus"},
-                new Country { Name = "USA"},
-                new Country { Name = "Finland"}
-            };
-            return result.AsQueryable();
-        }
-
-        internal Mock<ICountriesService> GetMock(out CountriesController controller)
-        {
+            long Id=2;
             var mockSet = SetUpMock.SetUpFor(GetTestEntities());
             var mock = new Mock<ICountriesService>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
             mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(GetTestEntities().AsEnumerable()));
-            controller = new CountriesController(mock.Object);
-            return mock;
+            mock.Setup(c => c.GetAsync(2, It.IsAny<bool>()))
+                .Returns(Task.FromResult(singleEntity));
+            ValidController = new CountriesController(mock.Object);
+            NotValidController = new CountriesController(mock.Object);
+            NotValidController.ModelState.AddModelError("Name", "Some Error");
+            Mock = mock;
         }
+        private static IQueryable<Country> GetTestEntities()
+        {
+            Country[] result = { new Country {Id=0, Name = "Netherlands" },
+                new Country {Id=1, Name = "Poland"},
+                new Country {Id=2, Name = "Belarus"},
+                new Country {Id=3, Name = "USA"},
+                new Country {Id=4, Name = "Finland"}
+            };
+            return result.AsQueryable();
+        }
+    }
+    public class CountriesControllerTests
+    {
+        readonly Mock<ICountriesService> mock;
+        readonly CountriesController validController;
+        readonly CountriesController notValidController;
+        readonly Country entity = EntitiesMock.singleEntity;
+        readonly Type indexResultType = typeof(PaginatedList<Country>);
+        readonly string indexActionName = "Index";
 
+        public CountriesControllerTests()
+        {
+            EntitiesMock.Initialize();
+            mock = EntitiesMock.Mock;
+            validController = EntitiesMock.ValidController;
+            notValidController = EntitiesMock.NotValidController;
+        }
 
         [Fact]
         public async Task IndexView_ResultNotNull()
         {
             // Arrange
-            GetMock(out var controller);
-
+            
             // Act
-            IActionResult result = await controller.Index(null);
+            IActionResult result = await validController.Index(null);
 
             // Assert
             Assert.NotNull(result);
@@ -62,10 +79,9 @@ namespace Tests.TinyERP4FunTests
         public async Task IndexView_ReturnsRightModel()
         {
             // Arrange
-            GetMock(out var controller);
 
             // Act
-            var result = (ViewResult) await controller.Index(null);
+            var result = (ViewResult) await validController.Index(null);
 
             // Assert
             Assert.Equal(indexResultType, result.Model.GetType());
@@ -74,26 +90,21 @@ namespace Tests.TinyERP4FunTests
         public async Task CreatePostAction_ModelError_ReturnsSameModel()
         {
             // Arrange
-            GetMock(out var controller);
-            var entity = GetSingleEntity();
-            controller.ModelState.AddModelError("Name", "Название модели не установлено");
+
 
             // Act
-            ViewResult result = await controller.Create(entity) as ViewResult;
+            var result = await notValidController.Create(entity) as ViewResult;
 
             // Assert
-            Assert.NotNull(result);
             Assert.Equal(entity, result.Model);
         }
         [Fact]
-        public async Task CreatePostAction_AddModelInService()
+        public async Task CreatePostAction_AddModelToService()
         {
             // Arrange
-            var mock = GetMock(out var controller);
-            var entity = GetSingleEntity();
 
             // Act
-            var result = await controller.Create(entity); 
+            var result = await validController.Create(entity); 
 
             // Assert
             mock.Verify(a => a.AddAsync(entity));
@@ -102,15 +113,101 @@ namespace Tests.TinyERP4FunTests
         public async Task CreatePostAction_ModelOk_RedirectsToIndex()
         {
             // Arrange
-            GetMock(out var controller);
-            var entity = GetSingleEntity();
 
             // Act
-            var result = await controller.Create(entity) as RedirectToActionResult;
+            var result = await validController.Create(entity) as RedirectToActionResult;
 
             // Assert
             Assert.Equal(indexActionName, result.ActionName);
         }
-       
+        [Fact]
+        public async Task EditGetAction_UpdateModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.Edit(entity.Id);
+
+            // Assert
+            mock.Verify(a => a.GetAsync(entity.Id, true));
+        }
+        [Fact]
+        public async Task EditPostAction_ModelError_ReturnsSameModel()
+        {
+            // Arrange
+
+            // Act
+            var result = await notValidController.Edit(entity.Id, entity) as ViewResult;
+
+            // Assert
+            Assert.Equal(entity, result.Model);
+        }
+        [Fact]
+        public async Task EditPostAction_UpdateModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.Edit(entity.Id, entity);
+
+            // Assert
+            mock.Verify(a => a.UpdateAsync(entity));
+        }
+        [Fact]
+        public async Task DeleteGetActionWithId2_ReturnsModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.Delete(entity.Id) as ViewResult;
+
+            // Assert
+            Assert.Equal(entity, result.Model);
+        }
+        [Fact]
+        public async Task DeleteGetAction_GetModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.Delete(entity.Id);
+
+            // Assert
+            mock.Verify(a => a.GetAsync(entity.Id, false));
+        }
+        [Fact]
+        public async Task DeletePostAction_DeleteModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.DeleteConfirmed(entity.Id);
+
+            // Assert
+            mock.Verify(a => a.DeleteAsync(entity.Id));
+        }
+        [Fact]
+        public async Task DetailsGetAction_GetModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.Details(entity.Id);
+
+            // Assert
+            mock.Verify(a => a.GetAsync(entity.Id, false));
+        }
+        [Fact]
+        public async Task DetailsGetActionWithId2_ReturnsModelFromService()
+        {
+            // Arrange
+
+            // Act
+            var result = await validController.Details(entity.Id) as ViewResult; 
+
+            // Assert
+            Assert.Equal(entity, result.Model);
+        }
+
     }
 }
