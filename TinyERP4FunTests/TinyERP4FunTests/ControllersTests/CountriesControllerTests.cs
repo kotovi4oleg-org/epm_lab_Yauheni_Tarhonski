@@ -12,21 +12,45 @@ using Xunit;
 using Tests;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Models;
+using TinyERP4Fun.Data;
 
 namespace Tests.TinyERP4FunTests
 {
     public class CountriesControllerTests
     {
-        [Fact]
-        public async Task IndexViewResultNotNull()
+        readonly Type indexResultType = typeof(PaginatedList<Country>);
+        readonly string indexActionName = "Index";
+        private Country GetSingleEntity()
         {
-            // Arrange
-            var countriesList = GetTestCountries();
-            var mockSet = SetUpMock.SetUpFor(GetTestCountries());
+            return new Country { Name = "Belarus" };
+        }
+        private IQueryable<Country> GetTestEntities()
+        {
+            Country[] result = { new Country { Name = "Netherlands" },
+                new Country { Name = "Poland"},
+                new Country { Name = "Belarus"},
+                new Country { Name = "USA"},
+                new Country { Name = "Finland"}
+            };
+            return result.AsQueryable();
+        }
+
+        internal Mock<ICountriesService> GetMock(out CountriesController controller)
+        {
+            var mockSet = SetUpMock.SetUpFor(GetTestEntities());
             var mock = new Mock<ICountriesService>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
-            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(GetTestCountries().AsEnumerable()));
-            CountriesController controller = new CountriesController(mock.Object);
+            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(GetTestEntities().AsEnumerable()));
+            controller = new CountriesController(mock.Object);
+            return mock;
+        }
+
+
+        [Fact]
+        public async Task IndexView_ResultNotNull()
+        {
+            // Arrange
+            GetMock(out var controller);
 
             // Act
             IActionResult result = await controller.Index(null);
@@ -35,33 +59,58 @@ namespace Tests.TinyERP4FunTests
             Assert.NotNull(result);
         }
         [Fact]
-        public async Task IndexReturnsRightModel()
+        public async Task IndexView_ReturnsRightModel()
         {
             // Arrange
-            var countriesList = GetTestCountries();
-            var mockSet = SetUpMock.SetUpFor(GetTestCountries());
-            var mock = new Mock<ICountriesService>();
-            mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
-            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(GetTestCountries().AsEnumerable()));
-            CountriesController controller = new CountriesController(mock.Object);
+            GetMock(out var controller);
 
             // Act
             var result = (ViewResult) await controller.Index(null);
-            
+
             // Assert
-            Assert.IsType<PaginatedList<Country>>(result.Model);
+            Assert.Equal(indexResultType, result.Model.GetType());
         }
-
-        private IQueryable<Country> GetTestCountries()
+        [Fact]
+        public async Task CreatePostAction_ModelError_ReturnsSameModel()
         {
-            Country[] result = { new Country { Name = "Netherlands" },
-                new Country { Name = "Poland"},
-                new Country { Name = "Finland"}
-            };
-            return result.AsQueryable();
+            // Arrange
+            GetMock(out var controller);
+            var entity = GetSingleEntity();
+            controller.ModelState.AddModelError("Name", "Название модели не установлено");
 
+            // Act
+            ViewResult result = await controller.Create(entity) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(entity, result.Model);
         }
+        [Fact]
+        public async Task CreatePostAction_AddModelInService()
+        {
+            // Arrange
+            var mock = GetMock(out var controller);
+            var entity = GetSingleEntity();
 
-        
+            // Act
+            var result = await controller.Create(entity); 
+
+            // Assert
+            mock.Verify(a => a.AddAsync(entity));
+        }
+        [Fact]
+        public async Task CreatePostAction_ModelOk_RedirectsToIndex()
+        {
+            // Arrange
+            GetMock(out var controller);
+            var entity = GetSingleEntity();
+
+            // Act
+            var result = await controller.Create(entity) as RedirectToActionResult;
+
+            // Assert
+            Assert.Equal(indexActionName, result.ActionName);
+        }
+       
     }
 }

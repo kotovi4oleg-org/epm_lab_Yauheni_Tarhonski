@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {}
+    "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {}
   },
   "projects": {
-    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
+    "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj",
+        "projectUniqueName": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj",
         "projectName": "TinyERP4Fun.Data",
-        "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj",
+        "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj",
         "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\obj\\",
+        "outputPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\ProgramData\\Xamarin\\NuGet\\",
@@ -32,8 +32,8 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
-                "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
+              "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
+                "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
               }
             }
           }
@@ -66,14 +66,14 @@
         }
       }
     },
-    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
+    "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj",
+        "projectUniqueName": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj",
         "projectName": "TinyERP4Fun.InterfacesAndModels",
-        "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj",
+        "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj",
         "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\obj\\",
+        "outputPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\ProgramData\\Xamarin\\NuGet\\",
@@ -124,14 +124,14 @@
         }
       }
     },
-    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj": {
+    "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj",
+        "projectUniqueName": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj",
         "projectName": "TinyERP4Fun.ModelServises",
-        "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj",
+        "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj",
         "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\obj\\",
+        "outputPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\ProgramData\\Xamarin\\NuGet\\",
@@ -152,11 +152,11 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
-                "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj"
+              "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
+                "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj"
               },
-              "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
-                "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
+              "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
+                "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
               }
             }
           }
@@ -193,14 +193,14 @@
         }
       }
     },
-    "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {
+    "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
+        "projectUniqueName": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
         "projectName": "TinyERP4Fun",
-        "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
+        "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj",
         "packagesPath": "C:\\Users\\Yauheni_Tarhonski\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\obj\\",
+        "outputPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\ProgramData\\Xamarin\\NuGet\\",
@@ -221,14 +221,14 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
-                "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj"
+              "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj": {
+                "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.Data\\TinyERP4Fun.Data.csproj"
               },
-              "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
-                "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
+              "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
+                "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
               },
-              "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj": {
-                "projectPath": "c:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj"
+              "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj": {
+                "projectPath": "C:\\Users\\Yauheni_Tarhonski\\source\\repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServises\\TinyERP4Fun.ModelServises.csproj"
               }
             }
           }
