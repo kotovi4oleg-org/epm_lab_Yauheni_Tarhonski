@@ -1,20 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TinyERP4Fun.Controllers;
 using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.Models.Common;
 using Xunit;
-using Tests;
-using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Models;
-using TinyERP4Fun.Data;
 
-namespace Tests.TinyERP4FunTests
+namespace Tests.TinyERP4FunTests.CountriesControllerTests
 {
     internal static class EntitiesMock
     {
