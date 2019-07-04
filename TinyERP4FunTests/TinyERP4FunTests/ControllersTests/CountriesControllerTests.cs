@@ -9,38 +9,8 @@ using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
 
-namespace Tests.TinyERP4FunTests.CountriesControllerTests
+namespace Tests.TinyERP4FunTests
 {
-    internal static class EntitiesMock
-    {
-        public static CountriesController ValidController { get; set; }
-        public static CountriesController NotValidController { get; set; }
-        public static Mock<ICountriesService> Mock { get; set; }
-        public static readonly Country singleEntity = new Country { Id = 2, Name = "Name2" };
-        public static readonly IQueryable<Country> testEntities =
-            new Country[] {
-                        new Country {Id=0, Name = "Name0" },
-                        new Country {Id=1, Name = "Name1"},
-                        new Country {Id=2, Name = "Name2"},
-                        new Country {Id=3, Name = "Name3"},
-                        new Country {Id=4, Name = "Name4"}
-                        }.AsQueryable();
-        static EntitiesMock()
-        {
-            long Id = singleEntity.Id;
-            var mockSet = SetUpMock.SetUpFor(testEntities);
-            var mock = new Mock<ICountriesService>();
-            mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
-            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
-            mock.Setup(c => c.GetAsync(Id, It.IsAny<bool>()))
-                .Returns(Task.FromResult(singleEntity));
-            ValidController = new CountriesController(mock.Object);
-            NotValidController = new CountriesController(mock.Object);
-            NotValidController = (CountriesController)Activator.CreateInstance(typeof(CountriesController), new object[] { mock.Object });
-            NotValidController.ModelState.AddModelError("Name", "Some Error");
-            Mock = mock;
-        }
-    }
     public class CountriesControllerTests
     {
         readonly Mock<ICountriesService> mock;
@@ -52,10 +22,10 @@ namespace Tests.TinyERP4FunTests.CountriesControllerTests
 
         public CountriesControllerTests()
         {
-            mock = EntitiesMock.Mock;
-            validController = EntitiesMock.ValidController;
-            notValidController = EntitiesMock.NotValidController;
-            entity = EntitiesMock.singleEntity;
+            mock = MockingEntities<Country, CountriesController, ICountriesService>.Mock;
+            validController = MockingEntities<Country, CountriesController, ICountriesService>.ValidController;
+            notValidController = MockingEntities<Country, CountriesController, ICountriesService>.NotValidController;
+            entity = MockingEntities<Country, CountriesController, ICountriesService>.singleEntity;
         }
 
         [Fact]

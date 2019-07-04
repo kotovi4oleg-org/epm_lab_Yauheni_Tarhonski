@@ -32,6 +32,7 @@ namespace TinyERP4Fun.Controllers
 
             IQueryable<City> result = _citiesService.GetFiltredCities(sortOrder, searchString);
             return View(await PaginatedList<City>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
+            //return View(PaginatedList<City>.Create(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize));
         }
 
         // GET: Cities/Details/5

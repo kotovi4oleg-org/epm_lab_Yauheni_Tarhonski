@@ -9,47 +9,34 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TinyERP4Fun.Controllers;
 using TinyERP4Fun.Interfaces;
+using TinyERP4Fun.Models.Common;
 
 namespace Tests
 {
-    internal static class MockingEntities<Typ, Contr, IServ> where Typ : class, IHaveLongId, ICanSetName, new()
+    internal static class MockingEntities<T, Contr, IServ> where T : class, IHaveLongId, ICanSetName, new()
                                             where Contr : Controller
-                                            where IServ : class, IBaseService<Typ>
+                                            where IServ : class, IBaseService<T>
     {
         public static Contr ValidController { get; set; }
         public static Contr NotValidController { get; set; }
         public static Mock<IServ> Mock { get; set; }
-        public static readonly Typ singleEntity = new Typ { Id = 2, Name = "Name2" };
-        public static readonly IQueryable<Typ> testEntities = 
-            new Typ[] {
-                        new Typ {Id=0, Name = "Name0" },
-                        new Typ {Id=1, Name = "Name1"},
-                        new Typ {Id=2, Name = "Name2"},
-                        new Typ {Id=3, Name = "Name3"},
-                        new Typ {Id=4, Name = "Name4"}
+        public static Mock<DbSet<T>> MockSet { get; set; }
+        public static readonly T singleEntity = new T { Id = 2, Name = "Name2" };
+        public static readonly IQueryable<T> testEntities = 
+            new T[] {
+                        new T {Id=0, Name = "Name0" },
+                        new T {Id=1, Name = "Name1"},
+                        new T {Id=2, Name = "Name2"},
+                        new T {Id=3, Name = "Name3"},
+                        new T {Id=4, Name = "Name4"}
                         }.AsQueryable();
 
         static MockingEntities()
         {
             long Id = singleEntity.Id;
             var mockSet = SetUpMock.SetUpFor(testEntities);
-            /*
-            var mockSet = new Mock<DbSet<Typ>>();
-
-            mockSet.As<IAsyncEnumerable<Typ>>()
-                    .Setup(m => m.GetEnumerator())
-                    .Returns(new TestAsyncEnumerator<Typ>(testEntities.GetEnumerator()));
-
-            mockSet.As<IQueryable<Typ>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<Typ>(testEntities.Provider));
-
-            mockSet.As<IQueryable<Typ>>().Setup(m => m.Expression).Returns(testEntities.Expression);
-            mockSet.As<IQueryable<Typ>>().Setup(m => m.ElementType).Returns(testEntities.ElementType);
-            mockSet.As<IQueryable<Typ>>().Setup(m => m.GetEnumerator()).Returns(() => testEntities.GetEnumerator());
-            /**/
-
             var mock = new Mock<IServ>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
             mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
@@ -59,11 +46,10 @@ namespace Tests
             NotValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
             NotValidController.ModelState.AddModelError("Name", "Some Error");
             Mock = mock;
+            MockSet = mockSet;
         }
-
-
     }
-
+    
     internal static class SetUpMock
     {
         public static Mock<DbSet<T>> SetUpFor<T>(IQueryable<T> entityList) where T : class
@@ -92,32 +78,26 @@ namespace Tests
         {
             _inner = inner;
         }
-
         public IQueryable CreateQuery(Expression expression)
         {
             return new TestAsyncEnumerable<TEntity>(expression);
         }
-
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
             return new TestAsyncEnumerable<TElement>(expression);
         }
-
         public object Execute(Expression expression)
         {
             return _inner.Execute(expression);
         }
-
         public TResult Execute<TResult>(Expression expression)
         {
             return _inner.Execute<TResult>(expression);
         }
-
         public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
         {
             return new TestAsyncEnumerable<TResult>(expression);
         }
-
         public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
         {
             return Task.FromResult(Execute<TResult>(expression));
@@ -152,12 +132,10 @@ namespace Tests
         {
             _inner = inner;
         }
-
         public void Dispose()
         {
             _inner.Dispose();
         }
-
         public T Current
         {
             get
@@ -165,10 +143,10 @@ namespace Tests
                 return _inner.Current;
             }
         }
-
         public Task<bool> MoveNext(CancellationToken cancellationToken)
         {
             return Task.FromResult(_inner.MoveNext());
         }
     }
+    /**/
 }

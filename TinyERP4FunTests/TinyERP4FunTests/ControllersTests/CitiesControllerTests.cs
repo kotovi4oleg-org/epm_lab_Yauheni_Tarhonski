@@ -8,12 +8,14 @@ using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.TinyERP4FunTests
 {
     public class CitiesControllerTests
     {
         readonly Mock<ICitiesService> mock;
+        readonly Mock<DbSet<City>> mockSet;
         readonly CitiesController validController;
         readonly CitiesController notValidController;
         readonly City entity;// = EntitiesMock.singleEntity;
@@ -22,7 +24,10 @@ namespace Tests.TinyERP4FunTests
 
         public CitiesControllerTests()
         {
+            
             mock = MockingEntities<City, CitiesController, ICitiesService>.Mock;
+            mockSet = MockingEntities<City, CitiesController, ICitiesService>.MockSet;
+            mock.Setup(c => c.GetFiltredCities(null, null)).Returns(mockSet.Object);
             validController = MockingEntities<City, CitiesController, ICitiesService>.ValidController;
             notValidController = MockingEntities<City, CitiesController, ICitiesService>.NotValidController;
             entity = MockingEntities<City, CitiesController, ICitiesService>.singleEntity;
@@ -34,7 +39,7 @@ namespace Tests.TinyERP4FunTests
             // Arrange
             
             // Act
-            IActionResult result = await validController.Index(null, null, null, null);
+            IActionResult result =  await validController.Index(null, null, null, null);
 
             // Assert
             Assert.NotNull(result);
