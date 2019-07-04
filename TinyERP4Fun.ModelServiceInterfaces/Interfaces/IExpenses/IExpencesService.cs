@@ -7,7 +7,7 @@ namespace TinyERP4Fun.Interfaces
 {
     public interface IExpencesService: IBaseService<Expences>
     {
-        Task<ExpencesFiltrerModel> GetFilteredContentAsync(int? pageNumber, ExpencesFiltrerModel expencesFilterModel, string currentUserId, bool adm);
+        Task<ExpencesFiltredModel> GetFilteredContentAsync(int? pageNumber, ExpencesFiltredModel expencesFilterModel, string currentUserId, bool adm);
         IQueryable<Ids> GetCurrenciesIds();
         IQueryable<Ids> GetCompaniesIds();
         IQueryable<Ids> GetOurCompaniesIds();

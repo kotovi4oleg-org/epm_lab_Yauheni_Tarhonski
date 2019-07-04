@@ -16,30 +16,29 @@ namespace Tests.TinyERP4FunTests.CountriesControllerTests
         public static CountriesController ValidController { get; set; }
         public static CountriesController NotValidController { get; set; }
         public static Mock<ICountriesService> Mock { get; set; }
-        public static readonly Country singleEntity = new Country { Id = 2, Name = "Belarus" };
-        public static void Initialize()//out CountriesController controller)
+        public static readonly Country singleEntity = new Country { Id = 2, Name = "Name2" };
+        public static readonly IQueryable<Country> testEntities =
+            new Country[] {
+                        new Country {Id=0, Name = "Name0" },
+                        new Country {Id=1, Name = "Name1"},
+                        new Country {Id=2, Name = "Name2"},
+                        new Country {Id=3, Name = "Name3"},
+                        new Country {Id=4, Name = "Name4"}
+                        }.AsQueryable();
+        static EntitiesMock()
         {
-            long Id=2;
-            var mockSet = SetUpMock.SetUpFor(GetTestEntities());
+            long Id = singleEntity.Id;
+            var mockSet = SetUpMock.SetUpFor(testEntities);
             var mock = new Mock<ICountriesService>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
-            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(GetTestEntities().AsEnumerable()));
-            mock.Setup(c => c.GetAsync(2, It.IsAny<bool>()))
+            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
+            mock.Setup(c => c.GetAsync(Id, It.IsAny<bool>()))
                 .Returns(Task.FromResult(singleEntity));
             ValidController = new CountriesController(mock.Object);
             NotValidController = new CountriesController(mock.Object);
+            NotValidController = (CountriesController)Activator.CreateInstance(typeof(CountriesController), new object[] { mock.Object });
             NotValidController.ModelState.AddModelError("Name", "Some Error");
             Mock = mock;
-        }
-        private static IQueryable<Country> GetTestEntities()
-        {
-            Country[] result = { new Country {Id=0, Name = "Netherlands" },
-                new Country {Id=1, Name = "Poland"},
-                new Country {Id=2, Name = "Belarus"},
-                new Country {Id=3, Name = "USA"},
-                new Country {Id=4, Name = "Finland"}
-            };
-            return result.AsQueryable();
         }
     }
     public class CountriesControllerTests
@@ -47,16 +46,16 @@ namespace Tests.TinyERP4FunTests.CountriesControllerTests
         readonly Mock<ICountriesService> mock;
         readonly CountriesController validController;
         readonly CountriesController notValidController;
-        readonly Country entity = EntitiesMock.singleEntity;
+        readonly Country entity;
         readonly Type indexResultType = typeof(PaginatedList<Country>);
         readonly string indexActionName = "Index";
 
         public CountriesControllerTests()
         {
-            EntitiesMock.Initialize();
             mock = EntitiesMock.Mock;
             validController = EntitiesMock.ValidController;
             notValidController = EntitiesMock.NotValidController;
+            entity = EntitiesMock.singleEntity;
         }
 
         [Fact]

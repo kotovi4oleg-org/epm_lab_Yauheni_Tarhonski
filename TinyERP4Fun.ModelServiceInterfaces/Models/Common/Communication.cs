@@ -3,7 +3,7 @@ using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Communication : IHaveName, IHaveLongId
+    public class Communication : IHaveName, IHaveLongId, ICanSetName
     {
         public long Id { get; set; }
         public CommunicationType CommunicationType { get; set; }

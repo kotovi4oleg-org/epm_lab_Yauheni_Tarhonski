@@ -2,7 +2,7 @@
 
 namespace TinyERP4Fun.Models.Expenses
 {
-    public class DocumentType : IHaveName, IHaveLongId
+    public class DocumentType : IHaveName, IHaveLongId, ICanSetName
     {
         public long Id { get; set; }
         public string Name { get; set; }

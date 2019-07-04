@@ -7,6 +7,10 @@ namespace TinyERP4Fun.Interfaces
     {
         string Name { get; }
     }
+    public interface ICanSetName
+    {
+        string Name { get; set; }
+    }
     public interface IHaveUser
     {
         string UserId { get; set; }

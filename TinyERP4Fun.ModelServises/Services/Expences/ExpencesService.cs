@@ -36,7 +36,7 @@ namespace TinyERP4Fun.ModelServises
                                                       .AsNoTracking()
                                                       .SingleOrDefaultAsync(m => m.Id == id);
         }
-        public async Task<ExpencesFiltrerModel> GetFilteredContentAsync(int? pageNumber, ExpencesFiltrerModel expencesFilterModel, string currentUserId, bool adm)
+        public async Task<ExpencesFiltredModel> GetFilteredContentAsync(int? pageNumber, ExpencesFiltredModel expencesFilterModel, string currentUserId, bool adm)
         {
             IQueryable<Expences> defaultContext = _context.Expences.Include(e => e.DocumentType)
                                                                    .Include(e => e.Company)

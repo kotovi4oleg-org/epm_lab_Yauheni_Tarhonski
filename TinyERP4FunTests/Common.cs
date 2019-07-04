@@ -1,0 +1,174 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using TinyERP4Fun.Interfaces;
+
+namespace Tests
+{
+    internal static class MockingEntities<Typ, Contr, IServ> where Typ : class, IHaveLongId, ICanSetName, new()
+                                            where Contr : Controller
+                                            where IServ : class, IBaseService<Typ>
+    {
+        public static Contr ValidController { get; set; }
+        public static Contr NotValidController { get; set; }
+        public static Mock<IServ> Mock { get; set; }
+        public static readonly Typ singleEntity = new Typ { Id = 2, Name = "Name2" };
+        public static readonly IQueryable<Typ> testEntities = 
+            new Typ[] {
+                        new Typ {Id=0, Name = "Name0" },
+                        new Typ {Id=1, Name = "Name1"},
+                        new Typ {Id=2, Name = "Name2"},
+                        new Typ {Id=3, Name = "Name3"},
+                        new Typ {Id=4, Name = "Name4"}
+                        }.AsQueryable();
+
+        static MockingEntities()
+        {
+            long Id = singleEntity.Id;
+            var mockSet = SetUpMock.SetUpFor(testEntities);
+            /*
+            var mockSet = new Mock<DbSet<Typ>>();
+
+            mockSet.As<IAsyncEnumerable<Typ>>()
+                    .Setup(m => m.GetEnumerator())
+                    .Returns(new TestAsyncEnumerator<Typ>(testEntities.GetEnumerator()));
+
+            mockSet.As<IQueryable<Typ>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestAsyncQueryProvider<Typ>(testEntities.Provider));
+
+            mockSet.As<IQueryable<Typ>>().Setup(m => m.Expression).Returns(testEntities.Expression);
+            mockSet.As<IQueryable<Typ>>().Setup(m => m.ElementType).Returns(testEntities.ElementType);
+            mockSet.As<IQueryable<Typ>>().Setup(m => m.GetEnumerator()).Returns(() => testEntities.GetEnumerator());
+            /**/
+
+            var mock = new Mock<IServ>();
+            mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
+            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
+            mock.Setup(c => c.GetAsync(Id, It.IsAny<bool>()))
+                .Returns(Task.FromResult(singleEntity));
+            ValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
+            NotValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
+            NotValidController.ModelState.AddModelError("Name", "Some Error");
+            Mock = mock;
+        }
+
+
+    }
+
+    internal static class SetUpMock
+    {
+        public static Mock<DbSet<T>> SetUpFor<T>(IQueryable<T> entityList) where T : class
+        {
+            var mockSet = new Mock<DbSet<T>>();
+
+            mockSet.As<IAsyncEnumerable<T>>()
+                    .Setup(m => m.GetEnumerator())
+                    .Returns(new TestAsyncEnumerator<T>(entityList.GetEnumerator()));
+
+            mockSet.As<IQueryable<T>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestAsyncQueryProvider<T>(entityList.Provider));
+
+            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(entityList.Expression);
+            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(entityList.ElementType);
+            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => entityList.GetEnumerator());
+            return mockSet;
+        }
+    }
+    internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
+    {
+        private readonly IQueryProvider _inner;
+
+        internal TestAsyncQueryProvider(IQueryProvider inner)
+        {
+            _inner = inner;
+        }
+
+        public IQueryable CreateQuery(Expression expression)
+        {
+            return new TestAsyncEnumerable<TEntity>(expression);
+        }
+
+        public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+        {
+            return new TestAsyncEnumerable<TElement>(expression);
+        }
+
+        public object Execute(Expression expression)
+        {
+            return _inner.Execute(expression);
+        }
+
+        public TResult Execute<TResult>(Expression expression)
+        {
+            return _inner.Execute<TResult>(expression);
+        }
+
+        public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
+        {
+            return new TestAsyncEnumerable<TResult>(expression);
+        }
+
+        public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(Execute<TResult>(expression));
+        }
+    }
+
+    internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+    {
+        public TestAsyncEnumerable(IEnumerable<T> enumerable)
+            : base(enumerable)
+        { }
+
+        public TestAsyncEnumerable(Expression expression)
+            : base(expression)
+        { }
+
+        public IAsyncEnumerator<T> GetEnumerator()
+        {
+            return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+        }
+
+        IQueryProvider IQueryable.Provider
+        {
+            get { return new TestAsyncQueryProvider<T>(this); }
+        }
+    }
+    internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
+    {
+        private readonly IEnumerator<T> _inner;
+
+        public TestAsyncEnumerator(IEnumerator<T> inner)
+        {
+            _inner = inner;
+        }
+
+        public void Dispose()
+        {
+            _inner.Dispose();
+        }
+
+        public T Current
+        {
+            get
+            {
+                return _inner.Current;
+            }
+        }
+
+        public Task<bool> MoveNext(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_inner.MoveNext());
+        }
+    }
+}

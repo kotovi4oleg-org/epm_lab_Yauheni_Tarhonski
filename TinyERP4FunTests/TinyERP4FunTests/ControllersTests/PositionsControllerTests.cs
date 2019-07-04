@@ -20,7 +20,7 @@ namespace Tests.TinyERP4FunTests.PositionsControllerTests
         public static readonly Position singleEntity = new Position { Id = 2, Name = "Position3" };
         public static void Initialize()//out CountriesController controller)
         {
-            long Id = 2;
+            long Id = singleEntity.Id;
             var mockSet = SetUpMock.SetUpFor(GetTestEntities());
             var mock = new Mock<IPositionsService>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);

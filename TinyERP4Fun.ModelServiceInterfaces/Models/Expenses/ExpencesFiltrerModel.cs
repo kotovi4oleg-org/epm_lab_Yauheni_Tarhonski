@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TinyERP4Fun.Models.Expenses
 {
-    public class ExpencesFiltrerModel
+    public class ExpencesFiltredModel
     {
         public PaginatedList<Expences> Expences { get; set; }
         public Expences SingleRecord { get; set; }

@@ -2,7 +2,7 @@
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class State : IHaveName, IHaveLongId
+    public class State : IHaveName, IHaveLongId, ICanSetName
     {
         public long Id { get; set; }
         public string Name { get; set; }

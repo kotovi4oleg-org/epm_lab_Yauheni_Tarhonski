@@ -2,7 +2,7 @@
 
 namespace TinyERP4Fun.Models.Stock
 {
-    public class Item : IHaveName, IHaveLongId, IHaveImage
+    public class Item : IHaveName, IHaveLongId, IHaveImage, ICanSetName
     {
         public long Id { get; set; }
         public string Name { get; set; }

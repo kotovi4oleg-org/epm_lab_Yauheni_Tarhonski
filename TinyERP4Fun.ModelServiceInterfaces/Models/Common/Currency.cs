@@ -2,7 +2,7 @@
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Currency : IHaveName, IHaveLongId
+    public class Currency : IHaveName, IHaveLongId, ICanSetName
     {
         public long Id { get; set; }
         public string Code { get; set; }

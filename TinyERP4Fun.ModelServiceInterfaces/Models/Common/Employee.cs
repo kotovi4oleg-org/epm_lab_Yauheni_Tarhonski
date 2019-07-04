@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Employee : IHaveName, IHaveLongId
+    public class Employee : IHaveName, IHaveLongId, ICanSetName
     {
         public long Id { get; set; }
         public long PersonId { get; set; }

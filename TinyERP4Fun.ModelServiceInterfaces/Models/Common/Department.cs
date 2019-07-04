@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TinyERP4Fun.Models.Common
 {
-    public class Department : IHaveName, IHaveLongId
+    public class Department : IHaveName, IHaveLongId, ICanSetName
     {
         public long Id { get; set; }
         public string Name { get; set; }

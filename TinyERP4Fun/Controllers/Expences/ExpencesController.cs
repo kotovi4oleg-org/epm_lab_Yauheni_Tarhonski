@@ -29,7 +29,7 @@ namespace TinyERP4Fun.Controllers
             if (ownerCheck&&entity!=null) return entity.User == currentUser;
             return false;
         }
-        private async Task<ExpencesFiltrerModel> IndexCreateViewModel(int? pageNumber, ExpencesFiltrerModel expencesViewModel, bool adm)
+        private async Task<ExpencesFiltredModel> IndexCreateViewModel(int? pageNumber, ExpencesFiltredModel expencesViewModel, bool adm)
         {
             //Настройку хранения фильтров не реализовывал. В планах - хранить фильтры в базе для каждого сочетания пользователь/модуль
             var currentUserId = _userManager.GetUserId(User);
@@ -43,7 +43,7 @@ namespace TinyERP4Fun.Controllers
             return expencesViewModel;
         }
 
-        public async Task<IActionResult> Index(int? pageNumber, ExpencesFiltrerModel expencesViewModel)
+        public async Task<IActionResult> Index(int? pageNumber, ExpencesFiltredModel expencesViewModel)
         {
             if (expencesViewModel.AdmFilter&&!await IsAdminOrOwner(null,false))
                 expencesViewModel.AdmFilter = false;
