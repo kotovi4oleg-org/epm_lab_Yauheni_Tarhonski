@@ -25,13 +25,13 @@ namespace Tests.TinyERP4FunTests.Common
 
         public CommunicationTypesControllerTests()
         {
-            var mockingEntities = new MockingEntities2<CommunicationType, 
+            var mockingEntities = new MockingEntities<CommunicationType, 
                                                        CommunicationTypesController, 
                                                        ICommunicationTypesService>();
             mock = mockingEntities.Mock;
             validController = mockingEntities.ValidController;
             notValidController = mockingEntities.NotValidController;
-            entity = mockingEntities.singleEntity;
+            entity = mockingEntities.SingleEntity();
         }
 
         [Fact]

@@ -15,7 +15,7 @@ using TinyERP4Fun.Models.Common;
 
 namespace Tests
 {
-    internal class MockingEntities2<T, Contr, IServ> where T : class, IHaveLongId, ICanSetName, new()
+    internal class MockingEntities<T, Contr, IServ> where T : class, IHaveLongId, ICanSetName, new()
                                         where Contr : Controller
                                         where IServ : class, IBaseService<T>
     {
@@ -23,7 +23,24 @@ namespace Tests
         public Contr NotValidController { get; set; }
         public Mock<IServ> Mock { get; set; }
         public Mock<DbSet<T>> MockSet { get; set; }
-        public readonly T singleEntity = new T { Id = 2, Name = "Name2" };
+        public T singleEntity = new T { Id = 2, Name = "Name2" };
+        public T SingleEntity()
+        {
+            foreach (var type in typeof(T).GetInterfaces())
+            {
+                if (type == typeof(ICanSetName)
+                    // Строчки ниже для generic interface 
+                    //type.IsGenericType
+                    //&&type.GetGenericTypeDefinition() == typeof(ICanSetName<>)
+                    //&& type.GetGenericArguments()[0] == typeof(T)
+                    )
+                {
+                    return singleEntity;
+                }
+            }
+            throw new NotImplementedException();
+            //return new T { Id = 2, Name = "Name2" };
+        }
         public readonly IQueryable<T> testEntities =
             new T[] {
                         new T {Id=0, Name = "Name0" },
@@ -32,15 +49,15 @@ namespace Tests
                         new T {Id=3, Name = "Name3"},
                         new T {Id=4, Name = "Name4"}
                         }.AsQueryable();
-        public MockingEntities2()
+        public MockingEntities()
         {
-            long Id = singleEntity.Id;
+            long Id = SingleEntity().Id;
             var mockSet = SetUpMock.SetUpFor(testEntities);
             var mock = new Mock<IServ>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
             mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
             mock.Setup(c => c.GetAsync(Id, It.IsAny<bool>()))
-                .Returns(Task.FromResult(singleEntity));
+                .Returns(Task.FromResult(SingleEntity()));
             ValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
             NotValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
             NotValidController.ModelState.AddModelError("Name", "Some Error");
@@ -48,40 +65,7 @@ namespace Tests
             MockSet = mockSet;
         }
     }
-    internal static class MockingEntities<T, Contr, IServ> where T : class, IHaveLongId, ICanSetName, new()
-                                            where Contr : Controller
-                                            where IServ : class, IBaseService<T>
-    {
-        public static Contr ValidController { get; set; }
-        public static Contr NotValidController { get; set; }
-        public static Mock<IServ> Mock { get; set; }
-        public static Mock<DbSet<T>> MockSet { get; set; }
-        public static readonly T singleEntity = new T { Id = 2, Name = "Name2" };
-        public static readonly IQueryable<T> testEntities = 
-            new T[] {
-                        new T {Id=0, Name = "Name0" },
-                        new T {Id=1, Name = "Name1"},
-                        new T {Id=2, Name = "Name2"},
-                        new T {Id=3, Name = "Name3"},
-                        new T {Id=4, Name = "Name4"}
-                        }.AsQueryable();
-
-        static MockingEntities()
-        {
-            long Id = singleEntity.Id;
-            var mockSet = SetUpMock.SetUpFor(testEntities);
-            var mock = new Mock<IServ>();
-            mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
-            mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
-            mock.Setup(c => c.GetAsync(Id, It.IsAny<bool>()))
-                .Returns(Task.FromResult(singleEntity));
-            ValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
-            NotValidController = (Contr)Activator.CreateInstance(typeof(Contr), new object[] { mock.Object });
-            NotValidController.ModelState.AddModelError("Name", "Some Error");
-            Mock = mock;
-            MockSet = mockSet;
-        }
-    }
+    
     
     internal static class SetUpMock
     {

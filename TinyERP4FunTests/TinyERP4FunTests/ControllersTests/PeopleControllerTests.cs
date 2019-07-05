@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+ * using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Linq;
@@ -11,38 +12,27 @@ using TinyERP4Fun.Models;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
-using Microsoft.EntityFrameworkCore;
 
 namespace Tests.TinyERP4FunTests.Common
 {
-    public class CompaniesControllerTests
+    public class PeopleControllerTests
     {
-        readonly Mock<ICompaniesService> mock;
-        readonly Mock<DbSet<Company>> mockSet;
-        readonly CompaniesController validController;
-        readonly CompaniesController notValidController;
-        readonly Company entity;
-        readonly Type indexResultType = typeof(PaginatedList<Company>);
+        readonly Mock<IPeopleService> mock;
+        readonly PeopleController validController;
+        readonly PeopleController notValidController;
+        readonly Person entity;
+        readonly Type indexResultType = typeof(PaginatedList<Person>);
         readonly string indexActionName = "Index";
 
-        public CompaniesControllerTests()
+        public PeopleControllerTests()
         {
-            /*
-            var mockingEntities = new MockingEntities2<Company, CompaniesController, ICompaniesService>();
+            var mockingEntities = new MockingEntities<Person,
+                                           PeopleController,
+                                           IPeopleService>();
             mock = mockingEntities.Mock;
             validController = mockingEntities.ValidController;
             notValidController = mockingEntities.NotValidController;
             entity = mockingEntities.singleEntity;
-            /**/
-            var mockingEntities = new MockingEntities<Company,
-                               CompaniesController,
-                               ICompaniesService>();
-            mock = mockingEntities.Mock;
-            mockSet = mockingEntities.MockSet;
-            mock.Setup(c => c.GetFiltredContent(null, null)).Returns(mockSet.Object);
-            validController = mockingEntities.ValidController;
-            notValidController = mockingEntities.NotValidController;
-            entity = mockingEntities.SingleEntity();
         }
 
         [Fact]
@@ -51,7 +41,7 @@ namespace Tests.TinyERP4FunTests.Common
             // Arrange
 
             // Act
-            IActionResult result = await validController.Index(null, null, null, null);
+            IActionResult result = await validController.Index(null);
 
             // Assert
             Assert.NotNull(result);
@@ -62,7 +52,7 @@ namespace Tests.TinyERP4FunTests.Common
             // Arrange
 
             // Act
-            var result = (ViewResult)await validController.Index(null, null, null, null);
+            var result = (ViewResult)await validController.Index(null);
 
             // Assert
             Assert.Equal(indexResultType, result.Model.GetType());
@@ -192,3 +182,4 @@ namespace Tests.TinyERP4FunTests.Common
 
     }
 }
+/**/

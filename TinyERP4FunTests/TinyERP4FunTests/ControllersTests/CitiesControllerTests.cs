@@ -24,7 +24,7 @@ namespace Tests.TinyERP4FunTests.Common
 
         public CitiesControllerTests()
         {
-            var mockingEntities = new MockingEntities2<City,
+            var mockingEntities = new MockingEntities<City,
                                            CitiesController,
                                            ICitiesService>();
             mock = mockingEntities.Mock;
@@ -32,7 +32,7 @@ namespace Tests.TinyERP4FunTests.Common
             mock.Setup(c => c.GetFiltredCities(null, null)).Returns(mockSet.Object);
             validController = mockingEntities.ValidController;
             notValidController = mockingEntities.NotValidController;
-            entity = mockingEntities.singleEntity;
+            entity = mockingEntities.SingleEntity();
         }
 
         [Fact]

@@ -8,7 +8,7 @@ using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Common;
 using TinyERP4Fun.Interfaces;
 
-namespace TinyERP4Fun.Controllers.Common
+namespace TinyERP4Fun.Controllers
 {
     [Authorize(Roles = Constants.rolesCommon_User)]
     public class CurrenciesController : Controller
