@@ -9,7 +9,7 @@ using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
 
-namespace Tests.TinyERP4FunTests
+namespace Tests.TinyERP4FunTests.Common
 {
     public class CountriesControllerTests
     {
@@ -22,10 +22,13 @@ namespace Tests.TinyERP4FunTests
 
         public CountriesControllerTests()
         {
-            mock = MockingEntities<Country, CountriesController, ICountriesService>.Mock;
-            validController = MockingEntities<Country, CountriesController, ICountriesService>.ValidController;
-            notValidController = MockingEntities<Country, CountriesController, ICountriesService>.NotValidController;
-            entity = MockingEntities<Country, CountriesController, ICountriesService>.singleEntity;
+            var mockingEntities = new MockingEntities2<Country,
+                                           CountriesController,
+                                           ICountriesService>();
+            mock = mockingEntities.Mock;
+            validController = mockingEntities.ValidController;
+            notValidController = mockingEntities.NotValidController;
+            entity = mockingEntities.singleEntity;
         }
 
         [Fact]

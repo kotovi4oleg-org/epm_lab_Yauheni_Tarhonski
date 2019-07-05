@@ -1,5 +1,4 @@
-﻿/*
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Linq;
@@ -10,7 +9,7 @@ using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
 
-namespace Tests.TinyERP4FunTests
+namespace Tests.TinyERP4FunTests.Common
 {
     public class CommunicationsControllerTests
     {
@@ -20,15 +19,16 @@ namespace Tests.TinyERP4FunTests
         readonly Communication entity;
         readonly Type indexResultType = typeof(EnumerableQuery<Communication>);
         readonly string indexActionName = "Index";
-        //readonly EntitiesMock entitiesMock;
 
         public CommunicationsControllerTests()
         {
-            MockingEntities<Communication, CommunicationsController, ICommunicationsService>.Initialize();
-            mock = MockingEntities<Communication, CommunicationsController, ICommunicationsService>.Mock;
-            validController = MockingEntities<Communication, CommunicationsController, ICommunicationsService>.ValidController;
-            notValidController = MockingEntities<Communication, CommunicationsController, ICommunicationsService>.NotValidController;
-            entity = MockingEntities<Communication, CommunicationsController, ICommunicationsService>.singleEntity;
+            var mockingEntities = new MockingEntities2<Communication, 
+                                            CommunicationsController, 
+                                            ICommunicationsService>();
+            mock = mockingEntities.Mock;
+            validController = mockingEntities.ValidController;
+            notValidController = mockingEntities.NotValidController;
+            entity = mockingEntities.singleEntity;
         }
 
         [Fact]
@@ -178,4 +178,3 @@ namespace Tests.TinyERP4FunTests
 
     }
 }
-/**/

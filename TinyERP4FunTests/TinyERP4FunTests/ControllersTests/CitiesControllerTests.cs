@@ -10,7 +10,7 @@ using Xunit;
 using TinyERP4Fun.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.TinyERP4FunTests
+namespace Tests.TinyERP4FunTests.Common
 {
     public class CitiesControllerTests
     {
@@ -24,13 +24,15 @@ namespace Tests.TinyERP4FunTests
 
         public CitiesControllerTests()
         {
-            
-            mock = MockingEntities<City, CitiesController, ICitiesService>.Mock;
-            mockSet = MockingEntities<City, CitiesController, ICitiesService>.MockSet;
+            var mockingEntities = new MockingEntities2<City,
+                                           CitiesController,
+                                           ICitiesService>();
+            mock = mockingEntities.Mock;
+            mockSet = mockingEntities.MockSet;
             mock.Setup(c => c.GetFiltredCities(null, null)).Returns(mockSet.Object);
-            validController = MockingEntities<City, CitiesController, ICitiesService>.ValidController;
-            notValidController = MockingEntities<City, CitiesController, ICitiesService>.NotValidController;
-            entity = MockingEntities<City, CitiesController, ICitiesService>.singleEntity;
+            validController = mockingEntities.ValidController;
+            notValidController = mockingEntities.NotValidController;
+            entity = mockingEntities.singleEntity;
         }
 
         [Fact]

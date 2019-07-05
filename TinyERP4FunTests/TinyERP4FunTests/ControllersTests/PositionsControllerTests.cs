@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 
-namespace Tests.TinyERP4FunTests
+namespace Tests.TinyERP4FunTests.Common
 {
     public class PositionsControllerTests
     {
@@ -25,14 +25,13 @@ namespace Tests.TinyERP4FunTests
 
         public PositionsControllerTests()
         {
-            mock = MockingEntities<Position, PositionsController, IPositionsService>
-                .Mock;
-            validController = MockingEntities<Position, PositionsController, IPositionsService>
-                .ValidController;
-            notValidController = MockingEntities<Position, PositionsController, IPositionsService>
-                .NotValidController;
-            entity = MockingEntities<Position, PositionsController, IPositionsService>
-                .singleEntity;
+            var mockingEntities = new MockingEntities2<Position,
+                                           PositionsController,
+                                           IPositionsService>();
+            mock = mockingEntities.Mock;
+            validController = mockingEntities.ValidController;
+            notValidController = mockingEntities.NotValidController;
+            entity = mockingEntities.singleEntity;
         }
 
         [Fact]
