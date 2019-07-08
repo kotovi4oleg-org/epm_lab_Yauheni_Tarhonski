@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TinyERP4Fun.ModelServiceInterfaces\TinyERP4Fun.InterfacesAndModels.csproj" />
     <ProjectReference Include="..\TinyERP4Fun\TinyERP4Fun.csproj" />
   </ItemGroup>
 

@@ -14363,6 +14363,7 @@
       "Microsoft.NETCore.App >= 2.2.0",
       "Moq >= 4.12.0",
       "TinyERP4Fun >= 1.0.0",
+      "TinyERP4Fun.InterfacesAndModels >= 1.0.0",
       "xunit >= 2.4.0",
       "xunit.runner.visualstudio >= 2.4.0"
     ]
@@ -14400,6 +14401,9 @@
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
+            "C:\\Users\\Yauheni_Tarhonski\\Source\\Repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj": {
+              "projectPath": "C:\\Users\\Yauheni_Tarhonski\\Source\\Repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun.ModelServiceInterfaces\\TinyERP4Fun.InterfacesAndModels.csproj"
+            },
             "C:\\Users\\Yauheni_Tarhonski\\Source\\Repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj": {
               "projectPath": "C:\\Users\\Yauheni_Tarhonski\\Source\\Repos\\epm_lab_Yauheni_Tarhonski\\TinyERP4Fun\\TinyERP4Fun.csproj"
             }
