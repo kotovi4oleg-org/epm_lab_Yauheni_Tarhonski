@@ -9,7 +9,6 @@ using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun;
 using TinyERP4Fun.Models;
-using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Models.Expenses;
 using TinyERP4Fun.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +19,7 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Tests.TinyERP4FunTests.Expences
+namespace Tests.TinyERP4FunTests.ExpencesTests
 {
     public class FakeSignInManager : SignInManager<IdentityUser>
     {
@@ -83,15 +82,15 @@ namespace Tests.TinyERP4FunTests.Expences
         public ExpencesController ValidController { get; set; }
         public ExpencesController NotValidController { get; set; }
         public Mock<IExpencesService> Mock { get; set; }
-        public readonly TinyERP4Fun.Models.Expenses.Expences singleEntity  
-            = new TinyERP4Fun.Models.Expenses.Expences { Id = 2};
-        public readonly IQueryable<TinyERP4Fun.Models.Expenses.Expences> testEntities =
-            new TinyERP4Fun.Models.Expenses.Expences[] {
-                        new TinyERP4Fun.Models.Expenses.Expences {Id=0},
-                        new TinyERP4Fun.Models.Expenses.Expences {Id=1},
-                        new TinyERP4Fun.Models.Expenses.Expences {Id=2},
-                        new TinyERP4Fun.Models.Expenses.Expences {Id=3},
-                        new TinyERP4Fun.Models.Expenses.Expences {Id=4}
+        public readonly Expences singleEntity  
+            = new Expences { Id = 2};
+        public readonly IQueryable<Expences> testEntities =
+            new Expences[] {
+                        new Expences {Id=0},
+                        new Expences {Id=1},
+                        new Expences {Id=2},
+                        new Expences {Id=3},
+                        new Expences {Id=4}
                         }.AsQueryable();
         public EntitiesMock()
         {
@@ -99,6 +98,11 @@ namespace Tests.TinyERP4FunTests.Expences
             var mockSet = SetUpMock.SetUpFor(testEntities);
             var mock = new Mock<IExpencesService>();
             mock.Setup(c => c.GetIQueryable()).Returns(mockSet.Object);
+            mock.Setup(c => c.GetFilteredContentAsync(It.IsAny<int?>(), 
+                                                      It.IsAny<ExpencesFiltredModel>(), 
+                                                      It.IsAny<string>(), 
+                                                      It.IsAny<bool>()))
+                .Returns(Task.FromResult(new ExpencesFiltredModel()));
             mock.Setup(c => c.GetListAsync()).Returns(Task.FromResult(testEntities.AsEnumerable()));
             mock.Setup(c => c.GetAsync(Id, It.IsAny<bool>()))
                 .Returns(Task.FromResult(singleEntity));
@@ -113,10 +117,9 @@ namespace Tests.TinyERP4FunTests.Expences
         readonly Mock<IExpencesService> mock;
         readonly ExpencesController validController;
         readonly ExpencesController notValidController;
-        readonly TinyERP4Fun.Models.Expenses.Expences entity;
+        readonly Expences entity;
         readonly Type indexResultType = typeof(ExpencesFiltredModel);
         readonly string indexActionName = "Index";
-        //public readonly ExpencesFiltredModel testEntities = new ExpencesFiltredModel();
 
         public ExpencesControllerTests()
         {
@@ -133,7 +136,7 @@ namespace Tests.TinyERP4FunTests.Expences
             // Arrange
             
             // Act
-            IActionResult result =  await validController.Index(null, null);
+            IActionResult result =  await validController.Index(null, new ExpencesFiltredModel());
 
             // Assert
             Assert.NotNull(result);
@@ -144,7 +147,7 @@ namespace Tests.TinyERP4FunTests.Expences
             // Arrange
 
             // Act
-            var result = (ViewResult) await validController.Index(null, null);
+            var result = (ViewResult) await validController.Index(null, new ExpencesFiltredModel());
 
             // Assert
             Assert.Equal(indexResultType, result.Model.GetType());

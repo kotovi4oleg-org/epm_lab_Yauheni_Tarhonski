@@ -12,7 +12,7 @@ using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.ModelServises
 {
-    public class ItemService : BaseService<Item>, IItemService
+    public class ItemService : BaseService<Item>, IItemsService
     {
         public ItemService(DefaultContext context) : base(context)
         {

@@ -54,7 +54,8 @@ namespace TinyERP4Fun.Controllers
             var emptyStringList = new string[] { };
             var filteredContext = _stockService.GetFiltredContent(fromFilter, toFilter, itemFilter, warehouseFilter, emptyStringList);
             //Это очень красивая строка  объясняет как делать множественный групбай: var result31 = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId }).Select(group => new { group.Key, Count = group.Sum(p=>p.Quantity) }).ToListAsync();
-            var result = await filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId })
+
+            var result = filteredContext.GroupBy(s => new { s.WarehouseId, s.ItemId })
                                               .Select(group => new StockViewModel()
                                               {
                                                   Item = group.FirstOrDefault().Item,
@@ -62,12 +63,10 @@ namespace TinyERP4Fun.Controllers
                                                   Warehouse = group.FirstOrDefault().Warehouse,
                                                   WarehouseId = group.Key.WarehouseId,
                                                   Quantity = group.Sum(s => s.Quantity)
-                                              })
-                                              .AsNoTracking()
-                                              .ToListAsync();
+                                              });
             StockPaginatedViewModel stockPaginatedViewModel = new StockPaginatedViewModel()
             {
-                StockViewModels = PaginatedList<StockViewModel>.Create(result, pageNumber ?? 1, Constants.pageSize),
+                StockViewModels = await PaginatedList<StockViewModel>.CreateAsync(result.AsNoTracking(), pageNumber ?? 1, Constants.pageSize),
                 ItemFilter = new SelectList(_stockService.GetItemsIds(), "Id","Name"),
                 WarehouseFilter = new SelectList(_stockService.GetWarehousesIds(), "Id", "Name"),
                 FromFilter = fromFilter,
@@ -75,6 +74,7 @@ namespace TinyERP4Fun.Controllers
             };
             return View(stockPaginatedViewModel);
         }
+
         public async Task<IActionResult> Details(long? id)
         {
             var stock = await _stockService.GetAsync(id);

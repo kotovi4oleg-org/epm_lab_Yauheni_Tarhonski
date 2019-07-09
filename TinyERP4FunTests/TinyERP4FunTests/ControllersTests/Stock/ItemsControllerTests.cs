@@ -9,24 +9,26 @@ using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
 using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Models.Expenses;
+using TinyERP4Fun.Models.Stock;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
-namespace Tests.TinyERP4FunTests.ExpencesTests
+namespace Tests.TinyERP4FunTests
 {
-    public class BusinessDirectionsControllerTests
+    public class ItemsControllerTests
     {
-        readonly Mock<IBusinessDirectionsService> mock;
-        readonly BusinessDirectionsController validController;
-        readonly BusinessDirectionsController notValidController;
-        readonly BusinessDirection entity;
-        readonly Type indexResultType = typeof(EnumerableQuery<BusinessDirection>);
+        readonly Mock<IItemsService> mock;
+        readonly ItemsController validController;
+        readonly ItemsController notValidController;
+        readonly Item entity;
+        readonly Type indexResultType = typeof(EnumerableQuery<Item>);
         readonly string indexActionName = "Index";
 
-        public BusinessDirectionsControllerTests()
+        public ItemsControllerTests()
         {
-            var mockingEntities = new MockingEntities<BusinessDirection,
-                                           BusinessDirectionsController,
-                                           IBusinessDirectionsService>();
+            var mockingEntities = new MockingEntities<Item,
+                                           ItemsController,
+                                           IItemsService>();
             mock = mockingEntities.Mock;
             validController = mockingEntities.ValidController;
             notValidController = mockingEntities.NotValidController;
@@ -62,7 +64,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
 
 
             // Act
-            var result = await notValidController.Create(entity) as ViewResult;
+            var result = await notValidController.Create(entity, null) as ViewResult;
 
             // Assert
             Assert.Equal(entity, result.Model);
@@ -73,7 +75,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Arrange
 
             // Act
-            var result = await validController.Create(entity); 
+            var result = await validController.Create(entity, new List<IFormFile>()); 
 
             // Assert
             mock.Verify(a => a.AddAsync(entity));
@@ -84,7 +86,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Arrange
 
             // Act
-            var result = await validController.Create(entity) as RedirectToActionResult;
+            var result = await validController.Create(entity, new List<IFormFile>()) as RedirectToActionResult;
 
             // Assert
             Assert.Equal(indexActionName, result.ActionName);

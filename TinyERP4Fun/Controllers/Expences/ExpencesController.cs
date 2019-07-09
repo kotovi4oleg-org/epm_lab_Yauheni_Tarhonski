@@ -40,7 +40,7 @@ namespace TinyERP4Fun.Controllers
             ViewBag.OurCompanyFilter = new SelectList(_expencesService.GetOurCompaniesIds(), "Id", "Name");
             if (!string.IsNullOrEmpty(expencesViewModel.Total))
                 expencesViewModel.Total = Localization.currentLocalizatin["Amount of Expenses"] + ": " + expencesViewModel.Total;
-
+            
             return expencesViewModel;
         }
 

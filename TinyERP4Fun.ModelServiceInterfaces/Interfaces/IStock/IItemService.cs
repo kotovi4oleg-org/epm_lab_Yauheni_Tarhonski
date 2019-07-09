@@ -4,7 +4,7 @@ using TinyERP4Fun.Models.Stock;
 
 namespace TinyERP4Fun.Interfaces
 {
-    public interface IItemService: IBaseService<Item>
+    public interface IItemsService: IBaseService<Item>
     {
         IQueryable<Ids> GetUnitsIds();
     }

@@ -76,7 +76,7 @@ namespace TinyERP4Fun
 
             //DI
             services.AddScoped<IStockService, StockService>();
-            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IItemsService, ItemService>();
             services.AddScoped<IWarehouseService, WarehouseService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IExpencesService, ExpencesService>();

@@ -6,12 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TinyERP4Fun.Controllers;
 using TinyERP4Fun.Interfaces;
-using TinyERP4Fun.Models.Common;
 
 namespace Tests
 {
@@ -24,7 +21,6 @@ namespace Tests
         public Mock<IServ> Mock { get; set; }
         public Mock<DbSet<T>> MockSet { get; set; }
         public T singleEntity = new T { Id = 2};
-
         public readonly IQueryable<T> testEntities =
             new T[] {
                         new T {Id=0},

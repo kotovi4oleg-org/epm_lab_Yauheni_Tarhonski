@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/**/
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Linq;
@@ -7,27 +8,51 @@ using TinyERP4Fun.Controllers;
 using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.Models.Common;
 using Xunit;
+using TinyERP4Fun.Models.Stock;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading;
+using TinyERP4Fun.ViewModels;
 using TinyERP4Fun.Models;
 using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Models.Expenses;
 
-namespace Tests.TinyERP4FunTests.ExpencesTests
+namespace Tests.TinyERP4FunTests
 {
-    public class BusinessDirectionsControllerTests
+    public class StockControllerTests
     {
-        readonly Mock<IBusinessDirectionsService> mock;
-        readonly BusinessDirectionsController validController;
-        readonly BusinessDirectionsController notValidController;
-        readonly BusinessDirection entity;
-        readonly Type indexResultType = typeof(EnumerableQuery<BusinessDirection>);
+        readonly Mock<IStockService> mock;
+        readonly Mock<DbSet<Stock>> mockSet;
+        readonly StockController validController;
+        readonly StockController notValidController;
+        readonly Stock entity;
+        readonly StockViewModel stockViewModel;
+        readonly Type indexResultType = typeof(StockPaginatedViewModel);
         readonly string indexActionName = "Index";
+        
+        public readonly IQueryable<Stock> testEntities =
+            new Stock[] {
+                        new Stock { Id = 5,
+                            Item =new Item(){ Id = 1 },
+                            ItemId = 1,
+                            Quantity = 1,
+                            Warehouse =new Warehouse(){ Id = 2 },
+                            WarehouseId = 2}
+                }.AsQueryable();
 
-        public BusinessDirectionsControllerTests()
+        public StockControllerTests()
         {
-            var mockingEntities = new MockingEntities<BusinessDirection,
-                                           BusinessDirectionsController,
-                                           IBusinessDirectionsService>();
+            var mockingEntities = new MockingEntities<Stock,
+                                           StockController,
+                                           IStockService>();
+            //TestAsyncEnumerable<Stock> testEntities2 = new TestAsyncEnumerable<Stock>(testEntities);
             mock = mockingEntities.Mock;
+            mockSet = mockingEntities.MockSet;
+            //var mockSetIndex = SetUpMock.SetUpFor(testEntities2);
+            mock.Setup(c => c.GetFiltredContent(It.IsAny<DateTime?>(),
+                                                It.IsAny<DateTime?>(),
+                                                It.IsAny<IEnumerable<long?>>(),
+                                                It.IsAny<IEnumerable<long?>>(),
+                                                It.IsAny<IEnumerable<string>>())).Returns(mockSet.Object);
             validController = mockingEntities.ValidController;
             notValidController = mockingEntities.NotValidController;
             entity = mockingEntities.singleEntity;
@@ -37,9 +62,9 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
         public async Task IndexView_ResultNotNull()
         {
             // Arrange
-            
+
             // Act
-            IActionResult result =  await validController.Index();
+            IActionResult result = await validController.Index(null,null,null,null,null);
 
             // Assert
             Assert.NotNull(result);
@@ -50,7 +75,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Arrange
 
             // Act
-            var result = (ViewResult) await validController.Index();
+            var result = (ViewResult)await validController.Index(null, null, null, null, null);
 
             // Assert
             Assert.Equal(indexResultType, result.Model.GetType());
@@ -73,7 +98,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Arrange
 
             // Act
-            var result = await validController.Create(entity); 
+            var result = await validController.Create(entity);
 
             // Assert
             mock.Verify(a => a.AddAsync(entity));
@@ -100,6 +125,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Assert
             mock.Verify(a => a.GetAsync(entity.Id, true));
         }
+        
         [Fact]
         public async Task EditPostAction_ModelError_ReturnsSameModel()
         {
@@ -122,6 +148,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Assert
             mock.Verify(a => a.UpdateAsync(entity));
         }
+        
         [Fact]
         public async Task DeleteGetActionWithId2_ReturnsModelFromService()
         {
@@ -172,7 +199,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Arrange
 
             // Act
-            var result = await validController.Details(entity.Id) as ViewResult; 
+            var result = await validController.Details(entity.Id) as ViewResult;
 
             // Assert
             Assert.Equal(entity, result.Model);
@@ -180,3 +207,4 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
 
     }
 }
+/**/

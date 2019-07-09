@@ -8,25 +8,24 @@ using TinyERP4Fun.Interfaces;
 using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
-using Microsoft.EntityFrameworkCore;
-using TinyERP4Fun.Models.Expenses;
+using TinyERP4Fun.Models.Stock;
 
-namespace Tests.TinyERP4FunTests.ExpencesTests
+namespace Tests.TinyERP4FunTests
 {
-    public class BusinessDirectionsControllerTests
+    public class WarehousesControllerTests
     {
-        readonly Mock<IBusinessDirectionsService> mock;
-        readonly BusinessDirectionsController validController;
-        readonly BusinessDirectionsController notValidController;
-        readonly BusinessDirection entity;
-        readonly Type indexResultType = typeof(EnumerableQuery<BusinessDirection>);
+        readonly Mock<IWarehouseService> mock;
+        readonly WarehousesController validController;
+        readonly WarehousesController notValidController;
+        readonly Warehouse entity;
+        readonly Type indexResultType = typeof(EnumerableQuery<Warehouse>);
         readonly string indexActionName = "Index";
 
-        public BusinessDirectionsControllerTests()
+        public WarehousesControllerTests()
         {
-            var mockingEntities = new MockingEntities<BusinessDirection,
-                                           BusinessDirectionsController,
-                                           IBusinessDirectionsService>();
+            var mockingEntities = new MockingEntities<Warehouse,
+                                            WarehousesController,
+                                            IWarehouseService>();
             mock = mockingEntities.Mock;
             validController = mockingEntities.ValidController;
             notValidController = mockingEntities.NotValidController;
@@ -39,7 +38,7 @@ namespace Tests.TinyERP4FunTests.ExpencesTests
             // Arrange
             
             // Act
-            IActionResult result =  await validController.Index();
+            IActionResult result = await validController.Index();
 
             // Assert
             Assert.NotNull(result);

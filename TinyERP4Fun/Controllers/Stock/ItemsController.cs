@@ -11,10 +11,10 @@ namespace TinyERP4Fun.Controllers
 {
     public class ItemsController : Controller
     {
-        private readonly IItemService _itemService;
-        public ItemsController(IItemService itemService)
+        private readonly IItemsService _itemService;
+        public ItemsController(IItemsService itemsService)
         {
-            _itemService = itemService;
+            _itemService = itemsService;
         }
 
         // GET: Items
