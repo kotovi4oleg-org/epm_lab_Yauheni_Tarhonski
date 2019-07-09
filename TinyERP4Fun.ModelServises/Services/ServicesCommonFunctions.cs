@@ -83,54 +83,6 @@ namespace TinyERP4Fun.ModelServises
             MemoryStream ms = new MemoryStream(entity.Image);
             return new FileStreamResult(ms, entity.ContentType); 
         }
-        public static async Task<IEnumerable<T>> GetListAsync<T>(DefaultContext _context) where T : class
-        {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
-        }
-        public static IQueryable<T> GetIQueryable<T>(DefaultContext _context) where T : class
-        {
-            return _context.Set<T>().AsNoTracking();
-        }
-
-        public static async Task<T> GetObject<T>(long? id, DefaultContext _context, bool tracking = false) where T : class, IHaveLongId
-        {
-            if (id == null) return null;
-            T resultObject;
-            if (tracking)
-                resultObject = await _context.Set<T>().SingleOrDefaultAsync(t => t.Id == id);
-            else
-                resultObject = await _context.Set<T>().AsNoTracking().SingleOrDefaultAsync(t => t.Id == id);
-            return resultObject;
-        }
-        public static async Task AddObject<T>(T entity, DefaultContext _context) where T : class, IHaveLongId
-        {
-            _context.Add(entity);
-            await _context.SaveChangesAsync();
-        }
-        public static async Task<bool> UpdateObject<T>(T entity, DefaultContext _context) where T : class, IHaveLongId
-        {
-            try
-            {
-                _context.Update(entity);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EntityExists<T>(entity.Id, _context)) return false;
-                throw;
-            }
-        }
-        public static async Task DeleteObject<T>(long id, DefaultContext _context) where T : class, IHaveLongId
-        {
-            var entity = await _context.Set<T>().FindAsync(id);
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
-        }
-        public static bool EntityExists<T>(long id, DefaultContext _context) where T : class, IHaveLongId
-        {
-            return _context.Set<T>().Any(e => e.Id == id);
-        }
 
     }
 }

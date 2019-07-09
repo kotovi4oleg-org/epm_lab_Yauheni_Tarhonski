@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TinyERP4Fun.Data;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace TinyERP4Fun.ModelServises
 {
@@ -18,28 +19,52 @@ namespace TinyERP4Fun.ModelServises
         }
         public virtual IQueryable<T> GetIQueryable()
         {
-            return ServicesCommonFunctions.GetIQueryable<T>(_context);
+            return _context.Set<T>().AsNoTracking();
         }
         public virtual async Task<IEnumerable<T>> GetListAsync()
         {
-            return await ServicesCommonFunctions.GetListAsync<T>(_context);
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
         public virtual async Task<T> GetAsync(long? id, bool tracking = false)
         {
-            return await ServicesCommonFunctions.GetObject<T>(id, _context, tracking);
+            if (id == null) return null;
+            T resultObject;
+            if (tracking)
+                resultObject = await _context.Set<T>().SingleOrDefaultAsync(t => t.Id == id);
+            else
+                resultObject = await _context.Set<T>().AsNoTracking().SingleOrDefaultAsync(t => t.Id == id);
+            return resultObject;
         }
         public virtual async Task AddAsync(T entity)
         {
-            await ServicesCommonFunctions.AddObject(entity, _context);
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
         }
         public virtual async Task<bool> UpdateAsync(T entity)
         {
-            return await ServicesCommonFunctions.UpdateObject(entity, _context);
+            //return await ServicesCommonFunctions.UpdateObject(entity, _context);
+            try
+            {
+                _context.Update(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EntityExists<T>(entity.Id, _context)) return false;
+                throw;
+            }
         }
         public virtual async Task DeleteAsync(long id)
         {
-            await ServicesCommonFunctions.DeleteObject<T>(id, _context);
+            var entity = await _context.Set<T>().FindAsync(id);
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+        public static bool EntityExists<T>(long id, DefaultContext _context) where T : class, IHaveLongId
+        {
+            return _context.Set<T>().Any(e => e.Id == id);
         }
     }
 }

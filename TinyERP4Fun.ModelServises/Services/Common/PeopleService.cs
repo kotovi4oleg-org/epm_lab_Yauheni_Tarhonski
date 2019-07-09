@@ -62,7 +62,7 @@ namespace TinyERP4Fun.ModelServises
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServicesCommonFunctions.EntityExists<Person>(person.Id, _context)) return false;
+                if (!EntityExists<Person>(person.Id, _context)) return false;
                 throw;
             }
             return true;
