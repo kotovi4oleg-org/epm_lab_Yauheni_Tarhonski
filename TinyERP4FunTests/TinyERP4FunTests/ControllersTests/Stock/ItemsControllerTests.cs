@@ -13,7 +13,7 @@ using TinyERP4Fun.Models.Stock;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
-namespace Tests.TinyERP4FunTests
+namespace TinyERP4FunTests
 {
     public class ItemsControllerTests
     {

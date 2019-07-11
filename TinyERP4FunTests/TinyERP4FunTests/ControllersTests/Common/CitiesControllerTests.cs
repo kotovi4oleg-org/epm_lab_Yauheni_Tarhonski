@@ -10,7 +10,7 @@ using Xunit;
 using TinyERP4Fun.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.TinyERP4FunTests.Common
+namespace TinyERP4FunTests.Common
 {
     public class CitiesControllerTests
     {

@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\TinyERP4Fun"
+    "\\TinyERP4FunTests",
+    "\\TinyERP4FunTests\\TinyERP4FunTests",
+    "\\TinyERP4FunTests\\TinyERP4FunTests\\ControllersTests"
   ],
-  "SelectedNode": "\\TinyERP4Fun\\Constants.cs",
+  "SelectedNode": "\\TinyERP4FunTests\\TinyERP4FunTests\\ControllersTests\\Common",
   "PreviewInSolutionExplorer": false
 }

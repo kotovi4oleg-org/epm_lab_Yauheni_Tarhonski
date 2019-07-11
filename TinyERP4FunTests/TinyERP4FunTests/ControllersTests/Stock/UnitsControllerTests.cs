@@ -10,7 +10,7 @@ using Xunit;
 using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Stock;
 
-namespace Tests.TinyERP4FunTests
+namespace TinyERP4FunTests
 {
     public class UnitsControllerTests
     {

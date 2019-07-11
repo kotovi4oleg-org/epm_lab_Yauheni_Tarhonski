@@ -11,7 +11,7 @@ using TinyERP4Fun.Models;
 using Microsoft.EntityFrameworkCore;
 using TinyERP4Fun.Models.Expenses;
 
-namespace Tests.TinyERP4FunTests.ExpencesTests
+namespace TinyERP4FunTests.ExpencesTests
 {
     public class BusinessDirectionsControllerTests
     {

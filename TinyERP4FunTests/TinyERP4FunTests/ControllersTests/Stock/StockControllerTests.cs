@@ -16,7 +16,7 @@ using TinyERP4Fun.ViewModels;
 using TinyERP4Fun.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.TinyERP4FunTests
+namespace TinyERP4FunTests
 {
     public class StockControllerTests
     {
@@ -25,7 +25,6 @@ namespace Tests.TinyERP4FunTests
         readonly StockController validController;
         readonly StockController notValidController;
         readonly Stock entity;
-        readonly StockViewModel stockViewModel;
         readonly Type indexResultType = typeof(StockPaginatedViewModel);
         readonly string indexActionName = "Index";
         
@@ -44,10 +43,8 @@ namespace Tests.TinyERP4FunTests
             var mockingEntities = new MockingEntities<Stock,
                                            StockController,
                                            IStockService>();
-            //TestAsyncEnumerable<Stock> testEntities2 = new TestAsyncEnumerable<Stock>(testEntities);
             mock = mockingEntities.Mock;
             mockSet = mockingEntities.MockSet;
-            //var mockSetIndex = SetUpMock.SetUpFor(testEntities2);
             mock.Setup(c => c.GetFiltredContent(It.IsAny<DateTime?>(),
                                                 It.IsAny<DateTime?>(),
                                                 It.IsAny<IEnumerable<long?>>(),

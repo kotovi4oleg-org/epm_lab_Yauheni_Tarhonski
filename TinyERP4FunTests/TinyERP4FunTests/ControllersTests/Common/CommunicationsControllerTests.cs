@@ -9,7 +9,7 @@ using TinyERP4Fun.Models.Common;
 using Xunit;
 using TinyERP4Fun.Models;
 
-namespace Tests.TinyERP4FunTests.Common
+namespace TinyERP4FunTests.Common
 {
     public class CommunicationsControllerTests
     {

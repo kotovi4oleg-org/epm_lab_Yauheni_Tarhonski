@@ -5,78 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using TinyERP4Fun.Controllers;
 using TinyERP4Fun.Interfaces;
-using TinyERP4Fun.Models.Common;
 using Xunit;
-using TinyERP4Fun;
-using TinyERP4Fun.Models;
 using TinyERP4Fun.Models.Expenses;
-using TinyERP4Fun.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Security.Claims;
+using TinyERP4FunTests;
 
 namespace Tests.TinyERP4FunTests.ExpencesTests
 {
-    public class FakeSignInManager : SignInManager<IdentityUser>
-    {
-        public FakeSignInManager()
-                : base(new Mock<FakeUserManager>().Object,
-                     new Mock<IHttpContextAccessor>().Object,
-                     new Mock<IUserClaimsPrincipalFactory<IdentityUser>>().Object,
-                     new Mock<IOptions<IdentityOptions>>().Object,
-                     new Mock<ILogger<SignInManager<IdentityUser>>>().Object,
-                     new Mock<IAuthenticationSchemeProvider>().Object)
-        { }
-    }
-    public class FakeUserManager : UserManager<IdentityUser>
-    {
-        public FakeUserManager()
-            : base(new Mock<IUserStore<IdentityUser>>().Object,
-              new Mock<IOptions<IdentityOptions>>().Object,
-              new Mock<IPasswordHasher<IdentityUser>>().Object,
-              new IUserValidator<IdentityUser>[0],
-              new IPasswordValidator<IdentityUser>[0],
-              new Mock<ILookupNormalizer>().Object,
-              new Mock<IdentityErrorDescriber>().Object,
-              new Mock<IServiceProvider>().Object,
-              new Mock<ILogger<UserManager<IdentityUser>>>().Object)
-        { }
-
-        public override Task<IdentityResult> CreateAsync(IdentityUser user, string password)
-        {
-            return Task.FromResult(IdentityResult.Success);
-        }
-
-        public override Task<IdentityResult> AddToRoleAsync(IdentityUser user, string role)
-        {
-            return Task.FromResult(IdentityResult.Success);
-        }
-
-        public override Task<string> GenerateEmailConfirmationTokenAsync(IdentityUser user)
-        {
-            return Task.FromResult(Guid.NewGuid().ToString());
-        }
-
-        public override Task<IdentityUser> GetUserAsync(ClaimsPrincipal user)
-        {
-            return Task.FromResult<IdentityUser>(null);
-        }
-        public override Task<IList<string>> GetRolesAsync(IdentityUser user)
-        {
-            return Task.FromResult((IList<string>)Constants.rolesExpences_Admin.Split(','));
-        }
-        public override string GetUserId(ClaimsPrincipal user)
-        {
-            return null;
-        }
-        
-
-
-    }
     internal class EntitiesMock
     {
         public ExpencesController ValidController { get; set; }

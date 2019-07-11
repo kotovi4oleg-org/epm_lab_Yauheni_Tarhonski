@@ -13,7 +13,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.TinyERP4FunTests.Common
+namespace TinyERP4FunTests.Common
 {
     public class CompaniesControllerTests
     {

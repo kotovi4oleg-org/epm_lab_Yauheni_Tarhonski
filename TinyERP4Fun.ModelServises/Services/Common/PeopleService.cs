@@ -24,10 +24,11 @@ namespace TinyERP4Fun.ModelServises
         }
         public override IQueryable<Person> GetIQueryable()
         {
-            return _context.Person.Include(x => x.User)
+            return _context.Set<Person>().Include(x => x.User)
                                   .Include(x => x.Company)
                                   .OrderBy(x => x.LastName)
-                                  .ThenBy(x => x.FirstName);
+                                  .ThenBy(x => x.FirstName)
+                                  ;
         }
         public override async Task AddAsync(Person person)
         {
@@ -62,7 +63,7 @@ namespace TinyERP4Fun.ModelServises
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EntityExists<Person>(person.Id, _context)) return false;
+                if (!EntityExists(person.Id, _context)) return false;
                 throw;
             }
             return true;
@@ -73,11 +74,11 @@ namespace TinyERP4Fun.ModelServises
             if (id == null) return null;
             Person resultObject;
             if (tracking)
-                resultObject = await _context.Person.Include(x => x.User)
+                resultObject = await _context.Set<Person>().Include(x => x.User)
                                                     .Include(x => x.Company)
                                                     .SingleOrDefaultAsync(t => t.Id == id);
             else
-                resultObject = await _context.Person.Include(x => x.User)
+                resultObject = await _context.Set<Person>().Include(x => x.User)
                                                     .Include(x => x.Company)
                                                     .SingleOrDefaultAsync(t => t.Id == id);
             return resultObject;
@@ -85,13 +86,13 @@ namespace TinyERP4Fun.ModelServises
         public async Task<IQueryable<Ids>> GetUsersIds(long? id)
         {
             var defaultAdmin = new List<IdentityUser> { await _userManager.FindByNameAsync(Constants.defaultAdminName) };
-            var usedUsers = _context.Person.Where(x => x.User != null && x.Id != id).Select(x => x.User);
+            var usedUsers = _context.Set<Person>().Where(x => x.User != null && x.Id != id).Select(x => x.User);
             var result = _userManager.Users.Except(defaultAdmin).Except(usedUsers).Select(x => new Ids(x.Id, x.Email));
             return result;
         }
         public IQueryable<Ids> GetCompaniesIds()
         {
-            return _context.Company.AsNoTracking().Select(x => new Ids(x.Id.ToString(), x.Name));
+            return _context.Set<Company>().AsNoTracking().Select(x => new Ids(x.Id.ToString(), x.Name));
         }
         public IQueryable<Ids> GetRolesIds()
         {

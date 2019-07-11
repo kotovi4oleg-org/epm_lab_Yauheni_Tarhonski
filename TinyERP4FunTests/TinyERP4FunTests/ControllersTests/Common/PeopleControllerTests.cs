@@ -14,7 +14,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using TinyERP4Fun.ViewModels;
 
-namespace Tests.TinyERP4FunTests.Common
+namespace TinyERP4FunTests.Common
 {
     public class PeopleControllerTests
     {
@@ -187,4 +187,3 @@ namespace Tests.TinyERP4FunTests.Common
 
     }
 }
-/**/

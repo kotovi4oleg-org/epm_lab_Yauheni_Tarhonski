@@ -11,9 +11,9 @@ namespace TinyERP4Fun.ModelServises
 {
     public abstract class BaseService<T> : IBaseService<T> where T: class, IHaveLongId 
     {
-        protected readonly DefaultContext _context;
+        protected readonly IDefaultContext _context;
 
-        public BaseService(DefaultContext context)
+        public BaseService(IDefaultContext context)
         {
             _context = context;
         }
@@ -52,17 +52,17 @@ namespace TinyERP4Fun.ModelServises
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EntityExists<T>(entity.Id, _context)) return false;
+                if (!EntityExists(entity.Id, _context)) return false;
                 throw;
             }
         }
         public virtual async Task DeleteAsync(long id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
-            _context.Set<T>().Remove(entity);
+            _context.Remove(entity);
             await _context.SaveChangesAsync();
         }
-        public static bool EntityExists<T>(long id, DefaultContext _context) where T : class, IHaveLongId
+        public static bool EntityExists(long id, DefaultContext _context)
         {
             return _context.Set<T>().Any(e => e.Id == id);
         }

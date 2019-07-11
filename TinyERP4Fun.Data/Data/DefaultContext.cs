@@ -8,10 +8,11 @@ using Microsoft.Extensions.Configuration;
 using TinyERP4Fun.Models.Common;
 using TinyERP4Fun.Models.Expenses;
 using TinyERP4Fun.Models.Stock;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4Fun.Data
 {
-    public class DefaultContext : IdentityDbContext
+    public class DefaultContext : IdentityDbContext, IDefaultContext
     {
         public DefaultContext(DbContextOptions<DefaultContext> options)
             : base(options)

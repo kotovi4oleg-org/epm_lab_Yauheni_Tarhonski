@@ -1,17 +1,99 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using TinyERP4Fun.Data;
 using TinyERP4Fun.Interfaces;
+using TinyERP4Fun;
 
-namespace Tests
+namespace TinyERP4FunTests
 {
+    public class FakeRoleManager : RoleManager<IdentityRole>
+    {
+        public FakeRoleManager()
+                : base(new Mock<IRoleStore<IdentityRole>>().Object,
+                     new IRoleValidator<IdentityRole>[0],
+                     new Mock<ILookupNormalizer>().Object,
+                     new Mock<IdentityErrorDescriber>().Object,
+                     new Mock<ILogger<RoleManager<IdentityRole>>>().Object)
+        { }
+    }
+    public class FakeSignInManager : SignInManager<IdentityUser>
+    {
+        public FakeSignInManager()
+                : base(new Mock<FakeUserManager>().Object,
+                     new Mock<IHttpContextAccessor>().Object,
+                     new Mock<IUserClaimsPrincipalFactory<IdentityUser>>().Object,
+                     new Mock<IOptions<IdentityOptions>>().Object,
+                     new Mock<ILogger<SignInManager<IdentityUser>>>().Object,
+                     new Mock<IAuthenticationSchemeProvider>().Object)
+        { }
+    }
+    public class FakeUserManager : UserManager<IdentityUser>
+    {
+        public FakeUserManager()
+            : base(new Mock<IUserStore<IdentityUser>>().Object,
+              new Mock<IOptions<IdentityOptions>>().Object,
+              new Mock<IPasswordHasher<IdentityUser>>().Object,
+              new IUserValidator<IdentityUser>[0],
+              new IPasswordValidator<IdentityUser>[0],
+              new Mock<ILookupNormalizer>().Object,
+              new Mock<IdentityErrorDescriber>().Object,
+              new Mock<IServiceProvider>().Object,
+              new Mock<ILogger<UserManager<IdentityUser>>>().Object)
+        { }
+
+        public override Task<IdentityResult> CreateAsync(IdentityUser user, string password)
+        {
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public override Task<IdentityResult> AddToRoleAsync(IdentityUser user, string role)
+        {
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public override Task<string> GenerateEmailConfirmationTokenAsync(IdentityUser user)
+        {
+            return Task.FromResult(Guid.NewGuid().ToString());
+        }
+
+        public override Task<IdentityUser> GetUserAsync(ClaimsPrincipal user)
+        {
+            return Task.FromResult<IdentityUser>(null);
+        }
+        public override Task<IList<string>> GetRolesAsync(IdentityUser user)
+        {
+            return Task.FromResult((IList<string>)Constants.rolesExpences_Admin.Split(','));
+        }
+        public override string GetUserId(ClaimsPrincipal user)
+        {
+            return null;
+        }
+    }
+
+    internal static class DefaultContextMock 
+    {
+        public static Mock<IDefaultContext> GetMock()
+        {
+            var options = new DbContextOptionsBuilder<DefaultContext>()
+                    .UseInMemoryDatabase(databaseName: "TestData")
+                    .Options;
+            return new Mock<IDefaultContext>(options);
+        }
+    }
     internal class MockingEntities<T, Contr, IServ> where T : class, IHaveLongId, new()
                                         where Contr : Controller
                                         where IServ : class, IBaseService<T>

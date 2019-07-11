@@ -18,7 +18,7 @@ namespace TinyERP4Fun.ModelServises
         }
         public IQueryable<City> GetFiltredCities(string sortOrder, string searchString)
         {
-            IQueryable<City> result = _context.City.Include(x => x.State).Include(x => x.State.Country);
+            IQueryable<City> result = _context.Set<City>().Include(x => x.State).Include(x => x.State.Country);
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -51,7 +51,7 @@ namespace TinyERP4Fun.ModelServises
         }
         public override async Task<IEnumerable<City>> GetListAsync()
         {
-            var defaultContext = _context.City.Include(x => x.State)
+            var defaultContext = _context.Set<City>().Include(x => x.State)
                                               .Include(x => x.State.Country);
             return await defaultContext.AsNoTracking().ToListAsync();
         }
@@ -60,12 +60,12 @@ namespace TinyERP4Fun.ModelServises
             if (id == null) return null;
             City resultObject;
             if (tracking)
-                resultObject = await _context.City
+                resultObject = await _context.Set<City>()
                                              .Include(x => x.State)
                                              .Include(x => x.State.Country)
                                              .SingleOrDefaultAsync(t => t.Id == id);
             else
-                resultObject = await _context.City
+                resultObject = await _context.Set<City>()
                                              .Include(x => x.State)
                                              .Include(x => x.State.Country)
                                              .AsNoTracking()
@@ -74,15 +74,15 @@ namespace TinyERP4Fun.ModelServises
         }
         public IQueryable<Ids> GetStatesIds(long countryId)
         {
-            return _context.State.Where(x => x.CountryId == countryId).AsNoTracking().Select(x=>new Ids(x.Id.ToString(),x.Name));
+            return _context.Set<State>().Where(x => x.CountryId == countryId).AsNoTracking().Select(x=>new Ids(x.Id.ToString(),x.Name));
         }
         public IQueryable<Ids> GetCountriesIds()
         {
-            return _context.Country.AsNoTracking().Select(x => new Ids(x.Id.ToString(), x.Name));
+            return _context.Set<Country>().AsNoTracking().Select(x => new Ids(x.Id.ToString(), x.Name));
         }
         public IEnumerable<State> GetStates(long countryId)
         {
-            return _context.State.Where(x => x.CountryId == countryId).AsNoTracking().ToList();
+            return _context.Set<State>().Where(x => x.CountryId == countryId).AsNoTracking().ToList();
         }
     }
 }

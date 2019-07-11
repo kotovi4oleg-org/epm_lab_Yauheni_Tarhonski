@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 
-namespace Tests.TinyERP4FunTests.Common
+namespace TinyERP4FunTests.Common
 {
     public class DepartmentsControllerTests
     {
