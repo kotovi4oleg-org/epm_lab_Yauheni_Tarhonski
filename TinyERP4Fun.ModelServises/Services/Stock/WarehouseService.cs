@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class WarehouseService : BaseService<Warehouse>, IWarehouseService
     {
-        public WarehouseService(DefaultContext context) : base(context)
+        public WarehouseService(IDefaultContext context) : base(context)
         {
         }
     }

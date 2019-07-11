@@ -12,7 +12,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class ExpencesService : BaseService<Expences>, IExpencesService
     {
-        public ExpencesService(DefaultContext context) : base(context)
+        public ExpencesService(IDefaultContext context) : base(context)
         {
         }
         public override async Task<Expences> GetAsync(long? id, bool tracking = false)

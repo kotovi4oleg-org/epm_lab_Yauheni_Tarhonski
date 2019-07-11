@@ -14,7 +14,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class ItemService : BaseService<Item>, IItemsService
     {
-        public ItemService(DefaultContext context) : base(context)
+        public ItemService(IDefaultContext context) : base(context)
         {
         }
         public override async Task<IEnumerable<Item>> GetListAsync()

@@ -10,7 +10,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CurrenciesService : BaseService<Currency>, ICurrenciesService
     {
-        public CurrenciesService(DefaultContext context) : base(context)
+        public CurrenciesService(IDefaultContext context) : base(context)
         {
         }
     }

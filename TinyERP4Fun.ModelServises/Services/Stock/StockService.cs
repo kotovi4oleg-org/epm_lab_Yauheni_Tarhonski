@@ -12,7 +12,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class StockService : BaseService<Stock>, IStockService
     {
-        public StockService(DefaultContext context) : base(context)
+        public StockService(IDefaultContext context) : base(context)
         {
         }
 

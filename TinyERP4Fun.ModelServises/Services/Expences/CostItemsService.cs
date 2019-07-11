@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CostItemsService : BaseService<CostItem>, ICostItemsService
     {
-        public CostItemsService(DefaultContext context) : base(context)
+        public CostItemsService(IDefaultContext context) : base(context)
         {
         }
     }

@@ -9,7 +9,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class BusinessDirectionsService : BaseService<BusinessDirection>, IBusinessDirectionsService
     {
-        public BusinessDirectionsService(DefaultContext context) : base(context)
+        public BusinessDirectionsService(IDefaultContext context) : base(context)
         {
         }
     }

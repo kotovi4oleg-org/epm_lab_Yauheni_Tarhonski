@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CompaniesService : BaseService<Company>, ICompaniesService
     {
-        public CompaniesService(DefaultContext context) : base(context)
+        public CompaniesService(IDefaultContext context) : base(context)
         {
         }
 

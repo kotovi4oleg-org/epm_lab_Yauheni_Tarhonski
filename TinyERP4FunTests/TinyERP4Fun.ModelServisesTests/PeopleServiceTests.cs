@@ -8,12 +8,13 @@ using Moq;
 using System.Linq;
 using Tests;
 using System.Threading;
+using TinyERP4Fun.Interfaces;
 
 namespace TinyERP4FunTests.ModelServicesTests
 {
     public class PeopleServiceTests
     {
-        public Mock<DefaultContext> Mock { get; set; }
+        public Mock<IDefaultContext> Mock { get; set; }
         public Mock<DbSet<Person>> MockSet { get; set; }
         public Person singleEntity = new Person { Id = 2 };
         public Person newEntity = new Person { Id = 15 };

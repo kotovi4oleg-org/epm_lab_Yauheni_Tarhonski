@@ -62,7 +62,7 @@ namespace TinyERP4Fun.ModelServises
             _context.Remove(entity);
             await _context.SaveChangesAsync();
         }
-        public static bool EntityExists(long id, DefaultContext _context)
+        public static bool EntityExists(long id, IDefaultContext _context)
         {
             return _context.Set<T>().Any(e => e.Id == id);
         }

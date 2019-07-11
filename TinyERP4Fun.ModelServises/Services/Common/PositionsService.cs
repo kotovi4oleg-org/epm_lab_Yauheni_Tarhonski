@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class PositionsService : BaseService<Position>, IPositionsService
     {
-        public PositionsService(DefaultContext context) : base(context)
+        public PositionsService(IDefaultContext context) : base(context)
         {
         }
     }

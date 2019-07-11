@@ -13,7 +13,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class StatesService : BaseService<State>, IStatesService
     {
-        public StatesService(DefaultContext context) : base(context)
+        public StatesService(IDefaultContext context) : base(context)
         {
         }
 

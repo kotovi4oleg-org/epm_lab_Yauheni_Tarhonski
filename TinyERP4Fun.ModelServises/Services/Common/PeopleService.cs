@@ -17,7 +17,7 @@ namespace TinyERP4Fun.ModelServises
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
-        public PeopleService(DefaultContext context, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager) : base(context)
+        public PeopleService(IDefaultContext context, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager) : base(context)
         {
             _roleManager = roleManager;
             _userManager = userManager;

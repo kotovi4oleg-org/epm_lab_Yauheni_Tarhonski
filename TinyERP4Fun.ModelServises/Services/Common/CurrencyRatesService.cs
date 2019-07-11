@@ -18,7 +18,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CurrencyRatesService : BaseService<CurrencyRates>, ICurrencyRatesService
     {
-        public CurrencyRatesService(DefaultContext context) : base(context)
+        public CurrencyRatesService(IDefaultContext context) : base(context)
         {
         }
         public override async Task<CurrencyRates> GetAsync(long? id, bool tracking)

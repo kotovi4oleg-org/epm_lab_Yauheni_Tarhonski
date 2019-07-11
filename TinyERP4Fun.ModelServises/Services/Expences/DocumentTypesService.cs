@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class DocumentTypesService : BaseService<DocumentType>, IDocumentTypesService
     {
-        public DocumentTypesService(DefaultContext context) : base(context)
+        public DocumentTypesService(IDefaultContext context) : base(context)
         {
         }
     }

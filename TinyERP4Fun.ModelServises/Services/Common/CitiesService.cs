@@ -13,7 +13,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CitiesService : BaseService<City>, ICitiesService
     {
-        public CitiesService(DefaultContext context) : base(context)
+        public CitiesService(IDefaultContext context) : base(context)
         {
         }
         public IQueryable<City> GetFiltredCities(string sortOrder, string searchString)

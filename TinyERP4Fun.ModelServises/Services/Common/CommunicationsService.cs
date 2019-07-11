@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CommunicationsService : BaseService<Communication>, ICommunicationsService
     {
-        public CommunicationsService(DefaultContext context) : base(context)
+        public CommunicationsService(IDefaultContext context) : base(context)
         {
         }
     }

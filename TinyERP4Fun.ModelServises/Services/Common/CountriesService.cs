@@ -11,7 +11,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class CountriesService : BaseService<Country>, ICountriesService
     {
-        public CountriesService(DefaultContext context) : base(context)
+        public CountriesService(IDefaultContext context) : base(context)
         {
         }
     }

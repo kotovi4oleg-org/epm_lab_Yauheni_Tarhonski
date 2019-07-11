@@ -100,6 +100,8 @@ namespace TinyERP4Fun
             services.AddScoped<IStatesService, StatesService>();
             services.AddScoped<IUpdateCurrencyRatesService, UpdateCurrencyRatesService>();
 
+            services.AddScoped<IDefaultContext, DefaultContext>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

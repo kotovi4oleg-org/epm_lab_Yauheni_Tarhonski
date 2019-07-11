@@ -13,7 +13,7 @@ namespace TinyERP4Fun.ModelServises
 {
     public class EmployeesService : BaseService<Employee>, IEmployeesService
     {
-        public EmployeesService(DefaultContext context) : base(context)
+        public EmployeesService(IDefaultContext context) : base(context)
         {
         }
         public override IQueryable<Employee> GetIQueryable()

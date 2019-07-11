@@ -88,10 +88,7 @@ namespace TinyERP4FunTests
     {
         public static Mock<IDefaultContext> GetMock()
         {
-            var options = new DbContextOptionsBuilder<DefaultContext>()
-                    .UseInMemoryDatabase(databaseName: "TestData")
-                    .Options;
-            return new Mock<IDefaultContext>(options);
+            return new Mock<IDefaultContext>();
         }
     }
     internal class MockingEntities<T, Contr, IServ> where T : class, IHaveLongId, new()
