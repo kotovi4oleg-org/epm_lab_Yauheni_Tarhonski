@@ -21,8 +21,7 @@ namespace TinyERP4Fun.ModelServises
             return _context.Employee.Include(x => x.Person)
                                                .Include(x => x.Department)
                                                .Include(x => x.Position)
-                                               .OrderBy(x => x.Person.LastName)
-                                               .ThenBy(x => x.Person.FirstName);
+                                               ;
         }
         public override async Task<Employee> GetAsync(long? id, bool tracking = false)
         {

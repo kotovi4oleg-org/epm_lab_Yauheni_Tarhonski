@@ -60,14 +60,15 @@ namespace TinyERP4Fun.ModelServises
         {
             var stock = await _context.Stock.FindAsync(id);
             if (stock.Quantity > 0) await CheckDelState(stock);
-            _context.Stock.Remove(stock);
+            _context.Remove(stock);
             await _context.SaveChangesAsync();
         }
         public override async Task<bool> UpdateAsync(Stock stock)
         {
             try
             {
-                var oldstock = await _context.Stock.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stock.Id);
+                
+                var oldstock = await _context.Stock.AsNoTracking().SingleOrDefaultAsync(s => s.Id == stock.Id);
 
                 if (oldstock.WarehouseId != stock.WarehouseId || oldstock.ItemId != stock.ItemId)
                 {
@@ -78,7 +79,7 @@ namespace TinyERP4Fun.ModelServises
                 {
                     await CheckUpdateState(stock);
                 }
-
+                
                 await CheckUpdateState(stock);
                 _context.Update(stock);
                 await _context.SaveChangesAsync();

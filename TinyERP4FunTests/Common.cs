@@ -18,7 +18,7 @@ using TinyERP4Fun.Data;
 using TinyERP4Fun.Interfaces;
 using TinyERP4Fun;
 
-namespace TinyERP4FunTests
+namespace TinyERP4Fun.Tests
 {
     public class FakeRoleManager : RoleManager<IdentityRole>
     {

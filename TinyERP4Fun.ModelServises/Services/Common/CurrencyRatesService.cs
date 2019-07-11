@@ -43,8 +43,7 @@ namespace TinyERP4Fun.ModelServises
         {
             return _context.CurrencyRates.Include(c => c.BaseCurrency)
                                          .Include(c => c.Currency)
-                                         .OrderByDescending(x => x.DateRate)
-                                         .ThenBy(x => x.Currency.Name);
+                                         ;
         }
         public IQueryable<Ids> GetCurrenciesIds()
         {
